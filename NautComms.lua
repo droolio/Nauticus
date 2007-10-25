@@ -20,16 +20,20 @@ local GetLag
 
 
 function Nauticus:DoRequest()
+	if next(self.requestList) ~= nil then
+		self:BroadcastTransportData()
+
+		if self.requestVersion then
+			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5, self)
+			return
+		end
+	end
+
 	if self.requestVersion then
 		local nautVersionNum = self.nautVersionNum
 
 		self.requestVersion = false
 		self:SendMessage(nil, "VER "..nautVersionNum)
-	end
-
-	if next(self.requestList) ~= nil then
-		self:BroadcastTransportData()
-		self.requestList = { }
 	end
 end
 
@@ -40,22 +44,18 @@ function Nauticus:BroadcastTransportData(to, requestList)
 
 	if not requestList then requestList = self.requestList; end
 
-	for index, data in pairs(transports) do
-		if data.label ~= -1 then
-			local transit = data.label
+	for transit in pairs(requestList) do
+		local since, boots, swaps = self:GetKnownCycle(transit)
 
-			if requestList[transit] then
-				local since, boots, swaps = self:GetKnownCycle(transit)
+		if since ~= nil then
+			since = math.floor((since+lag)*1000.0+.5)
 
-				if since ~= nil then
-					since = math.floor((since+lag)*1000.0+.5)
-
-					to_send[transit] = { ['since'] = since, ['boots'] = boots, ['swaps'] = swaps, }
-				else
-					to_send[transit] = { }
-				end
-			end
+			to_send[transit] = { ['since'] = since, ['boots'] = boots, ['swaps'] = swaps, }
+		else
+			to_send[transit] = { }
 		end
+
+		requestList[transit] = nil
 	end
 
 	if next(to_send) ~= nil then
@@ -160,7 +160,7 @@ function Nauticus:ReceiveMessage_known(sender, distribution, transports)
 	local isDirect = distribution == "WHISPER"
 
 	if isDirect then
-		requestList = { }
+		requestList = {}
 	else
 		requestList = self.requestList
 	end
@@ -345,7 +345,7 @@ function Nauticus:StringToTell(transports)
 				['swaps'] = swaps
 			}
 		else
-			trans_tab[transit] = { }
+			trans_tab[transit] = {}
 		end
 	end
 
