@@ -39,27 +39,39 @@ end
 
 function Nauticus:BroadcastTransportData(to, requestList)
 
+	local since, boots, swaps
 	local lag = GetLag()
-	local to_send = {}
+	local trans_str = ""
 
 	if not requestList then requestList = self.requestList; end
 
 	for transit in pairs(requestList) do
-		local since, boots, swaps = self:GetKnownCycle(transit)
+		since, boots, swaps = self:GetKnownCycle(transit)
+		trans_str = trans_str..self.lookupIndex[transit]
 
 		if since ~= nil then
-			since = math.floor((since+lag)*1000.0+.5)
+			trans_str = trans_str..":"..math.floor((since+lag)*1000.0+.5)
 
-			to_send[transit] = { ['since'] = since, ['boots'] = boots, ['swaps'] = swaps, }
-		else
-			to_send[transit] = { }
+			if swaps ~= 1 then
+				trans_str = trans_str..":"..swaps
+			end
+
+			if boots ~= 0 then
+				if swaps == 1 then
+					trans_str = trans_str..":"
+				end
+
+				trans_str = trans_str..":"..boots
+			end
 		end
 
+		trans_str = trans_str..","
 		requestList[transit] = nil
 	end
 
-	if next(to_send) ~= nil then
-		self:SendMessage(to, "KNO "..self:TellToString(to_send))
+	if trans_str ~= "" then
+		trans_str = string.sub(trans_str, 1, -2) -- remove the last comma
+		self:SendMessage(to, "KNO "..trans_str)
 		self:DebugMessage("tell our transports")
 	else
 		self:DebugMessage("nothing to tell")
@@ -289,34 +301,6 @@ function Nauticus:IsBetter(transit, since, boots, swaps)
 
 end
 
-function Nauticus:TellToString(transports)
-	local trans_str = ""
-
-	for transit, values in pairs(transports) do
-		trans_str = trans_str..self.lookupIndex[transit]
-
-		if values.since ~= nil then
-			trans_str = trans_str..":"..values.since
-
-			if values.swaps ~= 1 then
-				trans_str = trans_str..":"..values.swaps
-			end
-
-			if values.boots ~= 0 then
-				if values.swaps == 1 then
-					trans_str = trans_str..":"
-				end
-
-				trans_str = trans_str..":"..values.boots
-			end
-		end
-
-		trans_str = trans_str..","
-	end
-
-	return string.sub(trans_str, 1, -2) -- remove the last comma
-end
-
 function Nauticus:StringToTell(transports)
 	local Args = self:GetArgs(transports, ",")
 	local trans_tab = {}
@@ -380,9 +364,9 @@ function Nauticus:UpdateDistribution()
 				JoinChannelByName(self.dataChannel)
 			end
 		else
-			if self.dataChannel ~= "none" and GetChannelName(self.dataChannel) ~= 0 then
+			--[[if self.dataChannel ~= "none" and GetChannelName(self.dataChannel) ~= 0 then
 				LeaveChannelByName(self.dataChannel)
-			end
+			end]]
 
 			if newDistrib == "RAID" or newDistrib == "GUILD" then
 				self:RegisterEvent("CHAT_MSG_ADDON")

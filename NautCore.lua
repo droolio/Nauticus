@@ -61,7 +61,7 @@ Nauticus:RegisterDefaults("profile", {
 	dataChannel = "NauticSync",
 } )
 Nauticus:RegisterDefaults("account", {
-	knownCycles = { },
+	knownCycles = {},
 	debug = false,
 } )
 Nauticus:RegisterDefaults("char", {
@@ -716,6 +716,10 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 		-- /leave legacy channel(s)
 		elseif channel == "ZeppelinMaster" then
 			LeaveChannelByName(channel)
+			return
+
+		elseif channel == self.dataChannel and channel ~= "none" and IsInGuild() then
+			LeaveChannelByName(self.dataChannel)
 			return
 
 		end
