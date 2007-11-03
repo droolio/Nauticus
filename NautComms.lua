@@ -360,9 +360,9 @@ function Nauticus:UpdateDistribution()
 				self:UnregisterEvent("CHAT_MSG_ADDON")
 			end
 
-			if self.dataChannel ~= "none" and GetChannelName(self.dataChannel) == 0 then
+			--[[if self.dataChannel ~= "none" and GetChannelName(self.dataChannel) == 0 then
 				JoinChannelByName(self.dataChannel)
-			end
+			end]]
 		else
 			--[[if self.dataChannel ~= "none" and GetChannelName(self.dataChannel) ~= 0 then
 				LeaveChannelByName(self.dataChannel)

@@ -71,7 +71,7 @@ Nauticus:RegisterDefaults("char", {
 	showIcons = true,
 } )
 
-local options = { type = 'group', args = {
+Nauticus.options = { type = 'group', args = {
 	gui = {
 		type = 'group',
 		name = "GUI",
@@ -182,7 +182,7 @@ local options = { type = 'group', args = {
 		end
 	},
 } }
-Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, options)
+Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.options)
 
 
 local Pre_ChatFrame_OnEvent, Naut_ChatFrame_OnEvent
@@ -701,26 +701,38 @@ local currentZone
 function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _, num, channel)
 
 	if noticeType == "YOU_JOINED" then
-		if self.debug then
-			if channel == "NauticSync" then
-				ListChannelByName("NauticSync")
-				return
-
-			elseif channel == "ZeppelinMaster" then
+		-- legacy channel
+		if channel == "ZeppelinMaster" then
+			if self.debug then
 				ListChannelByName("ZeppelinMaster")
 				SendChatMessage("VER:1.7:2", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
-				SendChatMessage("VER:1.7:x", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
-				return
+
+				self:ScheduleEvent(function()
+					SendChatMessage("VER:1.7:x", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
+				end, 5, self)
+			else
+				LeaveChannelByName(channel)
 			end
 
-		-- /leave legacy channel(s)
-		elseif channel == "ZeppelinMaster" then
-			LeaveChannelByName(channel)
 			return
 
-		elseif channel == self.dataChannel and channel ~= "none" and IsInGuild() then
-			LeaveChannelByName(self.dataChannel)
+		elseif channel == self.dataChannel then
+			if self.debug then
+				ListChannelByName(channel)
+			elseif channel ~= "none" and IsInGuild() then
+				LeaveChannelByName(channel)
+			end
+
 			return
+
+		elseif self.dataChannel ~= "none" and
+			GetChannelName(self.dataChannel) == 0 and not IsInGuild() then
+
+			self:ScheduleEvent("NAUT_CHAN_JOIN", function()
+				if GetChannelName(self.dataChannel) == 0 then
+					JoinChannelByName(self.dataChannel)
+				end
+			end, 5, self)
 
 		end
 	end
