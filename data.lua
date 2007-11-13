@@ -117,6 +117,8 @@ Nauticus.transitZones = {
 [ L["Feralas"] ] = { ["fms2fer"] = true },
 [ L["The Veiled Sea"] ] = { ["exo2aub"] = true }, -- special case
 [ L["Twisting Nether"] ] = { ["exo2aub"] = true }, -- special case
+[ L["Orgrimmar"] ] = { ["org2uc"] = true, ["org2gg"] = true, virtual = true }, -- extend to city
+[ L["Undercity"] ] = { ["org2uc"] = true, ["grom2uc"] = true, virtual = true }, -- extend to city
 }
 
 Nauticus.platforms = {

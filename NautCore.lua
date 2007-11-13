@@ -282,7 +282,10 @@ end
 
 function Nauticus:DrawMapIcons()
 
-	local transit, liveData, cycle, platform, offsets, currentX, currentY, isZoneInteresting
+	local transit, liveData, cycle, platform, offsets, currentX, currentY,
+		isZoneInteresting, buttonMini, buttonWorld
+
+	local isWorldMapVisible = NautAstrolabe.WorldMapVisible
 
 	if NautHeaderFrame.isMoving then self:UpdateUI() end
 
@@ -311,16 +314,13 @@ function Nauticus:DrawMapIcons()
 
 			if self.showIcons then
 				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit]
+				buttonMini, buttonWorld = transports[t].minimap_icon, transports[t].worldmap_icon
 
-				if isZoneInteresting or NautAstrolabe.WorldMapVisible then
+				if isZoneInteresting or isWorldMapVisible then
 					currentX, currentY = self:CalcTripPosition(transit, cycle, platform)
 
 					if currentX and currentY then
-						local buttonMini, buttonWorld =
-							getglobal("Naut_MiniMapIconButton"..t),
-							getglobal("Naut_WorldMapIconButton"..t)
-
-						if NautAstrolabe.WorldMapVisible then
+						if isWorldMapVisible then
 							NautAstrolabe:PlaceIconOnWorldMap(WorldMapDetailFrame, buttonWorld,
 								0, 0, currentX, currentY)
 
@@ -329,22 +329,22 @@ function Nauticus:DrawMapIcons()
 						end
 
 						if isZoneInteresting then
-							NautAstrolabe.UpdateTimer = NautAstrolabe.MinimapUpdateTime
 							NautAstrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, currentX, currentY)
 
 							if NautAstrolabe:IsIconOnEdge(buttonMini) then
-								buttonMini:SetAlpha(.66)
+								buttonMini:SetAlpha(.6)
 							else
 								buttonMini:SetAlpha(.9)
 							end
 
+							NautAstrolabe.UpdateTimer = NautAstrolabe.MinimapUpdateTime
 							NautAstrolabe:UpdateMinimapIconPositions()
 						elseif buttonMini:IsVisible() then
 							NautAstrolabe:RemoveIconFromMinimap(buttonMini)
 						end
 					end
-				else
-					getglobal("Naut_MiniMapIconButton"..t):Hide()
+				elseif buttonMini:IsVisible() then
+					buttonMini:Hide()
 				end
 			end
 		end
@@ -456,7 +456,7 @@ end
 
 function Nauticus:CheckTriggers_OnUpdate(elapse)
 
-	if self.currentZoneTransports == nil then return; end
+	if self.currentZoneTransports == nil or self.currentZoneTransports.virtual then return; end
 
 	self.lastcheck_timeout = self.lastcheck_timeout + elapse
 	if 10.0 > self.lastcheck_timeout then return; end
@@ -680,6 +680,10 @@ function Nauticus:InitialiseConfig()
 		transit_data.offset[#(packedData[transit])] = rtts[transit]
 
 		liveData[transit] = { cycle = 0, index = 1, }
+
+		transports[t].minimap_icon, transports[t].worldmap_icon =
+			getglobal("Naut_MiniMapIconButton"..t),
+			getglobal("Naut_WorldMapIconButton"..t)
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)
@@ -703,7 +707,9 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 		self:DebugMessage("zoned: "..self.currentZone)
 
 		-- show GUI when zone change contains a transport
-		if self.currentZoneTransports and self:IsZoneGUI() then
+		if self.currentZoneTransports and self:IsZoneGUI() and
+			not self.currentZoneTransports.virtual then
+
 			self.db.char.showLowerGUI = true
 			self.db.char.showGUI = true
 			self:UpdateUI()

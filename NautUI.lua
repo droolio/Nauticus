@@ -20,25 +20,25 @@ local rtts, platforms, transports, transitData =
 
 
 function Nauticus:IsZoneGUI()
-    return self.db.profile.ZoneGUI
+    return self.db.profile.zoneGUI
 end
 
 function Nauticus:IsFactionSpecific()
-    return self.db.profile.FactionSpecific
+    return self.db.profile.factionSpecific
 end
 
 function Nauticus:ToggleFaction()
-    self.db.profile.FactionSpecific = not self.db.profile.FactionSpecific
-	NautOptionsFrameOptFactionSpecific:SetChecked(self.db.profile.FactionSpecific)
+    self.db.profile.factionSpecific = not self.db.profile.factionSpecific
+	NautOptionsFrameOptFactionSpecific:SetChecked(self.db.profile.factionSpecific)
 end
 
 function Nauticus:IsZoneSpecific()
-    return self.db.profile.ZoneSpecific
+    return self.db.profile.zoneSpecific
 end
 
 function Nauticus:ToggleZone()
-    self.db.profile.ZoneSpecific = not self.db.profile.ZoneSpecific
-	NautOptionsFrameOptZoneSpecific:SetChecked(self.db.profile.ZoneSpecific)
+    self.db.profile.zoneSpecific = not self.db.profile.zoneSpecific
+	NautOptionsFrameOptZoneSpecific:SetChecked(self.db.profile.zoneSpecific)
 end
 
 function Nauticus:IsAlias()
@@ -264,10 +264,10 @@ function Nauticus:Options_OnClick()
 end
 
 function Nauticus:OptionsSave_OnClick()
-	self.db.profile.zoneGUI = NautOptionsFrameOptZoneGUI:GetChecked()
-	self.db.profile.factionSpecific = NautOptionsFrameOptFactionSpecific:GetChecked()
-	self.db.profile.zoneSpecific = NautOptionsFrameOptZoneSpecific:GetChecked()
-	self.db.profile.cityAlias = NautOptionsFrameOptCityAlias:GetChecked()
+	self.db.profile.zoneGUI = NautOptionsFrameOptZoneGUI:GetChecked() ~= nil
+	self.db.profile.factionSpecific = NautOptionsFrameOptFactionSpecific:GetChecked() ~= nil
+	self.db.profile.zoneSpecific = NautOptionsFrameOptZoneSpecific:GetChecked() ~= nil
+	self.db.profile.cityAlias = NautOptionsFrameOptCityAlias:GetChecked() ~= nil
 
 	NautOptionsFrame:Hide()
 end
