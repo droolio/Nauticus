@@ -23,8 +23,8 @@ local Nauticus = Nauticus
 local rtts, platforms, triggers, transports, transitData
 
 -- object variables
-Nauticus.nautVersion = "2.2.0"
-Nauticus.nautVersionNum = 220
+Nauticus.nautVersion = "2.2.1"
+Nauticus.nautVersionNum = 221
 
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"

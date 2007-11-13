@@ -375,12 +375,16 @@ function Nauticus:ShowTooltip(transit)
 				'text2R', r, 'text2G', g, 'text2B', b)
 		end
 
-		if self.debug then
+		if IsShiftKeyDown() then
 			local cat = tablet:AddCategory(
 				'columns', 2
 			)
-			cat:AddLine('text', "Age:",
-				'text2', SecondsToTime(self:GetKnownCycle(transit)))
+
+			local since, boots, swaps = self:GetKnownCycle(transit)
+
+			cat:AddLine('text', "Age:", 'text2', SecondsToTime(since))
+			cat:AddLine('text', "Boots:", 'text2', boots)
+			cat:AddLine('text', "Swaps:", 'text2', swaps)
 		end
 
 	elseif has == false then

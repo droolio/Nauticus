@@ -138,7 +138,8 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 	if noticeType == "YOU_JOINED" or noticeType == "YOU_CHANGED" then
 		local newZone = select(3, string.find(channel, "^.+ %- (.+)$"))
 
-		if newZone then
+		if newZone and self.transitZones[newZone] then
+			-- special case; don't acknowledge zone change when brushing Durotar zone on Booty Bay <-> Ratchet route
 			if not (self.currentZone == L["The Barrens"] and newZone == L["Durotar"]) then
 				self.currentZone = newZone
 				self.currentZoneTransports = self.transitZones[newZone]
