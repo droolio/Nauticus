@@ -95,6 +95,61 @@ function Nauticus:SendMessage(to, msg)
 	end
 end
 
+-- if we joined a channel
+function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _, num, channel)
+
+	if noticeType == "YOU_JOINED" then
+		-- legacy channel
+		if channel == "ZeppelinMaster" then
+			if self.debug then
+				ListChannelByName("ZeppelinMaster")
+				SendChatMessage("VER:1.7:2", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
+
+				self:ScheduleEvent(function()
+					SendChatMessage("VER:1.7:x", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
+				end, 5, self)
+			else
+				LeaveChannelByName(channel)
+			end
+
+			return
+
+		elseif channel == self.dataChannel then
+			if self.debug then
+				ListChannelByName(channel)
+			elseif channel ~= "none" and IsInGuild() then
+				LeaveChannelByName(channel)
+			end
+
+			return
+
+		elseif self.dataChannel ~= "none" and
+			GetChannelName(self.dataChannel) == 0 and not IsInGuild() then
+
+			self:ScheduleEvent("NAUT_CHAN_JOIN", function()
+				if GetChannelName(self.dataChannel) == 0 then
+					JoinChannelByName(self.dataChannel)
+				end
+			end, 5, self)
+
+		end
+	end
+
+	if noticeType == "YOU_JOINED" or noticeType == "YOU_CHANGED" then
+		local newZone = select(3, string.find(channel, "^.+ %- (.+)$"))
+
+		if newZone then
+			if not (self.currentZone == L["The Barrens"] and newZone == L["Durotar"]) then
+				self.currentZone = newZone
+				self.currentZoneTransports = self.transitZones[newZone]
+			end
+
+			self:DebugMessage("channel: "..self.currentZone)
+		end
+	end
+
+end
+
 function Nauticus:CHAT_MSG_CHANNEL(msg, sender, _, numAndName, _, _, _, _, channel)
 	if sender ~= UnitName("player") and channel == self.dataChannel and
 		self.distribution == "CUSTOM" then

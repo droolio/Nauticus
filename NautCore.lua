@@ -47,9 +47,6 @@ local alarmSet = false
 local alarmDinged = false
 local alarmCountdown = 0
 
--- table of interesting (zone) transports to display or triggers to detect
-local currentZoneTransports
-
 Nauticus:RegisterDB("NauticusDB", "NauticusDBPC")
 Nauticus:RegisterDefaults("profile", {
 	zoneGUI = false,
@@ -113,7 +110,7 @@ Nauticus.options = { type = 'group', args = {
 					Nauticus.db.char.showIcons = v
 					Nauticus.showIcons = v
 					if not v then
-						NautAstrolabe:RemoveAllMinimapIcons()
+						Nauticus:RemoveAllMinimapIcons()
 					end
 				end,
 			},
@@ -176,7 +173,7 @@ Nauticus.options = { type = 'group', args = {
 		desc = "Reset all known cycles",
 		confirm = true,
 		func = function()
-			NautAstrolabe:RemoveAllMinimapIcons()
+			Nauticus:RemoveAllMinimapIcons()
 			Nauticus.db.account.knownCycles = {}
 			Nauticus:TransportSelectSetNone()
 		end
@@ -211,6 +208,7 @@ local FILTER_ARRIVED_AT = GetPattern(L["The zeppelin should have just arrived at
 local FILTER_LEFT_AT = GetPattern(L["The zeppelin should have just left from %s..."])
 local FILTER_ARRIVING_SOON = GetPattern(L["The zeppelin to %s should be arriving here any time now."])
 local FILTER_THERE_GOES = GetPattern(L["There goes the zeppelin to %s. I hope there's no explosions this time."])
+local FILTER_UNFAIR_GG = GetPattern(L["I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all."])
 
 function Naut_ChatFrame_OnEvent(event)
 
@@ -229,7 +227,8 @@ function Naut_ChatFrame_OnEvent(event)
 
 	elseif Nauticus.filterChat and event == "CHAT_MSG_MONSTER_SAY" and
 		(string.find(arg1, FILTER_ARRIVED_AT) or string.find(arg1, FILTER_LEFT_AT) or
-		string.find(arg1, FILTER_ARRIVING_SOON) or string.find(arg1, FILTER_THERE_GOES)) then
+		string.find(arg1, FILTER_ARRIVING_SOON) or string.find(arg1, FILTER_THERE_GOES) or
+		string.find(arg1, FILTER_UNFAIR_GG)) then
 
 		Nauticus:DebugMessage(arg2.." says: "..arg1)
 	else
@@ -256,9 +255,9 @@ function Nauticus:OnEnable()
 	-- wait 5 seconds before joining any comms channels
 	self:ScheduleEvent(function() self:UpdateDistribution(); end, 5, self)
 
-	currentZone = GetRealZoneText()
-	currentZoneTransports = self.transitZones[currentZone]
-	self:DebugMessage("enabled: "..currentZone)
+	self.currentZone = GetRealZoneText()
+	self.currentZoneTransports = self.transitZones[self.currentZone]
+	self:DebugMessage("enabled: "..self.currentZone)
 
 	self:TransportSelectSetNone()
 
@@ -277,7 +276,7 @@ end
 
 function Nauticus:OnDisable()
 	self.distribution = nil
-	NautAstrolabe:RemoveAllMinimapIcons()
+	Nauticus:RemoveAllMinimapIcons()
 	NautHeaderFrame:Hide()
 end
 
@@ -311,7 +310,7 @@ function Nauticus:DrawMapIcons()
 			liveData.cycle, liveData.index = cycle, platform
 
 			if self.showIcons then
-				isZoneInteresting = currentZoneTransports ~= nil and currentZoneTransports[transit]
+				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit]
 
 				if isZoneInteresting or NautAstrolabe.WorldMapVisible then
 					currentX, currentY = self:CalcTripPosition(transit, cycle, platform)
@@ -457,7 +456,7 @@ end
 
 function Nauticus:CheckTriggers_OnUpdate(elapse)
 
-	if currentZoneTransports == nil then return; end
+	if self.currentZoneTransports == nil then return; end
 
 	self.lastcheck_timeout = self.lastcheck_timeout + elapse
 	if 10.0 > self.lastcheck_timeout then return; end
@@ -472,7 +471,7 @@ function Nauticus:CheckTriggers_OnUpdate(elapse)
 		oldx, oldy = x, y
 
 		--check X/Y coords against all triggers for all transports
-		for transit, i in pairs(currentZoneTransports) do
+		for transit, i in pairs(self.currentZoneTransports) do
 			for i, index in pairs(triggers[transit]) do
 				if abs(x - transitData[transit].x[index]) <= PROX and
 					abs(y - transitData[transit].y[index]) <= PROX and
@@ -690,78 +689,21 @@ end
 function Nauticus:PLAYER_ENTERING_WORLD()
 	if GetRealZoneText() ~= "" then
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-		currentZoneTransports = self.transitZones[GetRealZoneText()]
+		self.currentZoneTransports = self.transitZones[GetRealZoneText()]
 		self:DebugMessage("enter: "..GetRealZoneText())
 	end
 end
 
-local currentZone
-
--- if we joined a channel
-function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _, num, channel)
-
-	if noticeType == "YOU_JOINED" then
-		-- legacy channel
-		if channel == "ZeppelinMaster" then
-			if self.debug then
-				ListChannelByName("ZeppelinMaster")
-				SendChatMessage("VER:1.7:2", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
-
-				self:ScheduleEvent(function()
-					SendChatMessage("VER:1.7:x", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
-				end, 5, self)
-			else
-				LeaveChannelByName(channel)
-			end
-
-			return
-
-		elseif channel == self.dataChannel then
-			if self.debug then
-				ListChannelByName(channel)
-			elseif channel ~= "none" and IsInGuild() then
-				LeaveChannelByName(channel)
-			end
-
-			return
-
-		elseif self.dataChannel ~= "none" and
-			GetChannelName(self.dataChannel) == 0 and not IsInGuild() then
-
-			self:ScheduleEvent("NAUT_CHAN_JOIN", function()
-				if GetChannelName(self.dataChannel) == 0 then
-					JoinChannelByName(self.dataChannel)
-				end
-			end, 5, self)
-
-		end
-	end
-
-	if noticeType == "YOU_JOINED" or noticeType == "YOU_CHANGED" then
-		local newZone = select(3, string.find(channel, "^.+ %- (.+)$"))
-
-		if newZone then
-			if not (currentZone == L["The Barrens"] and newZone == L["Durotar"]) then
-				currentZone = newZone
-				currentZoneTransports = self.transitZones[currentZone]
-			end
-
-			self:DebugMessage("channel: "..currentZone)
-		end
-	end
-
-end
-
 function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
-	if not loopback and currentZone == GetRealZoneText() then
+	if not loopback and self.currentZone == GetRealZoneText() then
 		self:ScheduleEvent(self.ZONE_CHANGED_NEW_AREA, 1, self, true)
 	else
-		currentZone = GetRealZoneText()
-		currentZoneTransports = self.transitZones[currentZone]
-		self:DebugMessage("zoned: "..currentZone)
+		self.currentZone = GetRealZoneText()
+		self.currentZoneTransports = self.transitZones[self.currentZone]
+		self:DebugMessage("zoned: "..self.currentZone)
 
 		-- show GUI when zone change contains a transport
-		if currentZoneTransports and self:IsZoneGUI() then
+		if self.currentZoneTransports and self:IsZoneGUI() then
 			self.db.char.showLowerGUI = true
 			self.db.char.showGUI = true
 			self:UpdateUI()

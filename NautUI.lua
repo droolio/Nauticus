@@ -13,6 +13,8 @@ local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
+local NautAstrolabe = DongleStub("Astrolabe-0.4")
+
 local rtts, platforms, transports, transitData =
 	Nauticus.rtts, Nauticus.platforms, Nauticus.transports, Nauticus.transitData
 
@@ -491,4 +493,13 @@ end
 function Nauticus:MapIconButtonMouseExit()
 	tablet:Close(this)
 	self.iconTooltip = nil
+end
+
+function Nauticus:RemoveAllMinimapIcons()
+	local buttonMini
+
+	for t = 1, #(transports), 1 do
+		buttonMini = getglobal("Naut_MiniMapIconButton"..t)
+		NautAstrolabe:RemoveIconFromMinimap(buttonMini)
+	end
 end

@@ -43,6 +43,7 @@ L:RegisterTranslations("enUS", function() return {
 ["The zeppelin should have just left from %s..."] = true,
 ["The zeppelin to %s should be arriving here any time now."] = true,
 ["There goes the zeppelin to %s. I hope there's no explosions this time."] = true,
+["I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all."] = true,
 
 -- zones
 ["Orgrimmar"] = true,

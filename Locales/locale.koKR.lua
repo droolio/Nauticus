@@ -62,6 +62,8 @@ L:RegisterTranslations("koKR", function() return {
 	"The zeppelin to %s should be arriving here any time now.",
 ["There goes the zeppelin to %s. I hope there's no explosions this time."] =
 	"There goes the zeppelin to %s. I hope there's no explosions this time.",
+["I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all."] =
+	"I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all.",
 ]]
 
 -- zones
