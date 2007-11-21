@@ -30,10 +30,10 @@ function Nauticus:DoRequest()
 	end
 
 	if self.requestVersion then
-		local nautVersionNum = self.nautVersionNum
+		local versionNum = self.versionNum
 
 		self.requestVersion = false
-		self:SendMessage(nil, "VER "..nautVersionNum)
+		self:SendMessage(nil, "VER "..versionNum)
 	end
 end
 
@@ -71,7 +71,7 @@ function Nauticus:BroadcastTransportData(to, requestList)
 
 	if trans_str ~= "" then
 		trans_str = string.sub(trans_str, 1, -2) -- remove the last comma
-		self:SendMessage(to, "KNO "..trans_str)
+		self:SendMessage(to, "KNW "..self.dataVersion.." "..trans_str)
 		self:DebugMessage("tell our transports")
 	else
 		self:DebugMessage("nothing to tell")
@@ -178,8 +178,8 @@ function Nauticus:ReceiveMessage(prefix, sender, distribution, channel, command,
 		self:ReceiveMessage_version(sender, distribution, tonumber(arg1))
 
 	-- tell, { transports }
-	elseif command == "KNO" then
-		self:ReceiveMessage_known(sender, distribution, self:StringToTell(arg1))
+	elseif command == "KNW" then
+		self:ReceiveMessage_known(sender, distribution, tonumber(arg1), self:StringToTell(arg2))
 
 	end
 end
@@ -190,7 +190,7 @@ function Nauticus:ReceiveMessage_version(sender, distribution, clientversion)
 
 	self:DebugMessage(sender.." says: version "..clientversion)
 
-	if clientversion > self.nautVersionNum then
+	if clientversion > self.versionNum then
 		if not self.db.account.newerVersion then
 			self.db.account.newerVersion = clientversion
 			self.db.account.newerVerAge = time()
@@ -198,9 +198,9 @@ function Nauticus:ReceiveMessage_version(sender, distribution, clientversion)
 			self.db.account.newerVersion = clientversion
 		end
 
-	elseif clientversion < self.nautVersionNum then
+	elseif clientversion < self.versionNum then
 		if isDirect then
-			self:SendMessage(sender, "version", self.nautVersionNum)
+			self:SendMessage(sender, "version", self.versionNum)
 		else
 			self.requestVersion = true
 			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
@@ -221,7 +221,9 @@ function Nauticus:ReceiveMessage_version(sender, distribution, clientversion)
 
 end
 
-function Nauticus:ReceiveMessage_known(sender, distribution, transports)
+function Nauticus:ReceiveMessage_known(sender, distribution, version, transports)
+
+	if version < self.dataVersion then return; end
 
 	local lag = GetLag()
 	local set, respond, since, boots, swaps, requestList

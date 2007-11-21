@@ -562,10 +562,10 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton7" inherits="Naut_WorldMapIconButton" id="7" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatDraenei"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton8" inherits="Naut_WorldMapIconButton" id="8" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatDraenei"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton9" inherits="Naut_WorldMapIconButton" id="9" hidden="true" toplevel="true">
 			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatDraenei"/>
@@ -594,10 +594,10 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
 		</Button>
 		<Button name="Naut_MiniMapIconButton7" inherits="Naut_MiniMapIconButton" id="7" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatDraenei"/>
 		</Button>
 		<Button name="Naut_MiniMapIconButton8" inherits="Naut_MiniMapIconButton" id="8" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatDraenei"/>
 		</Button>
 		<Button name="Naut_MiniMapIconButton9" inherits="Naut_MiniMapIconButton" id="9" hidden="true" toplevel="true">
 			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatDraenei"/>

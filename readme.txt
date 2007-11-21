@@ -1,4 +1,4 @@
-Nauticus v2.2.1
+Nauticus addon for World of Warcraft
 
 http://drool.me.uk/naut
 

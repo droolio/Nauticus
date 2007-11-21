@@ -289,7 +289,7 @@ function Nauticus:InitialiseUI()
 	NautOptionsFrameOptZoneSpecific:SetChecked(self:IsZoneSpecific())
 	NautOptionsFrameOptCityAlias:SetChecked(self:IsAlias())
 
-	NautHeaderFrameAddonName:SetText("Nauticus v"..self.nautVersion)
+	NautHeaderFrameAddonName:SetText("Nauticus v"..self.versionStr)
 
 	if (GetLocale() == "deDE") then
 		NautOptionsFrame:SetWidth(365)
@@ -375,7 +375,7 @@ function Nauticus:ShowTooltip(transit)
 				'text2R', r, 'text2G', g, 'text2B', b)
 		end
 
-		if IsShiftKeyDown() then
+		if self.debug or IsShiftKeyDown() then
 			local cat = tablet:AddCategory(
 				'columns', 2
 			)

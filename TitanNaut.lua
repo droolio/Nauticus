@@ -29,7 +29,7 @@ function TitanPanelNauticusButton_OnLoad()
 	this.registry = {
 		id = TITAN_NAUT_ID,
 		category = "Information",
-		version = Nauticus.nautVersion,
+		version = Nauticus.versionStr,
 		menuText = "Nauticus", 
 		buttonTextFunction = "TitanPanelNauticusButton_GetButtonText",
 		tooltipTitle = "Nauticus",

@@ -1,5 +1,11 @@
 Version History
 
+v2.3.0
+- CHANGE: recalibrated all routes for patch 2.3 compatibility
+- boat icons for Feathermoon & Rut'Theran routes changed to NE type
+- trigger detection rewritten - based on movement speed, more efficient
+
+
 v2.2.1
 - FIX: be extra careful not to screw up chat channel numbering
 - FIX: comms messages sometimes getting throttled in chat channel

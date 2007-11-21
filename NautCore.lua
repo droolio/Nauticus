@@ -9,10 +9,6 @@ local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
 
--- constants
-local PROX = 0.001
-local PROX_HALF = PROX/2
-
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
@@ -23,8 +19,9 @@ local Nauticus = Nauticus
 local rtts, platforms, triggers, transports, transitData
 
 -- object variables
-Nauticus.nautVersion = "2.2.1"
-Nauticus.nautVersionNum = 221
+Nauticus.versionStr = "2.3.0" -- for display
+Nauticus.versionNum = 230 -- for comparison
+Nauticus.dataVersion = 230 -- route calibration versioning
 
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
@@ -32,7 +29,7 @@ Nauticus.icon = "NauticusLogo"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
 
-Nauticus.lastcheck_timeout = 10
+Nauticus.lastcheck_timeout = 30
 Nauticus.requestVersion = false
 Nauticus.requestList = {}
 Nauticus.distribution = "NONE"
@@ -458,24 +455,24 @@ function Nauticus:CheckTriggers_OnUpdate(elapse)
 
 	if self.currentZoneTransports == nil or self.currentZoneTransports.virtual then return; end
 
+	-- if we've already triggered a set of coords, don't check again for another 30 secs
 	self.lastcheck_timeout = self.lastcheck_timeout + elapse
-	if 10.0 > self.lastcheck_timeout then return; end
+	if 30.0 > self.lastcheck_timeout then return; end
 
 	local c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
 	if not x then return; end
 	x, y = NautAstrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0)
 	if not x then return; end
 
-	-- have we moved by at least half the proximity range?
-	if abs(x - oldx) > PROX_HALF or abs(y - oldy) > PROX_HALF then
-		oldx, oldy = x, y
-
+	-- have we moved by at least 17 game yards since the last check? this equates to >~300% movement speed
+	if 17.0 < NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy) then
 		--check X/Y coords against all triggers for all transports
 		for transit, i in pairs(self.currentZoneTransports) do
 			for i, index in pairs(triggers[transit]) do
-				if abs(x - transitData[transit].x[index]) <= PROX and
-					abs(y - transitData[transit].y[index]) <= PROX and
-					not IsFlying() and not IsSwimming() then
+				-- within 20 game yards of trigger coords?
+				if 20.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
+					0, 0, transitData[transit].x[index], transitData[transit].y[index]) and
+					not IsFlying() then
 
 					self:SetKnownTime(transit, index, x, y)
 					return
@@ -483,6 +480,8 @@ function Nauticus:CheckTriggers_OnUpdate(elapse)
 			end
 		end
 	end
+
+	oldx, oldy = x, y
 
 end
 
@@ -512,6 +511,8 @@ function Nauticus:SetKnownTime(transit, index, x, y)
 			self:DebugMessage(transit..", cycle time: "..sum_time)
 		end
 	end
+
+	--if true then return; end
 
 	self:SetKnownCycle(transit, sum_time, 0, 0)
 	self.db.account.uptime = GetTime()
@@ -575,14 +576,14 @@ function Nauticus:InitialiseConfig()
 	self.debug = self.db.account.debug
 
 	if self.db.account.newerVersion then
-		self:DebugMessage("new version: "..self.db.account.newerVersion.." vs our "..self.nautVersionNum)
+		self:DebugMessage("new version: "..self.db.account.newerVersion.." vs our "..self.versionNum)
 
-		if self.db.account.newerVersion > self.nautVersionNum then
+		if self.db.account.newerVersion > self.versionNum then
 			DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..
 				L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."])
 
 			-- major update released and running old version longer than 10 days?
-			if math.floor(self.db.account.newerVersion/10) > math.floor(self.nautVersionNum/10) and
+			if math.floor(self.db.account.newerVersion/10) > math.floor(self.versionNum/10) and
 				864000.0 < (time() - self.db.account.newerVerAge) then
 
 				self.comm_disable = true
@@ -641,7 +642,7 @@ function Nauticus:InitialiseConfig()
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
-	local j, oldX, oldY, oldOffset, transit, transit_data, liveData
+	local j, oldX, oldY, oldOffset, transit, transit_data, liveData, dockTime
 
 	self.transitData = {}
 	self.liveData = {}
@@ -655,6 +656,8 @@ function Nauticus:InitialiseConfig()
 		transitData[transit] = { ['x'] = {}, ['y'] = {}, ['offset'] = {},
 			['dx'] = {}, ['dy'] = {}, ['dt'] = {}, }
 
+		if transit == "fms2fer" then dockTime = 30; else dockTime = 60; end
+
 		transit_data = transitData[transit]
 
 		for i = 1, #(packedData[transit]) do
@@ -666,7 +669,7 @@ function Nauticus:InitialiseConfig()
 
 			transit_data.x[i] = args[1]+oldX
 			transit_data.y[i] = args[2]+oldY
-			transit_data.offset[i] = args[3]+60+oldOffset
+			transit_data.offset[i] = args[3]+dockTime+oldOffset
 			transit_data.dx[i] = tonumber(args[1])
 			transit_data.dy[i] = tonumber(args[2])
 			transit_data.dt[i] = tonumber(args[3])
@@ -674,7 +677,7 @@ function Nauticus:InitialiseConfig()
 			oldX, oldY, oldOffset =
 				transit_data.x[i],
 				transit_data.y[i],
-				transit_data.offset[i]-60
+				transit_data.offset[i]-dockTime
 		end
 
 		transit_data.offset[#(packedData[transit])] = rtts[transit]
