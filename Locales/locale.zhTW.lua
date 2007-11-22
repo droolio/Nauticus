@@ -41,7 +41,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
 	"有新版的 Nauticus 釋出！ 請訪問 http://drool.me.uk/naut.",
 ["Type /nauticus or /naut gui show to show again."] =
-	"Type /nauticus or /naut gui show to show again.", -- to do
+	"輸入 /nauticus 或 /naut gui show 重新顯示圖形介面。", -- to do
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] =
 	"你已使用的是舊版的 Nauticus 超過 10 天了，同步訊息輸出現在將會關閉。",
 ["Thank you for upgrading."] =
