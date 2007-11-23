@@ -41,7 +41,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
 	"有新版的 Nauticus 釋出！ 請訪問 http://drool.me.uk/naut.",
 ["Type /nauticus or /naut gui show to show again."] =
-	"輸入 /nauticus 或 /naut gui show 重新顯示圖形介面。", -- to do
+	"輸入 /nauticus 或 /naut gui show 重新顯示圖形介面。",
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] =
 	"你已使用的是舊版的 Nauticus 超過 10 天了，同步訊息輸出現在將會關閉。",
 ["Thank you for upgrading."] =
@@ -87,7 +87,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["Grom'gol"] = "格羅姆高營地",
 ["Booty Bay"] = "藏寶海灣",
 ["Ratchet"] = "棘齒城",
-["Menethil Harbour"] = "米奈希爾港",
+["Menethil Harbor"] = "米奈希爾港",
 ["Auberdine"] = "奧伯丁",
 ["Theramore"] = "塞拉摩島",
 ["Rut'Theran Village"] = "魯瑟蘭村",
@@ -103,7 +103,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["GG"]	= "格羅姆高",	-- Grom'gol
 ["BB"]	= "藏寶",		-- Booty Bay
 ["Ra"]	= "棘齒",		-- Ratchet
-["MH"]	= "米奈希爾",	-- Menethil Harbour
+["MH"]	= "米奈希爾",	-- Menethil Harbor
 ["Aub"]	= "奧伯丁",	-- Auberdine
 ["Th"]	= "塞拉摩",	-- Theramore
 ["RTV"]	= "魯瑟蘭",	-- Rut'Theran Village

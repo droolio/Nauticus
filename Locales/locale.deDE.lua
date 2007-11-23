@@ -89,7 +89,7 @@ L:RegisterTranslations("deDE", function() return {
 ["Grom'gol"] = "Grom'gol",
 ["Booty Bay"] = "Beutebucht",
 ["Ratchet"] = "Ratschet",
-["Menethil Harbour"] = "Menethil",
+["Menethil Harbor"] = "Menethil",
 ["Auberdine"] = "Auberdine",
 ["Theramore"] = "Theramore",
 ["Rut'Theran Village"] = "Rut'Theran",
@@ -105,7 +105,7 @@ L:RegisterTranslations("deDE", function() return {
 ["GG"]	= "GG",		-- Grom'gol
 ["BB"]	= "BB",		-- Booty Bay
 ["Ra"]	= "Rat",	-- Ratchet
-["MH"]	= "Mene",	-- Menethil Harbour
+["MH"]	= "Mene",	-- Menethil Harbor
 ["Aub"]	= "Aub",	-- Auberdine
 ["Th"]	= "Ther",	-- Theramore
 ["RTV"]	= "Rut",	-- Rut'Theran Village

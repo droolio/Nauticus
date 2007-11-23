@@ -18,9 +18,11 @@ local NautAstrolabe = DongleStub("Astrolabe-0.4")
 local Nauticus = Nauticus
 local rtts, platforms, triggers, transports, transitData
 
+local GetTexCoord
+
 -- object variables
-Nauticus.versionStr = "2.3.0" -- for display
-Nauticus.versionNum = 230 -- for comparison
+Nauticus.versionStr = "2.3.1" -- for display
+Nauticus.versionNum = 231 -- for comparison
 Nauticus.dataVersion = 230 -- route calibration versioning
 
 Nauticus.activeTransit = -1
@@ -279,7 +281,7 @@ end
 
 function Nauticus:DrawMapIcons()
 
-	local transit, liveData, cycle, platform, offsets, currentX, currentY,
+	local transit, liveData, cycle, platform, offsets, currentX, currentY, angle,
 		isZoneInteresting, buttonMini, buttonWorld
 
 	local isWorldMapVisible = NautAstrolabe.WorldMapVisible
@@ -314,12 +316,14 @@ function Nauticus:DrawMapIcons()
 				buttonMini, buttonWorld = transports[t].minimap_icon, transports[t].worldmap_icon
 
 				if isZoneInteresting or isWorldMapVisible then
-					currentX, currentY = self:CalcTripPosition(transit, cycle, platform)
+					currentX, currentY, angle = self:CalcTripPosition(transit, cycle, platform)
 
 					if currentX and currentY then
 						if isWorldMapVisible then
 							NautAstrolabe:PlaceIconOnWorldMap(WorldMapDetailFrame, buttonWorld,
 								0, 0, currentX, currentY)
+
+							transports[t].worldmap_texture:SetTexCoord(GetTexCoord(angle))
 
 						elseif buttonWorld:IsVisible() then
 							NautAstrolabe:RemoveIconFromMinimap(buttonWorld)
@@ -327,6 +331,7 @@ function Nauticus:DrawMapIcons()
 
 						if isZoneInteresting then
 							NautAstrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, currentX, currentY)
+							transports[t].minimap_texture:SetTexCoord(GetTexCoord(angle-math.deg(MiniMapCompassRing:GetFacing())))
 
 							if NautAstrolabe:IsIconOnEdge(buttonMini) then
 								buttonMini:SetAlpha(.6)
@@ -532,12 +537,13 @@ function Nauticus:CalcTripPosition(transit, cycle, index)
 	local transitData = transitData[transit]
 
 	if index == 1 then
-		return transitData.x[index], transitData.y[index]
+		return transitData.x[index], transitData.y[index], transitData.dir[index]
 	else
 		local fraction = (cycle - transitData.offset[index-1]) / transitData.dt[index]
 
 		return transitData.x[index-1] + transitData.dx[index] * fraction,
-			transitData.y[index-1] + transitData.dy[index] * fraction
+			transitData.y[index-1] + transitData.dy[index] * fraction,
+			transitData.dir[index-1] + transitData.d_dir[index] * fraction
 	end
 end
 
@@ -642,7 +648,7 @@ function Nauticus:InitialiseConfig()
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
-	local j, oldX, oldY, oldOffset, transit, transit_data, liveData, dockTime
+	local j, oldX, oldY, oldOffset, oldDir, transit, transit_data, liveData
 
 	self.transitData = {}
 	self.liveData = {}
@@ -650,18 +656,16 @@ function Nauticus:InitialiseConfig()
 	liveData = self.liveData
 
 	for t = 1, #(transports), 1 do
-		oldX, oldY, oldOffset = 0, 0, 0
+		oldX, oldY, oldOffset, oldDir = 0, 0, 0, 0
 
 		transit = transports[t].label
 		transitData[transit] = { ['x'] = {}, ['y'] = {}, ['offset'] = {},
-			['dx'] = {}, ['dy'] = {}, ['dt'] = {}, }
-
-		if transit == "fms2fer" then dockTime = 30; else dockTime = 60; end
+			['dx'] = {}, ['dy'] = {}, ['dt'] = {}, ['dir'] = {}, ['d_dir'] = {}, }
 
 		transit_data = transitData[transit]
 
 		for i = 1, #(packedData[transit]) do
-			j = 0
+			j = 0; args[6] = nil
 			-- search for seperators in the string and return the separated data
 			for value in string.gmatch(packedData[transit][i], "[^:]+") do
 				j = j + 1; args[j] = value
@@ -669,15 +673,18 @@ function Nauticus:InitialiseConfig()
 
 			transit_data.x[i] = args[1]+oldX
 			transit_data.y[i] = args[2]+oldY
-			transit_data.offset[i] = args[3]+dockTime+oldOffset
+			transit_data.offset[i] = args[3]+oldOffset
 			transit_data.dx[i] = tonumber(args[1])
 			transit_data.dy[i] = tonumber(args[2])
 			transit_data.dt[i] = tonumber(args[3])
+			transit_data.dir[i] = args[5]+oldDir
+			transit_data.d_dir[i] = tonumber(args[5])
 
-			oldX, oldY, oldOffset =
+			oldX, oldY, oldOffset, oldDir =
 				transit_data.x[i],
 				transit_data.y[i],
-				transit_data.offset[i]-dockTime
+				transit_data.offset[i],
+				transit_data.dir[i]
 		end
 
 		transit_data.offset[#(packedData[transit])] = rtts[transit]
@@ -687,6 +694,10 @@ function Nauticus:InitialiseConfig()
 		transports[t].minimap_icon, transports[t].worldmap_icon =
 			getglobal("Naut_MiniMapIconButton"..t),
 			getglobal("Naut_WorldMapIconButton"..t)
+
+		transports[t].minimap_texture, transports[t].worldmap_texture =
+			getglobal("Naut_MiniMapIconButton"..t.."Texture"),
+			getglobal("Naut_WorldMapIconButton"..t.."Texture")
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)
@@ -790,5 +801,43 @@ end
 function Nauticus:DebugMessage(msg)
 	if self.debug then
 		ChatFrame4:AddMessage("[Naut]: "..msg)
+	end
+end
+
+local texCoordCache = { LLx = {}, LLy = {}, URx = {}, URy = {}, }
+
+function GetTexCoord(degrees)
+	degrees = math.floor(degrees+.5)
+	while degrees < 0 do degrees = degrees + 360; end
+	while degrees > 360 do degrees = degrees - 360; end
+
+	local LLx, LLy, URx, URy =
+		texCoordCache.LLx[degrees], texCoordCache.LLy[degrees],
+		texCoordCache.URx[degrees], texCoordCache.URy[degrees]
+
+	return URy, LLx, LLx, LLy, URx, URy, LLy, URx
+end
+
+-- build cache of all angles
+do
+	local cosa, sina, A, B, C, D, E, F, det, BFsubCE, AFaddCD
+
+	for i = 0, 360 do
+		cosa, sina = cos(i), sin(i)
+
+		-- translate texture to centre, rotate it, put it back
+		-- T(x1,y1).R(angle).T(-x1,-y1)
+		A, B, C, D, E, F =
+			cosa,	-sina,	0.5*(1-cosa)+0.5*sina,
+			sina,	cosa,	0.5*(1-cosa)-0.5*sina
+
+		det = A*E - B*D
+		BFsubCE = B*F - C*E
+		AFaddCD = -A*F + C*D
+
+		texCoordCache.LLx[i], texCoordCache.LLy[i],
+		texCoordCache.URx[i], texCoordCache.URy[i] =
+			(-B + BFsubCE) / det, (A + AFaddCD) / det,
+			(E + BFsubCE) / det, (-D + AFaddCD) / det
 	end
 end

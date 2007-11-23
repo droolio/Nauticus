@@ -89,7 +89,7 @@ L:RegisterTranslations("koKR", function() return {
 ["Grom'gol"] = "그롬골 주둔지",
 ["Booty Bay"] = "무법항",
 ["Ratchet"] = "톱니항",
-["Menethil Harbour"] = "메네실 항구",
+["Menethil Harbor"] = "메네실 항구",
 ["Auberdine"] = "아우버다인",
 ["Theramore"] = "테라모어 섬",
 ["Rut'Theran Village"] = "루테란 마을",
@@ -105,7 +105,7 @@ L:RegisterTranslations("koKR", function() return {
 ["GG"]	= "가덤",		-- Grom'gol
 ["BB"]	= "무법",		-- Booty Bay
 ["Ra"]	= "톱니",		-- Ratchet
-["MH"]	= "메네실",	-- Menethil Harbour
+["MH"]	= "메네실",	-- Menethil Harbor
 ["Aub"]	= "아우버",	-- Auberdine
 ["Th"]	= "테라",		-- Theramore
 ["RTV"]	= "루테란",	-- Rut'Theran Village

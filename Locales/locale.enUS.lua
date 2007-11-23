@@ -68,7 +68,7 @@ L:RegisterTranslations("enUS", function() return {
 ["Grom'gol"] = true,
 ["Booty Bay"] = true,
 ["Ratchet"] = true,
-["Menethil Harbour"] = true,
+["Menethil Harbor"] = true,
 ["Auberdine"] = true,
 ["Theramore"] = true,
 ["Rut'Theran Village"] = true,
@@ -84,7 +84,7 @@ L:RegisterTranslations("enUS", function() return {
 ["GG"]	= true,	-- Grom'gol
 ["BB"]	= true,	-- Booty Bay
 ["Ra"]	= true,	-- Ratchet
-["MH"]	= true,	-- Menethil Harbour
+["MH"]	= true,	-- Menethil Harbor
 ["Aub"]	= true,	-- Auberdine
 ["Th"]	= true,	-- Theramore
 ["RTV"]	= true,	-- Rut'Theran Village

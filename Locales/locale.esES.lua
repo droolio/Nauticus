@@ -82,7 +82,7 @@ L:RegisterTranslations("esES", function() return {
 ["Grom'gol"] = "Grom'gol",
 ["Booty Bay"] = "Booty Bay",
 ["Ratchet"] = "Ratchet",
-["Menethil Harbour"] = "Menethil Harbour",
+["Menethil Harbor"] = "Menethil Harbor",
 ["Auberdine"] = "Auberdine",
 ["Theramore"] = "Theramore",
 ["Rut'Theran Village"] = "Rut'Theran Village",
@@ -99,7 +99,7 @@ L:RegisterTranslations("esES", function() return {
 ["GG"]	= "GG",		-- Grom'gol
 ["BB"]	= "BB",		-- Booty Bay
 ["Ra"]	= "Ra",		-- Ratchet
-["MH"]	= "MH",		-- Menethil Harbour
+["MH"]	= "MH",		-- Menethil Harbor
 ["Aub"]	= "Aub",	-- Auberdine
 ["Th"]	= "Th",		-- Theramore
 ["RTV"]	= "RTV",	-- Rut'Theran Village
