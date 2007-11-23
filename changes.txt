@@ -1,5 +1,10 @@
 Version History
 
+v2.3.1
+- NEW: rotating icons, point in the direction of travel!
+- tweaked round-trip-times slightly
+
+
 v2.3.0
 - CHANGE: recalibrated all routes for patch 2.3 compatibility
 - boat icons for Feathermoon & Rut'Theran routes changed to NE type
