@@ -36,8 +36,6 @@ extracting this package.
 ---
 TO DO
 
-- new icons, rotated in real-time to point in the direction of travel 
-(cached matrix transformations ftw)
 - show multiple transport details in tooltip when mousing-over map icons 
 which are too close together to pick out due to overlap
 - detect closest platform to auto pop-up tooltip and/or sound 
@@ -85,8 +83,7 @@ Q. How does Nauticus get the times?
 
 There are no Blizzard-provided API methods to directly determine the 
 transport schedule. Thus we do it indirectly by getting player coords 
-and comparing them to a known set of coords along the route - usually 
-far out to sea, where they would otherwise not be seen.
+and comparing them to a known set of coords along the route.
 
 When the player triggers these coords, we know the cycle and can 
 subsequently work out future cycles at any point in time.

@@ -197,17 +197,23 @@ function Nauticus:OnInitialize()
 	ChatFrame_OnEvent = Naut_ChatFrame_OnEvent
 end
 
-local function GetPattern(text)
-	return '^'..gsub(text, "%%s", ".+")..'$'
-end
-
-local FILTER_ARRIVED1 = GetPattern(L["The zeppelin to %s has just arrived! All aboard for %s!"])
-local FILTER_ARRIVED2 = GetPattern(L["Don't be late, the next ship to %s departs in only a minute!"])
-local FILTER_ARRIVED_AT = GetPattern(L["The zeppelin should have just arrived at %s..."])
-local FILTER_LEFT_AT = GetPattern(L["The zeppelin should have just left from %s..."])
-local FILTER_ARRIVING_SOON = GetPattern(L["The zeppelin to %s should be arriving here any time now."])
-local FILTER_THERE_GOES = GetPattern(L["There goes the zeppelin to %s. I hope there's no explosions this time."])
-local FILTER_UNFAIR_GG = GetPattern(L["I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all."])
+local FILTER_NPC = {
+-- orc2uc:
+["Frezza"] = true, -- yells
+["Zapetta"] = true, -- yell + says
+["Sky-Captain Cloudkicker"] = true,
+["Chief Officer Coppernut"] = true,
+-- grom2uc:
+["Hin Denburg"] = true, -- yells
+["Navigator Hatch"] = true,
+["Chief Officer Hammerflange"] = true,
+-- org2gg:
+["Snurk Bucksquick"] = true, -- yells
+-- mh2thera:
+["Captain \"Stash\" Torgoley"] = true,
+["First Mate Kowalski"] = true,
+["Navigator Mehran"] = true,
+}
 
 function Naut_ChatFrame_OnEvent(event)
 
@@ -219,20 +225,17 @@ function Naut_ChatFrame_OnEvent(event)
 			return Pre_ChatFrame_OnEvent(event)
 		end
 
-	elseif Nauticus.filterChat and event == "CHAT_MSG_MONSTER_YELL" and
-		(string.find(arg1, FILTER_ARRIVED1) or string.find(arg1, FILTER_ARRIVED2)) then
+	elseif not Nauticus.filterChat then
+		return Pre_ChatFrame_OnEvent(event)
+
+	elseif (event == "CHAT_MSG_MONSTER_SAY" or
+		event == "CHAT_MSG_MONSTER_YELL") and FILTER_NPC[arg2] then
 
 		Nauticus:DebugMessage(arg2.." yells: "..arg1)
-
-	elseif Nauticus.filterChat and event == "CHAT_MSG_MONSTER_SAY" and
-		(string.find(arg1, FILTER_ARRIVED_AT) or string.find(arg1, FILTER_LEFT_AT) or
-		string.find(arg1, FILTER_ARRIVING_SOON) or string.find(arg1, FILTER_THERE_GOES) or
-		string.find(arg1, FILTER_UNFAIR_GG)) then
-
-		Nauticus:DebugMessage(arg2.." says: "..arg1)
-	else
-		return Pre_ChatFrame_OnEvent(event)
+		return
 	end
+
+	return Pre_ChatFrame_OnEvent(event)
 
 end
 
@@ -506,18 +509,19 @@ function Nauticus:SetKnownTime(transit, index, x, y)
 
 	if self.debug then
 		if self:HasKnownCycle(transit) then
-			local oldCycle = math.fmod(self:GetKnownCycle(transit), rtts[transit])
-			self:DebugMessage(transit..", cycle time: "..sum_time.." ; old: "
-				..format("%0.3f", oldCycle).." ; diff: "..format("%0.3f", oldCycle-sum_time)
-				.." ; drift: "..format("%0.6f",
-					(oldCycle-sum_time)/((self:GetKnownCycle(transit)-sum_time)/rtts[transit]) )
-				)
+			local old_time = self:GetKnownCycle(transit)
+			local oldCycle = math.fmod(old_time, rtts[transit])
+			local diff = oldCycle-sum_time
+			self:DebugMessage(transit..", cycle time: "..sum_time
+				.." ; old: "..format("%0.3f", oldCycle)
+				.." ; diff: "..format("%0.3f", diff)
+				.." ; drift: "..format("%0.6f", diff / ((old_time-sum_time) / rtts[transit])))
 		else
 			self:DebugMessage(transit..", cycle time: "..sum_time)
 		end
 	end
 
-	--if true then return; end
+	if self.db.account.freeze then return; end
 
 	self:SetKnownCycle(transit, sum_time, 0, 0)
 	self.db.account.uptime = GetTime()

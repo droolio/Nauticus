@@ -35,16 +35,6 @@ L:RegisterTranslations("enUS", function() return {
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = true,
 ["Thank you for upgrading."] = true,
 
--- yells and comments to filter:
--- note for translators - these are precise in-game chat messages as spoken by the goblin zeppelin masters
-["The zeppelin to %s has just arrived! All aboard for %s!"] = true,
-["Don't be late, the next ship to %s departs in only a minute!"] = true,
-["The zeppelin should have just arrived at %s..."] = true,
-["The zeppelin should have just left from %s..."] = true,
-["The zeppelin to %s should be arriving here any time now."] = true,
-["There goes the zeppelin to %s. I hope there's no explosions this time."] = true,
-["I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all."] = true,
-
 -- zones
 ["Orgrimmar"] = true,
 ["Undercity"] = true,

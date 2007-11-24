@@ -37,25 +37,6 @@ L:RegisterTranslations("frFR", function() return {
 ["Thank you for upgrading."] = true,
 ]]
 
--- yells and comments to filter:
--- note for translators - these are precise in-game chat messages as spoken by the goblin zeppelin masters
---[[
-["The zeppelin to %s has just arrived! All aboard for %s!"] =
-	"The zeppelin to %s has just arrived! All aboard for %s!",
-["Don't be late, the next ship to %s departs in only a minute!"] =
-	"Don't be late, the next ship to %s departs in only a minute!",
-["The zeppelin should have just arrived at %s..."] =
-	"The zeppelin should have just arrived at %s...",
-["The zeppelin should have just left from %s..."] =
-	"The zeppelin should have just left from %s...",
-["The zeppelin to %s should be arriving here any time now."] =
-	"The zeppelin to %s should be arriving here any time now.",
-["There goes the zeppelin to %s. I hope there's no explosions this time."] =
-	"There goes the zeppelin to %s. I hope there's no explosions this time.",
-["I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all."] =
-	"I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all.",
-]]
-
 -- zones
 ["Orgrimmar"] = "Orgrimmar",
 ["Undercity"] = "Fossoyeuse",

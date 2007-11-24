@@ -286,9 +286,9 @@ function Nauticus:ReceiveMessage_known(sender, distribution, version, transports
 		end
 
 		if set ~= nil then
-			if set then
-				self.tempText = RED.."Receiving Data.."
-				self.tempTextCount = 2
+			if set and not self.db.account.freeze then
+				--self.tempText = RED.."Receiving Data.."
+				--self.tempTextCount = 2
 				self:SetKnownCycle(transit, since, boots, swaps)
 			end
 
