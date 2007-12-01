@@ -9,6 +9,8 @@ local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
 
+local DEFAULT_CHANNEL = "NauticSync" -- do not change!
+
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
@@ -34,7 +36,6 @@ Nauticus.tempTextCount = 0
 Nauticus.lastcheck_timeout = 30
 Nauticus.requestVersion = false
 Nauticus.requestList = {}
-Nauticus.distribution = "NONE"
 
 Nauticus.debug = false
 
@@ -54,7 +55,7 @@ Nauticus:RegisterDefaults("profile", {
 	cityAlias = true,
 	filterChat = true,
 	alarmOffset = 20,
-	dataChannel = "NauticSync",
+	dataChannel = DEFAULT_CHANNEL,
 } )
 Nauticus:RegisterDefaults("account", {
 	knownCycles = {},
@@ -76,7 +77,7 @@ Nauticus.options = { type = 'group', args = {
 			show = {
 				type = 'execute',
 				name = "Show GUI",
-				desc = "Show the main GUI window",
+				desc = "Show the main GUI window.",
 				func = function()
 					Nauticus.db.char.showGUI = true
 					Nauticus.db.char.showLowerGUI = true
@@ -86,7 +87,7 @@ Nauticus.options = { type = 'group', args = {
 			reset = {
 				type = 'execute',
 				name = "Reset GUI",
-				desc = "Reset the main GUI window position",
+				desc = "Reset the main GUI window position.",
 				func = function()
 					Nauticus.db.char.showGUI = true
 					Nauticus.db.char.showLowerGUI = true
@@ -101,7 +102,7 @@ Nauticus.options = { type = 'group', args = {
 			icons = {
 				type = 'toggle',
 				name = "Show icons",
-				desc = "Toggle on/off map icons",
+				desc = "Toggle on/off map icons.",
 				get = function()
 					return Nauticus.db.char.showIcons
 				end,
@@ -118,7 +119,7 @@ Nauticus.options = { type = 'group', args = {
 	filter = {
 		type = 'toggle',
 		name = "Goblin chat filter",
-		desc = "Toggle on/off chat filter for yelling goblin spam",
+		desc = "Toggle on/off chat filter for yelling goblin spam.",
 		get = function()
 			return Nauticus.db.profile.filterChat
 		end,
@@ -130,7 +131,7 @@ Nauticus.options = { type = 'group', args = {
 	alarm = {
 		type = 'range',
 		name = "Alarm delay",
-		desc = "Change the alarm delay (in seconds)",
+		desc = "Change the alarm delay (in seconds).",
 		get = function()
 			return Nauticus.db.profile.alarmOffset
 		end,
@@ -145,31 +146,42 @@ Nauticus.options = { type = 'group', args = {
 	channel = {
 		type = 'text',
 		name = "Sync channel",
-		desc = "Sets a custom name for the sync channel",
-		hidden = true,
-		usage = "<name>",
+		desc = "Set custom sync channel.",
+		--hidden = true,
+		usage = "{<name> | default | none | guild}",
 		get = function()
 			return Nauticus.db.profile.dataChannel
 		end,
 		set = function(name)
-			if Nauticus.distribution == "CUSTOM" and Nauticus.dataChannel ~= "none" and
-				GetChannelName(Nauticus.dataChannel) ~= 0
-			then
-				LeaveChannelByName(Nauticus.dataChannel)
-			end
+			local name_lower = strlower(name)
+			if name_lower == "" or name_lower == "default" or name_lower == strlower(DEFAULT_CHANNEL) then name = DEFAULT_CHANNEL
+			elseif name_lower == "none" or name_lower == "guild" then name = name_lower; end
+			local dataChannel = Nauticus.dataChannel
+			local newChan = Nauticus:GetChannel(name)
 			Nauticus.db.profile.dataChannel = name
-			Nauticus.dataChannel = name
-			if Nauticus.distribution == "CUSTOM" and Nauticus.dataChannel ~= "none" and
-				GetChannelName(Nauticus.dataChannel) == 0
-			then
-				JoinChannelByName(Nauticus.dataChannel)
+			if newChan ~= dataChannel then
+				if dataChannel and GetChannelName(dataChannel) ~= 0 then
+					Nauticus:DebugMessage("leaving: "..dataChannel)
+					LeaveChannelByName(dataChannel)
+				end
+				if newChan and GetChannelName(newChan) == 0 then
+					Nauticus:DebugMessage("joining: "..newChan)
+					JoinChannelByName(newChan)
+					if Nauticus.debug then ListChannelByName(newChan); end
+				end
+				Nauticus.dataChannel = newChan
+			end
+			Nauticus:UpdateDistribution()
+			if name ~= DEFAULT_CHANNEL then
+				DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..RED..
+					format("WARNING: Setting the sync channel to anything other than '%s' will impact the addon's accuracy.", DEFAULT_CHANNEL))
 			end
 		end,
 	},
 	reset = {
 		type = 'execute',
 		name = "Reset",
-		desc = "Reset all known cycles",
+		desc = "Reset all known cycles.",
 		confirm = true,
 		func = function()
 			Nauticus:RemoveAllMinimapIcons()
@@ -184,8 +196,8 @@ Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.options)
 local Pre_ChatFrame_OnEvent, Naut_ChatFrame_OnEvent
 
 function Nauticus:OnInitialize()
-	rtts, platforms, triggers, transports =
-		self.rtts, self.platforms, self.triggers, self.transports
+	rtts, platforms, transports =
+		self.rtts, self.platforms, self.transports
 
 	self:InitialiseConfig()
 	self:InitialiseUI()
@@ -217,8 +229,8 @@ local FILTER_NPC = {
 
 function Naut_ChatFrame_OnEvent(event)
 
-	if event == "CHAT_MSG_CHANNEL" and Nauticus.dataChannel ~= "none" and
-		string.lower(arg9) == string.lower(Nauticus.dataChannel) then
+	if event == "CHAT_MSG_CHANNEL" and Nauticus.dataChannel and
+		strlower(arg9) == strlower(Nauticus.dataChannel) then
 
 		-- silence
 		if Nauticus.debug then
@@ -254,8 +266,9 @@ function Nauticus:OnEnable()
 
 	self:RegisterEvent("WORLD_MAP_UPDATE")
 
-	-- wait 5 seconds before joining any comms channels
-	self:ScheduleEvent(function() self:UpdateDistribution(); end, 5, self)
+	-- wait 10 seconds before sending to any comms channels
+	self.dataChannel = self:GetChannel()
+	self:UpdateDistribution(10)
 
 	self.currentZone = GetRealZoneText()
 	self.currentZoneTransports = self.transitZones[self.currentZone]
@@ -386,7 +399,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 			end
 
 			if NautFrame:IsVisible() then
-				getglobal("NautFramePlat"..(index+1).."Name"):SetText(plat_name)
+				getglobal("NautFramePlat"..index.."Name"):SetText(plat_name)
 			end
 
 			if data.index == platform then
@@ -413,8 +426,8 @@ function Nauticus:Clock_OnUpdate(elapse)
 				end
 
 				if NautFrame:IsVisible() then
-					getglobal("NautFramePlat"..(index+1).."ArrivalDepature"):SetText(YELLOW..L["Departure"]..":")
-					getglobal("NautFramePlat"..(index+1).."Time"):SetText(colour..formatted_time)
+					getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(YELLOW..L["Departure"]..":")
+					getglobal("NautFramePlat"..index.."Time"):SetText(colour..formatted_time)
 				end
 
 				lowestTime = -500
@@ -436,8 +449,8 @@ function Nauticus:Clock_OnUpdate(elapse)
 				end
 
 				if NautFrame:IsVisible() then
-					getglobal("NautFramePlat"..(index+1).."ArrivalDepature"):SetText(YELLOW..L["Arrival"]..":")
-					getglobal("NautFramePlat"..(index+1).."Time"):SetText(GREEN..formatted_time)
+					getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(YELLOW..L["Arrival"]..":")
+					getglobal("NautFramePlat"..index.."Time"):SetText(GREEN..formatted_time)
 				end
 
 				if plat_time < lowestTime then
@@ -544,10 +557,13 @@ function Nauticus:CalcTripPosition(transit, cycle, index)
 		return transitData.x[index], transitData.y[index], transitData.dir[index]
 	else
 		local fraction = (cycle - transitData.offset[index-1]) / transitData.dt[index]
+		local dir
+
+		if self.zonings[transit][index] then dir = transitData.dir[index]
+		else dir = transitData.dir[index-1] + transitData.d_dir[index] * fraction end
 
 		return transitData.x[index-1] + transitData.dx[index] * fraction,
-			transitData.y[index-1] + transitData.dy[index] * fraction,
-			transitData.dir[index-1] + transitData.d_dir[index] * fraction
+			transitData.y[index-1] + transitData.dy[index] * fraction, dir
 	end
 end
 
@@ -582,7 +598,7 @@ function Nauticus:InitialiseConfig()
 		nautSavedVars = nil
 	end
 
-	self.dataChannel = self.db.profile.dataChannel
+	--self.dataChannel = self.db.profile.dataChannel
 	self.debug = self.db.account.debug
 
 	if self.db.account.newerVersion then
@@ -621,7 +637,7 @@ function Nauticus:InitialiseConfig()
 		-- calculate potential drift time in ms between sessions
 		local drift = (the_time-now)-(self.db.account.timestamp-self.db.account.uptime)
 
-		self:DebugMessage("boot drift: "..drift)
+		self:DebugMessage(format("boot drift: %0.3f", drift))
 
 		-- if more than 3 mins drift, that means reboot occured. we need to adjust ms timers
 		if math.abs(drift) > 180 then
@@ -652,12 +668,15 @@ function Nauticus:InitialiseConfig()
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
-	local j, oldX, oldY, oldOffset, oldDir, transit, transit_data, liveData
+	local j, oldX, oldY, oldOffset, oldDir, transit, transit_data, liveData, zonings
 
 	self.transitData = {}
 	self.liveData = {}
+	self.zonings = {}
+	triggers = {}
 	transitData = self.transitData
 	liveData = self.liveData
+	zonings = self.zonings
 
 	for t = 1, #(transports), 1 do
 		oldX, oldY, oldOffset, oldDir = 0, 0, 0, 0
@@ -666,6 +685,8 @@ function Nauticus:InitialiseConfig()
 		transitData[transit] = { ['x'] = {}, ['y'] = {}, ['offset'] = {},
 			['dx'] = {}, ['dy'] = {}, ['dt'] = {}, ['dir'] = {}, ['d_dir'] = {}, }
 
+		zonings[transit] = {}
+		triggers[transit] = {}
 		transit_data = transitData[transit]
 
 		for i = 1, #(packedData[transit]) do
@@ -683,6 +704,19 @@ function Nauticus:InitialiseConfig()
 			transit_data.dt[i] = tonumber(args[3])
 			transit_data.dir[i] = args[5]+oldDir
 			transit_data.d_dir[i] = tonumber(args[5])
+
+			if args[6] then
+				local comment = strsub(args[6], 1, 4)
+				if comment == "plat" then
+					local index = tonumber(strsub(args[6], 5))
+					platforms[transit][index].index = i
+				elseif comment == "trig" then
+					local index = tonumber(strsub(args[6], 5))
+					triggers[transit][index] = i
+				elseif comment == "zone" then
+					zonings[transit][i] = true
+				end
+			end
 
 			oldX, oldY, oldOffset, oldDir =
 				transit_data.x[i],
@@ -709,6 +743,8 @@ function Nauticus:InitialiseConfig()
 end
 
 function Nauticus:PLAYER_ENTERING_WORLD()
+	self:UpdateDistribution(10)
+
 	if GetRealZoneText() ~= "" then
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 		self.currentZoneTransports = self.transitZones[GetRealZoneText()]
@@ -737,12 +773,12 @@ end
 	
 function Nauticus:PARTY_MEMBERS_CHANGED()
 	self:DebugMessage("update distro: party")
-	self:UpdateDistribution()
+	self:UpdateDistribution(10)
 end
 
 function Nauticus:PLAYER_GUILD_UPDATE()
 	self:DebugMessage("update distro: guild")
-	self:UpdateDistribution()
+	self:UpdateDistribution(10)
 end
 
 local last_map_update = 0
@@ -802,9 +838,13 @@ function Nauticus:GetArgs(message, separator)
 	return args
 end
 
+local lastDebug = GetTime()
+
 function Nauticus:DebugMessage(msg)
 	if self.debug then
-		ChatFrame4:AddMessage("[Naut]: "..msg)
+		local now = GetTime()
+		ChatFrame4:AddMessage(format("[Naut] ["..YELLOW.."%0.3f|r]: %s", now-lastDebug, msg))
+		lastDebug = now
 	end
 end
 

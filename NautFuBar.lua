@@ -15,8 +15,8 @@ local Nauticus, NauticusFu = Nauticus, NauticusFu
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
-local platforms, transports, transitData =
-	Nauticus.platforms, Nauticus.transports, Nauticus.transitData
+local transports, transitData =
+	Nauticus.transports, Nauticus.transitData
 
 -- constants
 local ARTWORKPATH = "Interface\\AddOns\\Nauticus\\Artwork\\"

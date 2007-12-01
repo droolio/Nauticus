@@ -9,6 +9,8 @@ local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
 
+local DEFAULT_CHANNEL = "NauticSync" -- do not change!
+
 local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
@@ -87,10 +89,10 @@ function Nauticus:SendMessage(to, msg)
 	elseif self.distribution == "CUSTOM" then
 		if self.debug and UnitName("player") == "Naute" then
 			SendAddonMessage("Naut2", msg, "WHISPER", "Nauticus")
-		elseif self.dataChannel ~= "none" and GetChannelName(self.dataChannel) then
+		elseif self.dataChannel and GetChannelName(self.dataChannel) then
 			SendChatMessage(msg, "CHANNEL", nil, GetChannelName(self.dataChannel))
 		end
-	else
+	elseif self.distribution then
 		SendAddonMessage("Naut2", msg, self.distribution)
 	end
 end
@@ -99,14 +101,17 @@ end
 function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _, num, channel)
 
 	if noticeType == "YOU_JOINED" then
+		self:DebugMessage("joined: "..channel)
+		local channel_lower = strlower(channel)
+
 		-- legacy channel
-		if channel == "ZeppelinMaster" then
+		if channel_lower == "zeppelinmaster" then
 			if self.debug then
-				ListChannelByName("ZeppelinMaster")
-				SendChatMessage("VER:1.7:2", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
+				ListChannelByName(channel)
+				SendChatMessage("VER:1.7:2", "CHANNEL", nil, GetChannelName(channel))
 
 				self:ScheduleEvent(function()
-					SendChatMessage("VER:1.7:x", "CHANNEL", nil, GetChannelName("ZeppelinMaster"))
+					SendChatMessage("VER:1.7:x", "CHANNEL", nil, GetChannelName(channel))
 				end, 5, self)
 			else
 				LeaveChannelByName(channel)
@@ -114,21 +119,15 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 
 			return
 
-		elseif channel == self.dataChannel then
-			if self.debug then
-				ListChannelByName(channel)
-			elseif channel ~= "none" and IsInGuild() then
-				LeaveChannelByName(channel)
-			end
-
-			return
-
-		elseif self.dataChannel ~= "none" and
-			GetChannelName(self.dataChannel) == 0 and not IsInGuild() then
+		elseif self.dataChannel and channel_lower ~= strlower(self.dataChannel) and
+			GetChannelName(self.dataChannel) == 0 then
 
 			self:ScheduleEvent("NAUT_CHAN_JOIN", function()
-				if GetChannelName(self.dataChannel) == 0 then
+				if self.dataChannel and GetChannelName(self.dataChannel) == 0 then
+					self:DebugMessage("joining: "..self.dataChannel)
 					JoinChannelByName(self.dataChannel)
+					self:UpdateDistribution()
+					if self.debug then ListChannelByName(self.dataChannel); end
 				end
 			end, 5, self)
 
@@ -156,18 +155,18 @@ function Nauticus:CHAT_MSG_CHANNEL(msg, sender, _, numAndName, _, _, _, _, chann
 		self.distribution == "CUSTOM" then
 
 		local Args = self:GetArgs(msg, " ")
-		self:ReceiveMessage("Naut2", sender, "CUSTOM", "NauticSync", Args[1], Args[2], Args[3])
+		self:ReceiveMessage("Naut2", sender, "CUSTOM", Args[1], Args[2], Args[3])
 	end
 end
 
 function Nauticus:CHAT_MSG_ADDON(prefix, msg, distribution, sender)
 	if prefix == "Naut2" and sender ~= UnitName("player") then
 		local Args = self:GetArgs(msg, " ")
-		self:ReceiveMessage(prefix, sender, distribution, nil, Args[1], Args[2], Args[3])
+		self:ReceiveMessage(prefix, sender, distribution, Args[1], Args[2], Args[3])
 	end
 end
 
-function Nauticus:ReceiveMessage(prefix, sender, distribution, channel, command, arg1, arg2)
+function Nauticus:ReceiveMessage(prefix, sender, distribution, command, arg1, arg2)
 	if command == nil then self:DebugMessage("nil command!"); return; end
 
 	self:DebugMessage("pre: "..prefix.." ; sender: "..sender.." ; dis: "
@@ -394,17 +393,27 @@ function Nauticus:StringToTell(transports)
 	return trans_tab
 end
 
-function Nauticus:UpdateDistribution()
+function Nauticus:UpdateDistribution(wait)
+
+	if wait then
+		self:ScheduleEvent("NAUT_UPD_DISTRO", function()
+			self:UpdateDistribution()
+		end, wait, self)
+
+		return
+	end
 
 	local distribution = self.distribution
 	local newDistrib
 
 	if GetNumPartyMembers() > 0 then
 		newDistrib = "RAID"
-	elseif IsInGuild() then
+	elseif IsInGuild() and self.db.profile.dataChannel == "guild" then
 		newDistrib = "GUILD"
-	else
+	elseif self.dataChannel then
 		newDistrib = "CUSTOM"
+	else
+		newDistrib = nil
 	end
 
 	if newDistrib ~= distribution then
@@ -417,34 +426,40 @@ function Nauticus:UpdateDistribution()
 			if distribution == "RAID" or distribution == "GUILD" then
 				self:UnregisterEvent("CHAT_MSG_ADDON")
 			end
-
-			--[[if self.dataChannel ~= "none" and GetChannelName(self.dataChannel) == 0 then
-				JoinChannelByName(self.dataChannel)
-			end]]
-		else
-			--[[if self.dataChannel ~= "none" and GetChannelName(self.dataChannel) ~= 0 then
-				LeaveChannelByName(self.dataChannel)
-			end]]
-
-			if newDistrib == "RAID" or newDistrib == "GUILD" then
-				self:RegisterEvent("CHAT_MSG_ADDON")
-			end
+		elseif newDistrib == "RAID" or newDistrib == "GUILD" then
+			self:RegisterEvent("CHAT_MSG_ADDON")
 		end
 
 		self.distribution = newDistrib
 
-		self:DebugMessage("distrib: "..newDistrib)
-
-		for index, data in pairs(transports) do
-			if data.label ~= -1 then
-				self.requestList[data.label] = true
+		if newDistrib then
+			for index, data in pairs(transports) do
+				if data.label ~= -1 then
+					self.requestList[data.label] = true
+				end
 			end
+
+			self.requestVersion = true
+			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
 		end
 
-		self.requestVersion = true
-		self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
+		if self.debug then
+			if not newDistrib then newDistrib = "NONE" end
+			self:DebugMessage("distrib: "..newDistrib)
+		end
 	end
 
+end
+
+function Nauticus:GetChannel(dataChannel)
+	if not dataChannel then dataChannel = self.db.profile.dataChannel; end
+	if dataChannel == "none" then return nil
+	elseif dataChannel == "guild" then
+		if IsInGuild() then return nil
+		else return DEFAULT_CHANNEL; end
+	end
+
+	return dataChannel
 end
 
 function GetLag()

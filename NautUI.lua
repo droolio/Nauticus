@@ -156,9 +156,9 @@ function Nauticus:TransportSelectSetNone()
 
 	if has == nil then
 		for index = 1, 2 do
-			getglobal("NautFramePlat"..(index).."Name"):SetText(L["None Selected"])
-			getglobal("NautFramePlat"..(index).."ArrivalDepature"):SetText(L["Not Available"])
-			getglobal("NautFramePlat"..(index).."Time"):SetText(L["N/A"])
+			getglobal("NautFramePlat"..index.."Name"):SetText(L["None Selected"])
+			getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(L["Not Available"])
+			getglobal("NautFramePlat"..index.."Time"):SetText(L["N/A"])
 		end
 
 		self.lowestNameTime = "--"
@@ -175,9 +175,9 @@ function Nauticus:TransportSelectSetNone()
 				plat_name = data.name
 			end
 
-			getglobal("NautFramePlat"..(index+1).."Name"):SetText(plat_name)
-			getglobal("NautFramePlat"..(index+1).."ArrivalDepature"):SetText(L["Not Available"])
-			getglobal("NautFramePlat"..(index+1).."Time"):SetText(L["N/A"])
+			getglobal("NautFramePlat"..index.."Name"):SetText(plat_name)
+			getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(L["Not Available"])
+			getglobal("NautFramePlat"..index.."Time"):SetText(L["N/A"])
 		end
 
 		self.lowestNameTime = L["N/A"]
