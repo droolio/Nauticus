@@ -13,6 +13,7 @@ local ORANGE  = "|cffffba00"
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
 local ARTWORKPATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
 local ARTWORK_ZONING = ARTWORKPATH.."MapIcon_Zoning"
+local MAX_FORMATTED_TIME = 256 -- the longest route minus 60
 
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
 
@@ -24,11 +25,11 @@ local Nauticus = Nauticus
 local rtts, platforms, triggers, transports, transitData
 local zonings
 
-local GetTexCoord
+local GetTexCoord, formattedTimeCache
 
 -- object variables
-Nauticus.versionStr = "2.3.1" -- for display
-Nauticus.versionNum = 231 -- for comparison
+Nauticus.versionStr = "2.3.2" -- for display
+Nauticus.versionNum = 232 -- for comparison
 Nauticus.dataVersion = 230 -- route calibration versioning
 
 Nauticus.activeTransit = -1
@@ -404,17 +405,13 @@ function Nauticus:Clock_OnUpdate(elapse)
 		cycle, platform = liveData.cycle, liveData.index
 
 		local lowestTime = 500
-		local plat_name, plat_time, formatted_time, colour
+		local plat_name, plat_time, formatted_time, depOrArr, colour
 
 		for index, data in pairs(platforms[transit]) do
 			if self:IsAlias() then
 				plat_name = data.alias
 			else
 				plat_name = data.name
-			end
-
-			if NautFrame:IsVisible() then
-				getglobal("NautFramePlat"..index.."Name"):SetText(plat_name)
 			end
 
 			if data.index == platform then
@@ -427,23 +424,14 @@ function Nauticus:Clock_OnUpdate(elapse)
 					PlaySoundFile("Sound\\Spells\\PVPFlagTakenHorde.wav")
 				end
 
-				if plat_time >= 60 then
-					formatted_time = format("%dm %02ds", plat_time/60,
-						math.fmod(plat_time, 60) )
-				else
-					formatted_time = format("%ds", plat_time)
-				end
-
 				if plat_time > 30 then
 					colour = YELLOW
 				else
 					colour = RED
 				end
 
-				if NautFrame:IsVisible() then
-					getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(YELLOW..L["Departure"]..":")
-					getglobal("NautFramePlat"..index.."Time"):SetText(colour..formatted_time)
-				end
+				depOrArr = L["Departure"]
+				formatted_time = self.formattedTimeCache[floor(plat_time)]
 
 				lowestTime = -500
 				self.lowestNameTime = data.ebv.." "..colour..formatted_time
@@ -456,23 +444,21 @@ function Nauticus:Clock_OnUpdate(elapse)
 					plat_time = plat_time + rtts[transit]
 				end
 
-				if plat_time >= 60 then
-					formatted_time = format("%dm %02ds", plat_time/60,
-						math.fmod(plat_time, 60) )
-				else
-					formatted_time = format("%ds", plat_time)
-				end
-
-				if NautFrame:IsVisible() then
-					getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(YELLOW..L["Arrival"]..":")
-					getglobal("NautFramePlat"..index.."Time"):SetText(GREEN..formatted_time)
-				end
+				colour = GREEN
+				depOrArr = L["Arrival"]
+				formatted_time = self.formattedTimeCache[floor(plat_time)]
 
 				if plat_time < lowestTime then
 					lowestTime = plat_time
 					self.lowestNameTime = data.ebv.." "..GREEN..formatted_time
 					self.icon = "Transit"
 				end
+			end
+
+			if NautFrame:IsVisible() then
+				getglobal("NautFramePlat"..index.."Name"):SetText(plat_name)
+				getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(YELLOW..depOrArr..":")
+				getglobal("NautFramePlat"..index.."Time"):SetText(colour..formatted_time)
 			end
 		end
 
@@ -900,5 +886,19 @@ do
 		texCoordCache.URx[i], texCoordCache.URy[i] =
 			(-B + BFsubCE) / det, (A + AFaddCD) / det,
 			(E + BFsubCE) / det, (-D + AFaddCD) / det
+	end
+end
+
+-- build cache of formatted times
+do
+	formattedTimeCache = {}
+	Nauticus.formattedTimeCache = formattedTimeCache
+
+	for i = 0, 59 do
+		formattedTimeCache[i] = format("%ds", i)
+	end
+
+	for i = 60, MAX_FORMATTED_TIME do
+		formattedTimeCache[i] = format("%dm %02ds", i/60, math.fmod(i, 60))
 	end
 end

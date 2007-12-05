@@ -364,11 +364,7 @@ function Nauticus:ShowTooltip(transit)
 				depOrArr = L["Arrival"]
 			end
 
-			if plat_time >= 60 then
-				formatted_time = format("%dm %02ds", plat_time/60, math.fmod(plat_time, 60) )
-			else
-				formatted_time = format("%ds", plat_time)
-			end
+			formatted_time = self.formattedTimeCache[floor(plat_time)]
 
 			cat:AddLine('text', depOrArr..":",
 				'text2', formatted_time,

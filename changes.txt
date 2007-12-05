@@ -1,5 +1,14 @@
 Version History
 
+v2.3.2
+- now blocks all ship talk; by npc name instead of specific strings
+- default to world channel for better sync reach
+- FIX: small rounding issue when comparing times from others
+- add new world map icon to show when transport is zoning
+- slightly tweak round-trip-times again (uber accurate now)
+- lots of minor cpu/memory usage optimisations
+
+
 v2.3.1
 - NEW: rotating icons, point in the direction of travel!
 - tweaked round-trip-times slightly

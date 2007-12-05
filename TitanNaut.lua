@@ -110,12 +110,7 @@ function TitanPanelNauticusButton_GetTooltipText()
 				toolTipText = toolTipText..L["Arrival"]..":\t"..GREEN
 			end
 
-			if plat_time >= 60 then
-				toolTipText = toolTipText..format("%dm %02ds\n\n", plat_time/60,
-					math.fmod(plat_time, 60) )
-			else
-				toolTipText = toolTipText..format("%ds\n\n", plat_time)
-			end
+			toolTipText = toolTipText..Nauticus.formattedTimeCache[floor(plat_time)].."\n\n"
 		end
 
 	elseif has == false then

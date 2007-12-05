@@ -1,6 +1,6 @@
 Nauticus addon for World of Warcraft
 
-http://drool.me.uk/naut
+Official Homepage: http://drool.me.uk/naut
 
 ---
 Nauticus tracks the precise location of boats and Zeppelins around 
