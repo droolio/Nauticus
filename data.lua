@@ -12,64 +12,64 @@ namealias = L["Select Transport"],
 label = -1,
 faction = -1,
 },
-[1] = {
-shiptype = "Zep",
+[1] = { -- The Thundercaller
+shiptype = "Zeppelin",
 name = L["Durotar"].." <==> "..L["Tirisfal Glades"],
 namealias = L["Orgrimmar"].." <==> "..L["Undercity"],
 label = "org2uc",
 faction = "Horde",
 },
-[2] = {
-shiptype = "Zep",
+[2] = { -- The Iron Eagle
+shiptype = "Zeppelin",
 name = L["Durotar"].." <==> "..L["Stranglethorn Vale"],
 namealias = L["Orgrimmar"].." <==> "..L["Grom'gol"],
 label = "org2gg",
 faction = "Horde",
 },
-[3] = {
-shiptype = "Zep",
+[3] = { -- The Purple Princess
+shiptype = "Zeppelin",
 name = L["Tirisfal Glades"].." <==> "..L["Stranglethorn Vale"],
 namealias = L["Undercity"].." <==> "..L["Grom'gol"],
 label = "grom2uc",
 faction = "Horde",
 },
-[4] = {
+[4] = { -- The Maiden's Fancy
 shiptype = "Boat",
 name = L["The Barrens"].." <==> "..L["Stranglethorn Vale"],
 namealias = L["Ratchet"].." <==> "..L["Booty Bay"],
 label = "ratch2bb",
 faction = "Neutral",
 },
-[5] = {
+[5] = { -- The Bravery
 shiptype = "Boat",
 name = L["Wetlands"].." <==> "..L["Darkshore"],
 namealias = L["Menethil Harbor"].." <==> "..L["Auberdine"],
 label = "mh2aub",
 faction = "Alliance",
 },
-[6] = {
+[6] = { -- The Lady Mehley
 shiptype = "Boat",
 name = L["Wetlands"].." <==> "..L["Dustwallow Marsh"],
 namealias = L["Menethil Harbor"].." <==> "..L["Theramore"],
 label = "mh2thera",
 faction = "Alliance",
 },
-[7] = {
-shiptype = "Boat2",
+[7] = { -- The Moonspray
+shiptype = "BoatNE",
 name = L["Teldrassil"].." <==> "..L["Darkshore"],
 namealias = L["Rut'Theran Village"].." <==> "..L["Auberdine"],
 label = "rtv2ds",
 faction = "Alliance",
 },
-[8] = {
-shiptype = "Boat2",
+[8] = { -- Feathermoon Ferry
+shiptype = "BoatNE",
 name = L["Sardor Isle"].." <==> "..L["Feralas"],
 namealias = L["Feathermoon"].." <==> "..L["Forgotten Coast"],
 label = "fms2fer",
 faction = "Alliance",
 },
-[9] = {
-shiptype = "Boat2",
+[9] = { -- Elune's Blessing
+shiptype = "BoatNE",
 name = L["Azuremyst Isle"].." <==> "..L["Darkshore"],
 namealias = L["The Exodar"].." <==> "..L["Auberdine"],
 label = "exo2aub",
@@ -93,15 +93,15 @@ Nauticus.lookupIndex = {
 
 -- accurate round trip times
 Nauticus.rtts = {
-["org2uc"] =	239.338610,
-["org2gg"] =	248.994829,
-["grom2uc"] =	315.032046,
-["ratch2bb"] =	231.240478,
-["mh2aub"] =	241.782434,
-["mh2thera"] =	230.166480,
-["rtv2ds"] =	312.733986,
-["fms2fer"] =	259.751995,
-["exo2aub"] =	240.013607,
+["org2uc"] =	239.338600,
+["org2gg"] =	248.994783,
+["grom2uc"] =	315.032044,
+["ratch2bb"] =	231.240480,
+["mh2aub"] =	241.782638,
+["mh2thera"] =	230.166442,
+["rtv2ds"] =	312.733984,
+["fms2fer"] =	259.751983,
+["exo2aub"] =	240.013608,
 }
 
 Nauticus.transitZones = {

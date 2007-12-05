@@ -544,31 +544,31 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 <Frame name="Naut_WorldMapFrame" hidden="false" parent="WorldMapDetailFrame" enableMouse="true">
 	<Frames>
 		<Button name="Naut_WorldMapIconButton1" inherits="Naut_WorldMapIconButton" id="1" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Zeppelin"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton2" inherits="Naut_WorldMapIconButton" id="2" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Zeppelin"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton3" inherits="Naut_WorldMapIconButton" id="3" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Zeppelin"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton4" inherits="Naut_WorldMapIconButton" id="4" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton5" inherits="Naut_WorldMapIconButton" id="5" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton6" inherits="Naut_WorldMapIconButton" id="6" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton7" inherits="Naut_WorldMapIconButton" id="7" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatNE"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton8" inherits="Naut_WorldMapIconButton" id="8" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatNE"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 		<Button name="Naut_WorldMapIconButton9" inherits="Naut_WorldMapIconButton" id="9" hidden="true" toplevel="true">
-			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatNE"/>
+			<NormalTexture name="$parentTexture"/>
 		</Button>
 	</Frames>
 </Frame>

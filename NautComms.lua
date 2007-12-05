@@ -151,8 +151,8 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 end
 
 function Nauticus:CHAT_MSG_CHANNEL(msg, sender, _, numAndName, _, _, _, _, channel)
-	if sender ~= UnitName("player") and channel == self.dataChannel and
-		self.distribution == "CUSTOM" then
+	if sender ~= UnitName("player") and self.dataChannel and
+		strlower(channel) == strlower(self.dataChannel) and self.distribution == "CUSTOM" then
 
 		local Args = self:GetArgs(msg, " ")
 		self:ReceiveMessage("Naut2", sender, "CUSTOM", Args[1], Args[2], Args[3])
@@ -176,9 +176,9 @@ function Nauticus:ReceiveMessage(prefix, sender, distribution, command, arg1, ar
 	if command == "VER" then
 		self:ReceiveMessage_version(sender, distribution, tonumber(arg1))
 
-	-- tell, { transports }
+	-- known, { transports }
 	elseif command == "KNW" then
-		self:ReceiveMessage_known(sender, distribution, tonumber(arg1), self:StringToTell(arg2))
+		self:ReceiveMessage_known(sender, distribution, tonumber(arg1), self:StringToKnown(arg2))
 
 	end
 end
@@ -265,20 +265,20 @@ function Nauticus:ReceiveMessage_known(sender, distribution, version, transports
 				ourSince = math.floor(ourSince*1000.0)/1000.0
 
 				if since ~= nil then
-					self:DebugMessage(sender.." says: tell "..transit.." "..debugColour..
+					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
 						since.."|r (boots: "..boots..", swaps: "..swaps..") vs our "..
 						ourSince.." (boots: "..ourBoots..", swaps: "..ourSwaps..") ; diff: "..
 						math.floor((ourSince-since)*1000.0)/1000.0)
 				else
-					self:DebugMessage(sender.." says: tell "..transit.." "..debugColour..
+					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
 						"nil|r vs our "..ourSince.." (boots: "..ourBoots..", swaps: "..ourSwaps..")")
 				end
 			else
 				if since ~= nil then
-					self:DebugMessage(sender.." says: tell "..transit.." "..debugColour..
+					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
 						since.."|r (boots: "..boots..", swaps: "..swaps..") vs our nil")
 				else
-					self:DebugMessage(sender.." says: tell "..transit.." "..debugColour..
+					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
 						"nil|r vs our nil")
 				end
 			end
@@ -336,12 +336,12 @@ function Nauticus:IsBetter(transit, since, boots, swaps)
 			elseif boots > ourBoots then
 				return false, true -- no set, respond
 			else
-				local age = math.floor(since / rtts[transit])
-				local ourAge = math.floor(ourSince / rtts[transit])
+				-- age difference; positive = better, negative = worse
+				local ageDiff = math.floor((ourSince - since) / rtts[transit] + .5)
 
-				if age < ourAge then
+				if 0 < ageDiff then -- (age < ourAge)
 					return true -- set, no response
-				elseif age > ourAge then
+				elseif 0 > ageDiff then -- (age > ourAge)
 					return false, true -- no set, respond
 				else
 					if swaps < ourSwaps then
@@ -358,7 +358,7 @@ function Nauticus:IsBetter(transit, since, boots, swaps)
 
 end
 
-function Nauticus:StringToTell(transports)
+function Nauticus:StringToKnown(transports)
 	local Args = self:GetArgs(transports, ",")
 	local trans_tab = {}
 

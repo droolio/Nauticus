@@ -9,7 +9,10 @@ local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
 
+-- constants
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
+local ARTWORKPATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
+local ARTWORK_ZONING = ARTWORKPATH.."MapIcon_Zoning"
 
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
 
@@ -19,6 +22,7 @@ local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 local Nauticus = Nauticus
 local rtts, platforms, triggers, transports, transitData
+local zonings
 
 local GetTexCoord
 
@@ -297,15 +301,16 @@ end
 
 function Nauticus:DrawMapIcons()
 
-	local transit, liveData, cycle, platform, offsets, currentX, currentY, angle,
-		isZoneInteresting, buttonMini, buttonWorld
+	local transport, transit, liveData, cycle, platform, offsets, currentX, currentY, angle,
+		isZoning, isZoneInteresting, buttonMini, buttonWorld
 
 	local isWorldMapVisible = NautAstrolabe.WorldMapVisible
 
 	if NautHeaderFrame.isMoving then self:UpdateUI() end
 
 	for t = 1, #(transports), 1 do
-		transit = transports[t].label
+		transport = transports[t]
+		transit = transport.label
 
 		if self:HasKnownCycle(transit) then
 			liveData = self.liveData[transit]
@@ -329,17 +334,27 @@ function Nauticus:DrawMapIcons()
 
 			if self.showIcons then
 				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit]
-				buttonMini, buttonWorld = transports[t].minimap_icon, transports[t].worldmap_icon
+				buttonMini, buttonWorld = transport.minimap_icon, transport.worldmap_icon
 
 				if isZoneInteresting or isWorldMapVisible then
-					currentX, currentY, angle = self:CalcTripPosition(transit, cycle, platform)
+					currentX, currentY, angle, isZoning = self:CalcTripPosition(transit, cycle, platform)
 
 					if currentX and currentY then
 						if isWorldMapVisible then
+							if isZoning ~= transport.status then
+								if isZoning then
+									transport.worldmap_texture:SetTexture(ARTWORK_ZONING)
+								else
+									transport.worldmap_texture:SetTexture(transport.texture_name)
+								end
+
+								transport.status = isZoning
+							end
+
 							NautAstrolabe:PlaceIconOnWorldMap(WorldMapDetailFrame, buttonWorld,
 								0, 0, currentX, currentY)
 
-							transports[t].worldmap_texture:SetTexCoord(GetTexCoord(angle))
+							transport.worldmap_texture:SetTexCoord(GetTexCoord(angle))
 
 						elseif buttonWorld:IsVisible() then
 							NautAstrolabe:RemoveIconFromMinimap(buttonWorld)
@@ -347,7 +362,7 @@ function Nauticus:DrawMapIcons()
 
 						if isZoneInteresting then
 							NautAstrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, currentX, currentY)
-							transports[t].minimap_texture:SetTexCoord(GetTexCoord(angle-math.deg(MiniMapCompassRing:GetFacing())))
+							transport.minimap_texture:SetTexCoord(GetTexCoord(angle-math.deg(MiniMapCompassRing:GetFacing())))
 
 							if NautAstrolabe:IsIconOnEdge(buttonMini) then
 								buttonMini:SetAlpha(.6)
@@ -486,14 +501,15 @@ function Nauticus:CheckTriggers_OnUpdate(elapse)
 	if not x then return; end
 
 	-- have we moved by at least 17 game yards since the last check? this equates to >~300% movement speed
-	if 17.0 < NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy) then
-		--check X/Y coords against all triggers for all transports
+	if 17.0 < NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy) and
+		not IsFlying() then
+
+		--check X/Y coords against all triggers for all transports in current zone
 		for transit, i in pairs(self.currentZoneTransports) do
 			for i, index in pairs(triggers[transit]) do
 				-- within 20 game yards of trigger coords?
 				if 20.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
-					0, 0, transitData[transit].x[index], transitData[transit].y[index]) and
-					not IsFlying() then
+					0, 0, transitData[transit].x[index], transitData[transit].y[index]) then
 
 					self:SetKnownTime(transit, index, x, y)
 					return
@@ -554,16 +570,14 @@ function Nauticus:CalcTripPosition(transit, cycle, index)
 	local transitData = transitData[transit]
 
 	if index == 1 then
-		return transitData.x[index], transitData.y[index], transitData.dir[index]
+		return transitData.x[index], transitData.y[index], transitData.dir[index], false -- -1
 	else
 		local fraction = (cycle - transitData.offset[index-1]) / transitData.dt[index]
-		local dir
-
-		if self.zonings[transit][index] then dir = transitData.dir[index]
-		else dir = transitData.dir[index-1] + transitData.d_dir[index] * fraction end
 
 		return transitData.x[index-1] + transitData.dx[index] * fraction,
-			transitData.y[index-1] + transitData.dy[index] * fraction, dir
+			transitData.y[index-1] + transitData.dy[index] * fraction,
+			transitData.dir[index-1] + transitData.d_dir[index] * fraction,
+			zonings[transit][index] == true
 	end
 end
 
@@ -668,7 +682,7 @@ function Nauticus:InitialiseConfig()
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
-	local j, oldX, oldY, oldOffset, oldDir, transit, transit_data, liveData, zonings
+	local j, oldX, oldY, oldOffset, oldDir, transport, transit, transit_data, liveData
 
 	self.transitData = {}
 	self.liveData = {}
@@ -681,7 +695,8 @@ function Nauticus:InitialiseConfig()
 	for t = 1, #(transports), 1 do
 		oldX, oldY, oldOffset, oldDir = 0, 0, 0, 0
 
-		transit = transports[t].label
+		transport = transports[t]
+		transit = transport.label
 		transitData[transit] = { ['x'] = {}, ['y'] = {}, ['offset'] = {},
 			['dx'] = {}, ['dy'] = {}, ['dt'] = {}, ['dir'] = {}, ['d_dir'] = {}, }
 
@@ -729,13 +744,15 @@ function Nauticus:InitialiseConfig()
 
 		liveData[transit] = { cycle = 0, index = 1, }
 
-		transports[t].minimap_icon, transports[t].worldmap_icon =
+		transport.minimap_icon, transport.worldmap_icon =
 			getglobal("Naut_MiniMapIconButton"..t),
 			getglobal("Naut_WorldMapIconButton"..t)
 
-		transports[t].minimap_texture, transports[t].worldmap_texture =
+		transport.minimap_texture, transport.worldmap_texture =
 			getglobal("Naut_MiniMapIconButton"..t.."Texture"),
 			getglobal("Naut_WorldMapIconButton"..t.."Texture")
+
+		transport.texture_name = ARTWORKPATH.."MapIcon_"..transport.shiptype
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)
