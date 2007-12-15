@@ -458,7 +458,6 @@ function Nauticus:MapIconButtonMouseEnter()
 	local transit = self.transports[id].label
 
 	if not tablet:IsRegistered(this) then
-		self.iconTablet = tablet
 		tablet:Register(this,
 		    'children', function()
 				self:ShowTooltip(transit)

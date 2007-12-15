@@ -23,6 +23,8 @@ local rtts, platforms, transports, transitData =
 local TITAN_NAUT_ID = "Nauticus"
 local TITAN_NAUT_ARTWORK = "Interface\\AddOns\\Nauticus\\Artwork\\"
 
+local Naut_TitanPanelButton_OnTooltipUpdate
+
 
 function TitanPanelNauticusButton_OnLoad()
 
@@ -33,7 +35,7 @@ function TitanPanelNauticusButton_OnLoad()
 		menuText = "Nauticus", 
 		buttonTextFunction = "TitanPanelNauticusButton_GetButtonText",
 		tooltipTitle = "Nauticus",
-		tooltipTextFunction = "TitanPanelNauticusButton_GetTooltipText",
+		tooltipCustomFunction = Naut_TitanPanelButton_OnTooltipUpdate,
 		frequency = 1,
 		icon = TITAN_NAUT_ARTWORK.."NauticusLogo",
 		iconWidth = 16,
@@ -65,78 +67,41 @@ function TitanPanelNauticusButton_OnEvent()
 	end
 end
 
-function TitanPanelNauticusButton_GetTooltipText()
+function Naut_TitanPanelButton_OnTooltipUpdate()
+	local tablet = Nauticus.tablet
 
-	local transit = Nauticus.activeTransit
-	local toolTipText = ""
-	local has = Nauticus:HasKnownCycle(Nauticus.activeTransit)
-
-	if has then
-		local plat_name, plat_time, colour
-
-		local liveData = Nauticus.liveData[transit]
-		local cycle, platform = liveData.cycle, liveData.index
-
-		toolTipText = toolTipText..Nauticus:GetActiveRouteName().."\n\n"
-
-		for index, data in pairs(platforms[transit]) do
-			if Nauticus:IsAlias() then
-				plat_name = data.alias
-			else
-				plat_name = data.name
-			end
-
-			toolTipText = toolTipText..WHITE..plat_name.."\n"
-
-			if data.index == platform then
-				-- we're at a platform and waiting to depart
-				plat_time = Nauticus:CalcTripCycleTimeByIndex(transit, platform) - cycle
-
-				if plat_time > 30 then
-					colour = YELLOW
+	if not tablet:IsRegistered(this) then
+		tablet:Register(this,
+			'children', function()
+				Nauticus:ShowTooltip(Nauticus.activeTransit)
+			end,
+			'point', function(parent)
+				local x, y = GetCursorPosition()
+				local cx, cy = GetScreenWidth() / 2, GetScreenHeight() / 2
+				if x > cx then
+					if y < cy then
+						return "BOTTOMRIGHT", "TOPRIGHT"
+					else
+						return "TOPRIGHT", "BOTTOMRIGHT"
+					end
 				else
-					colour = RED
+					if y < cy then
+						return "BOTTOMLEFT", "TOPLEFT"
+					else
+						return "TOPLEFT", "BOTTOMLEFT"
+					end
 				end
-
-				toolTipText = toolTipText..L["Departure"]..":\t"..colour
-
-			else
-				plat_time = Nauticus:CalcTripCycleTimeByIndex(transit, data.index-1) - cycle
-
-				if plat_time < 0 then
-					plat_time = plat_time + rtts[transit]
-				end
-
-				toolTipText = toolTipText..L["Arrival"]..":\t"..GREEN
-			end
-
-			toolTipText = toolTipText..Nauticus.formattedTimeCache[floor(plat_time)].."\n\n"
-		end
-
-	elseif has == false then
-		local plat_name
-
-		toolTipText = toolTipText..Nauticus:GetActiveRouteName().."\n\n"
-
-		for index, data in pairs(platforms[transit]) do
-			if Nauticus:IsAlias() then
-				plat_name = data.alias
-			else
-				plat_name = data.name
-			end
-
-			toolTipText = toolTipText..WHITE..plat_name.."\n"..L["Not Available"].."\n\n"
-		end
-
-	elseif has == nil then
-		toolTipText = toolTipText..L["No Transit Selected"].."\n"
-
+			end,
+			'dontHook', true
+		)
 	end
 
-	toolTipText = toolTipText..GREEN.."Hint: "..L["Click to cycle transport.|nAlt-Click to set up alarm"]
+	Nauticus.iconTooltip = this
+	tablet:Open(this)
+end
 
-	return toolTipText
-
+local function Naut_TitanPanelButton_Close()
+	Nauticus.tablet:Close(this)
 end
 
 function Naut_TitanPanelRightClickMenu_AddToggleVar(text, var, toggleFunc)
@@ -198,6 +163,8 @@ function TitanPanelNauticusButton_GetButtonText(id)
 end
 
 function TitanPanelNauticusButton_OnClick(event)
+
+	Naut_TitanPanelButton_Close()
 
 	if event ~= "LeftButton" then return; end
 

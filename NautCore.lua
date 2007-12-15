@@ -468,7 +468,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 	end
 
 	if self.iconTooltip then
-		self.iconTablet:Refresh(self.iconTooltip)
+		self.tablet:Refresh(self.iconTooltip)
 	end
 
 end
