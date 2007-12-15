@@ -738,7 +738,7 @@ function Nauticus:InitialiseConfig()
 			getglobal("Naut_MiniMapIconButton"..t.."Texture"),
 			getglobal("Naut_WorldMapIconButton"..t.."Texture")
 
-		transport.texture_name = ARTWORKPATH.."MapIcon_"..transport.shiptype
+		transport.texture_name = ARTWORKPATH.."MapIcon_"..transport.ship_type
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)

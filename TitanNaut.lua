@@ -73,7 +73,9 @@ function Naut_TitanPanelButton_OnTooltipUpdate()
 	if not tablet:IsRegistered(this) then
 		tablet:Register(this,
 			'children', function()
+				tablet:SetTitle(Nauticus.title)
 				Nauticus:ShowTooltip(Nauticus.activeTransit)
+				tablet:SetHint(L["Click to cycle transport.|nAlt-Click to set up alarm"])
 			end,
 			'point', function(parent)
 				local x, y = GetCursorPosition()

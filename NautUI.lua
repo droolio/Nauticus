@@ -312,34 +312,31 @@ Nauticus.tablet = AceLibrary("Tablet-2.0")
 local tablet = Nauticus.tablet
 function Nauticus:ShowTooltip(transit)
 
-	local cat = tablet:AddCategory(
-		'columns', 1
-	)
+	local cat
 
 	local has = self:HasKnownCycle(transit)
 
 	if has then
-		local plat_name, plat_time, formatted_time, depOrArr, r,g,b
+		local plat_time, formatted_time, depOrArr, r,g,b
 
 		local liveData = self.liveData[transit]
 		local cycle, platform = liveData.cycle, liveData.index
 
-		cat:AddLine('text', self:GetActiveRouteName(transit),
-			'justify', "CENTER")
+		cat = tablet:AddCategory(
+			'text', transports[self.lookupIndex[transit]].vessel_name,
+			'columns', 1,
+			'font', GameFontHighlightLarge,
+			'textR', 0.25, 'textG', 0.75, 'textB', 1,
+			'justify', "CENTER"
+		)
+
+		cat:AddLine('text', "")
 
 		for index, data in pairs(platforms[transit]) do
-			if self:IsAlias() then
-				plat_name = data.alias
-			else
-				plat_name = data.name
-			end
-
 			cat = tablet:AddCategory(
-				'text', plat_name,
+				'text', data.alias,
 				'columns', 2,
-				'child_textR', 1,
-				'child_textG', 1,
-				'child_textB', 0
+				'hideBlankLine', true
 			)
 
 			if data.index == platform then
@@ -366,28 +363,38 @@ function Nauticus:ShowTooltip(transit)
 
 			formatted_time = self.formattedTimeCache[floor(plat_time)]
 
-			cat:AddLine('text', depOrArr..":",
+			cat:AddLine(
+				'text', depOrArr..":",
+				'indentation', 10,
 				'text2', formatted_time,
-				'text2R', r, 'text2G', g, 'text2B', b)
+				'font2', NumberFontNormal,
+				'text2R', r, 'text2G', g, 'text2B', b
+			)
 		end
 
-		if self.debug or IsShiftKeyDown() then
-			local cat = tablet:AddCategory(
+		if (self.debug and not IsShiftKeyDown()) or (not self.debug and IsShiftKeyDown()) then
+			cat = tablet:AddCategory(
 				'columns', 2
 			)
 
 			local since, boots, swaps = self:GetKnownCycle(transit)
 
 			cat:AddLine('text', "Age:", 'text2', SecondsToTime(since))
-			cat:AddLine('text', "Boots:", 'text2', boots)
-			cat:AddLine('text', "Swaps:", 'text2', swaps)
+			cat:AddLine('text', "Boots, Swaps:", 'text2', boots..", "..swaps)
 		end
 
 	elseif has == false then
 		local plat_name
 
-		cat:AddLine('text', self:GetActiveRouteName(transit),
-			'justify', "CENTER")
+		cat = tablet:AddCategory(
+			'text', transports[self.lookupIndex[transit]].vessel_name,
+			'columns', 1,
+			'font', GameFontHighlightLarge,
+			'textR', 0.25, 'textG', 0.75, 'textB', 1,
+			'justify', "CENTER"
+		)
+
+		cat:AddLine('text', "")
 
 		for index, data in pairs(platforms[transit]) do
 			if self:IsAlias() then
@@ -396,19 +403,27 @@ function Nauticus:ShowTooltip(transit)
 				plat_name = data.name
 			end
 
-			local cat = tablet:AddCategory(
+			cat = tablet:AddCategory(
 				'text', plat_name,
-				'columns', 2,
-				'child_textR', 1,
-				'child_textG', 1,
-				'child_textB', 0
+				'columns', 1,
+				'hideBlankLine', true
 			)
 
-			cat:AddLine('text', L["Not Available"])
+			cat:AddLine(
+				'text', L["Not Available"],
+				'justify', "CENTER"
+			)
 		end
 
 	elseif has == nil then
-		cat:AddLine('text', L["No Transit Selected"])
+		cat = tablet:AddCategory(
+			'text', L["No Transit Selected"],
+			'columns', 1,
+			'font', GameFontHighlightLarge,
+			'textR', 1, 'textG', 0.25, 'textB', 0,
+			'showWithoutChildren', true,
+			'justify', "CENTER"
+		)
 
 	end
 
