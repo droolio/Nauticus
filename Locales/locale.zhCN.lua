@@ -15,9 +15,9 @@ L:RegisterTranslations("zhCN", function() return {
 ["Departure"] = "出发",
 ["Arr"] = "到达", -- abbreviation for Arrival
 ["Dep"] = "出发", -- abbreviation for Departure
-["None Selected"] = "未选择",
 ["Select Transport"] = "选择路线",
-["No Transit Selected"] = "没有选择路线",
+["Select None"] = "Select None", -- to do
+["No Transport Selected"] = "没有选择路线",
 ["Not Available"] = "无有效计时",
 ["N/A"] = "--", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus 选项",
@@ -32,10 +32,6 @@ L:RegisterTranslations("zhCN", function() return {
 	"只显示你目前所在区域可用的传送点",
 ["Shows only transports in your current zone."] =
 	"只显示你目前所在区域可用的传送点",
-["Display using city aliases"] =
-	"显示使用城市别名",
-["Displays destinations as city aliases instead of zone names (e.g. Undercity instead of Tirisfal Glades)."] =
-	"显示目的地别名 (例如.. 幽暗城代替提瑞斯法林地)",
 ["Click to cycle transport.|nAlt-Click to set up alarm"] =
 	"左键：传送周期 |nAlt+左键：设置报警",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =

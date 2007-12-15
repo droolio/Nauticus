@@ -57,7 +57,6 @@ Nauticus:RegisterDefaults("profile", {
 	zoneGUI = false,
 	factionSpecific = true,
 	zoneSpecific = false,
-	cityAlias = true,
 	filterChat = true,
 	alarmOffset = 20,
 	dataChannel = DEFAULT_CHANNEL,
@@ -405,15 +404,9 @@ function Nauticus:Clock_OnUpdate(elapse)
 		cycle, platform = liveData.cycle, liveData.index
 
 		local lowestTime = 500
-		local plat_name, plat_time, formatted_time, depOrArr, colour
+		local plat_time, formatted_time, depOrArr, colour
 
 		for index, data in pairs(platforms[transit]) do
-			if self:IsAlias() then
-				plat_name = data.alias
-			else
-				plat_name = data.name
-			end
-
 			if data.index == platform then
 				-- we're at a platform and waiting to depart
 				plat_time = self:CalcTripCycleTimeByIndex(transit, platform) - cycle
@@ -456,7 +449,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 			end
 
 			if NautFrame:IsVisible() then
-				getglobal("NautFramePlat"..index.."Name"):SetText(plat_name)
+				getglobal("NautFramePlat"..index.."Name"):SetText(data.name)
 				getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(YELLOW..depOrArr..":")
 				getglobal("NautFramePlat"..index.."Time"):SetText(colour..formatted_time)
 			end

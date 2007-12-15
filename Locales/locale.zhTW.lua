@@ -15,9 +15,9 @@ L:RegisterTranslations("zhTW", function() return {
 ["Departure"] = "出發",
 ["Arr"] = "抵達", -- abbreviation for Arrival
 ["Dep"] = "出發", -- abbreviation for Departure
-["None Selected"] = "未選擇",
 ["Select Transport"] = "選擇路線",
-["No Transit Selected"] = "沒有選擇路線",
+["Select None"] = "Select None", -- to do
+["No Transport Selected"] = "沒有選擇路線",
 ["Not Available"] = "無有效計時",
 ["N/A"] = "--", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus 選項",
@@ -32,10 +32,6 @@ L:RegisterTranslations("zhTW", function() return {
 	"只顯示你目前區域可用的傳輸點",
 ["Shows only transports in your current zone."] =
 	"只顯示你目前區域可用的傳輸點",
-["Display using city aliases"] =
-	"顯示使用城市別名",
-["Displays destinations as city aliases instead of zone names (e.g. Undercity instead of Tirisfal Glades)."] =
-	"顯示目的地別名 (例如.. 幽暗城代替提里斯法林地)",
 ["Click to cycle transport.|nAlt-Click to set up alarm"] =
 	"左鍵：運輸週期 |nAlt+左鍵：設定鬧鈴",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =

@@ -41,15 +41,6 @@ function Nauticus:ToggleZone()
 	NautOptionsFrameOptZoneSpecific:SetChecked(self.db.profile.zoneSpecific)
 end
 
-function Nauticus:IsAlias()
-    return self.db.profile.cityAlias
-end
-
-function Nauticus:ToggleAlias()
-    self.db.profile.cityAlias = not self.db.profile.cityAlias
-	NautOptionsFrameOptCityAlias:SetChecked(self.db.profile.cityAlias)
-end
-
 function Nauticus:IsRouteShown(i)
 	local addtrans = false
 
@@ -103,29 +94,22 @@ function Nauticus:GetNextShownRoute()
 	return transports[addtrans].label
 end
 
-function Nauticus:GetActiveRouteName(transit)
-	if not transit then transit = self.activeTransit; end
-	if transit == -1 then return L["None Selected"]; end
-
-	if self:IsAlias() then
-		return transports[self.lookupIndex[transit]].namealias
-	else
-		return transports[self.lookupIndex[transit]].name
-	end
-end
-
 function Nauticus:TransportSelectInitialise(level)
 
 	if level == 1 then
 		local info, textdesc
 
-		for i = 0, #(transports), 1 do
-			if transports[i].faction == -1 or self:IsRouteShown(i) then
-				if self:IsAlias() then
-					textdesc = transports[i].namealias
-				else
-					textdesc = transports[i].name
-				end
+		info = UIDropDownMenu_CreateInfo()
+		info.text = YELLOW..L["Select None"]
+		info.value = 0
+		if self.activeTransit == -1 then info.checked = true; end
+		info.func = function() Nauticus:TransportSelect_OnClick() end
+
+		UIDropDownMenu_AddButton(info)
+
+		for i = 1, #(transports), 1 do
+			if self:IsRouteShown(i) then
+				textdesc = transports[i].name
 
 				if self:HasKnownCycle(transports[i].label) then
 					textdesc = GREEN..textdesc
@@ -156,7 +140,7 @@ function Nauticus:TransportSelectSetNone()
 
 	if has == nil then
 		for index = 1, 2 do
-			getglobal("NautFramePlat"..index.."Name"):SetText(L["None Selected"])
+			getglobal("NautFramePlat"..index.."Name"):SetText(L["No Transport Selected"])
 			getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(L["Not Available"])
 			getglobal("NautFramePlat"..index.."Time"):SetText(L["N/A"])
 		end
@@ -166,16 +150,9 @@ function Nauticus:TransportSelectSetNone()
 
 	elseif has == false then
 		local transit = self.activeTransit
-		local plat_name
 
 		for index, data in pairs(platforms[transit]) do
-			if self:IsAlias() then
-				plat_name = data.alias
-			else
-				plat_name = data.name
-			end
-
-			getglobal("NautFramePlat"..index.."Name"):SetText(plat_name)
+			getglobal("NautFramePlat"..index.."Name"):SetText(data.name)
 			getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(L["Not Available"])
 			getglobal("NautFramePlat"..index.."Time"):SetText(L["N/A"])
 		end
@@ -267,7 +244,6 @@ function Nauticus:OptionsSave_OnClick()
 	self.db.profile.zoneGUI = NautOptionsFrameOptZoneGUI:GetChecked() ~= nil
 	self.db.profile.factionSpecific = NautOptionsFrameOptFactionSpecific:GetChecked() ~= nil
 	self.db.profile.zoneSpecific = NautOptionsFrameOptZoneSpecific:GetChecked() ~= nil
-	self.db.profile.cityAlias = NautOptionsFrameOptCityAlias:GetChecked() ~= nil
 
 	NautOptionsFrame:Hide()
 end
@@ -276,7 +252,6 @@ function Nauticus:OptionsClose_OnClick()
 	NautOptionsFrameOptZoneGUI:SetChecked(self:IsZoneGUI())
 	NautOptionsFrameOptFactionSpecific:SetChecked(self:IsFactionSpecific())
 	NautOptionsFrameOptZoneSpecific:SetChecked(self:IsZoneSpecific())
-	NautOptionsFrameOptCityAlias:SetChecked(self:IsAlias())
 
 	NautOptionsFrame:Hide()
 end
@@ -287,7 +262,6 @@ function Nauticus:InitialiseUI()
 	NautOptionsFrameOptZoneGUI:SetChecked(self:IsZoneGUI())
 	NautOptionsFrameOptFactionSpecific:SetChecked(self:IsFactionSpecific())
 	NautOptionsFrameOptZoneSpecific:SetChecked(self:IsZoneSpecific())
-	NautOptionsFrameOptCityAlias:SetChecked(self:IsAlias())
 
 	NautHeaderFrameAddonName:SetText("Nauticus v"..self.versionStr)
 
@@ -301,7 +275,6 @@ function Nauticus:InitialiseUI()
 	NautOptionsFrameOptZoneGUIText:SetText(L["Show GUI when zone change contains a transport"])
 	NautOptionsFrameOptFactionSpecificText:SetText(L["Show only transports for your faction"])
 	NautOptionsFrameOptZoneSpecificText:SetText(L["Show only transports in your current zone"])
-	NautOptionsFrameOptCityAliasText:SetText(L["Display using city aliases"])
 
 	NautOptionsFrameCloseOptionsButtonText:SetText(L["Close"])
 	NautOptionsFrameSaveOptionsButtonText:SetText(L["Save"])
@@ -334,7 +307,7 @@ function Nauticus:ShowTooltip(transit)
 
 		for index, data in pairs(platforms[transit]) do
 			cat = tablet:AddCategory(
-				'text', data.alias,
+				'text', data.name,
 				'columns', 2,
 				'hideBlankLine', true
 			)
@@ -367,7 +340,7 @@ function Nauticus:ShowTooltip(transit)
 				'text', depOrArr..":",
 				'indentation', 10,
 				'text2', formatted_time,
-				'font2', NumberFontNormal,
+				'font2', Naut_NumberFont,
 				'text2R', r, 'text2G', g, 'text2B', b
 			)
 		end
@@ -384,8 +357,6 @@ function Nauticus:ShowTooltip(transit)
 		end
 
 	elseif has == false then
-		local plat_name
-
 		cat = tablet:AddCategory(
 			'text', transports[self.lookupIndex[transit]].vessel_name,
 			'columns', 1,
@@ -397,14 +368,8 @@ function Nauticus:ShowTooltip(transit)
 		cat:AddLine('text', "")
 
 		for index, data in pairs(platforms[transit]) do
-			if self:IsAlias() then
-				plat_name = data.alias
-			else
-				plat_name = data.name
-			end
-
 			cat = tablet:AddCategory(
-				'text', plat_name,
+				'text', data.name,
 				'columns', 1,
 				'hideBlankLine', true
 			)
@@ -417,7 +382,7 @@ function Nauticus:ShowTooltip(transit)
 
 	elseif has == nil then
 		cat = tablet:AddCategory(
-			'text', L["No Transit Selected"],
+			'text', L["No Transport Selected"],
 			'columns', 1,
 			'font', GameFontHighlightLarge,
 			'textR', 1, 'textG', 0.25, 'textB', 0,

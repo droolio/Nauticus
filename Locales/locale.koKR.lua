@@ -15,9 +15,9 @@ L:RegisterTranslations("koKR", function() return {
 ["Departure"] = "출발",
 ["Arr"] = "Arr", -- abbreviation for Arrival
 ["Dep"] = "Dep", -- abbreviation for Departure
-["None Selected"] = "선택하지 않음",
 ["Select Transport"] = "이동수단을 선택하세요",
-["No Transit Selected"] = "No Transit Selected",
+["Select None"] = "Select None", -- to do
+["No Transport Selected"] = "No Transport Selected",
 ["Not Available"] = "Not Available",
 ["N/A"] = "N/A", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus Options",
@@ -32,10 +32,6 @@ L:RegisterTranslations("koKR", function() return {
 	"현재 지역의 이동수단만 표시",
 ["Shows only transports in your current zone."] =
 	"Shows only transports in your current zone.",
-["Display using city aliases"] =
-	"도착지의 다른이름 표시",
-["Displays destinations as city aliases instead of zone names (e.g. Undercity instead of Tirisfal Glades)."] =
-	"Displays destinations as city aliases instead of zone names (예. 티리스팔 숲 -> 언더시티).",
 ["Click to cycle transport.|nAlt-Click to set up alarm"] =
 	"Click to cycle transport.|nAlt-Click to set up alarm",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =

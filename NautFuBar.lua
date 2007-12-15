@@ -49,15 +49,6 @@ function NauticusFu:ToggleZone()
     self:Update()
 end
 
-function NauticusFu:IsAlias()
-    return Nauticus:IsAlias()
-end
-
-function NauticusFu:ToggleAlias()
-    Nauticus:ToggleAlias()
-    self:Update()
-end
-
 local tablet = Nauticus.tablet
 function NauticusFu:OnTooltipUpdate()
 	Nauticus:ShowTooltip(Nauticus.activeTransit)
@@ -88,19 +79,10 @@ function NauticusFu:OnMenuRequest(level, value, inTooltip)
 		'tooltipText', L["Shows only transports in your current zone."]
 	)
 
-	dewdrop:AddLine(
-		'text', L["Display using city aliases"],
-		'arg1', self,
-		'func', "ToggleAlias",
-		'checked', self:IsAlias(),
-		'tooltipTitle', L["Display using city aliases"],
-		'tooltipText', L["Displays destinations as city aliases instead of zone names (e.g. Undercity instead of Tirisfal Glades)."]
-	)
-
 	dewdrop:AddSeparator()
 
 	dewdrop:AddLine(
-		'text', YELLOW.."Select None",
+		'text', YELLOW..L["Select None"],
 		'checked', (Nauticus.activeTransit == -1),
 		'func', function() self:SetTransport(0) end
 	)
@@ -109,11 +91,7 @@ function NauticusFu:OnMenuRequest(level, value, inTooltip)
 
 	for i = 1, #(transports), 1 do
 		if Nauticus:IsRouteShown(i) then
-			if self:IsAlias() then
-				textdesc = transports[i].namealias
-			else
-				textdesc = transports[i].name
-			end
+			textdesc = transports[i].name
 
 			if Nauticus:HasKnownCycle(transports[i].label) then
 				textdesc = GREEN..textdesc
@@ -170,17 +148,9 @@ function NauticusFu:OnClick()
 	Nauticus.activeTransit = Nauticus:GetNextShownRoute()
 	Nauticus.db.char.activeTransit = Nauticus.activeTransit
 
-	local colour
-
-	if Nauticus:HasKnownCycle(Nauticus.activeTransit) then
-		colour = GREEN
-	else
-		colour = RED
-	end
-
 	-- set temporary button text so you know which one is currently selected
-	if Nauticus:HasKnownCycle(activeTransit) then
-		Nauticus.tempText = colour..Nauticus:GetActiveRouteName()
+	if Nauticus:HasKnownCycle(Nauticus.activeTransit) then
+		Nauticus.tempText = GREEN..transports[Nauticus.lookupIndex[Nauticus.activeTransit]].name
 		Nauticus.tempTextCount = 2
 		self:SetText(Nauticus.tempText)
 	end
@@ -193,8 +163,8 @@ function NauticusFu:SetTransport(id)
 	Nauticus.activeTransit = transports[id].label
 	Nauticus.db.char.activeTransit = Nauticus.activeTransit
 
-	if Nauticus:HasKnownCycle(activeTransit) then
-		Nauticus.tempText = Nauticus:GetActiveRouteName()
+	if Nauticus:HasKnownCycle(Nauticus.activeTransit) then
+		Nauticus.tempText = GREEN..transports[id].name
 		Nauticus.tempTextCount = 2
 		self:SetText(Nauticus.tempText)
 	end

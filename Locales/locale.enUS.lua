@@ -15,9 +15,9 @@ L:RegisterTranslations("enUS", function() return {
 ["Departure"] = true,
 ["Arr"] = true, -- abbreviation for Arrival
 ["Dep"] = true, -- abbreviation for Departure
-["None Selected"] = true,
 ["Select Transport"] = true,
-["No Transit Selected"] = true,
+["Select None"] = true,
+["No Transport Selected"] = true,
 ["Not Available"] = true,
 ["N/A"] = true, -- abbreviation for Not Available
 ["Nauticus Options"] = true,
@@ -27,8 +27,6 @@ L:RegisterTranslations("enUS", function() return {
 ["Shows only neutral and transports specific to your faction."] = true,
 ["Show only transports in your current zone"] = true,
 ["Shows only transports in your current zone."] = true,
-["Display using city aliases"] = true,
-["Displays destinations as city aliases instead of zone names (e.g. Undercity instead of Tirisfal Glades)."] = true,
 ["Click to cycle transport.|nAlt-Click to set up alarm"] = true,
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = true,
 ["Type /nauticus or /naut gui show to show again."] = true,

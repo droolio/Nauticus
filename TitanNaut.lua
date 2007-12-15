@@ -121,20 +121,15 @@ function TitanPanelRightClickMenu_PrepareNauticusMenu()
 
 	Naut_TitanPanelRightClickMenu_AddToggleVar(L["Show only transports for your faction"], Nauticus:IsFactionSpecific(), function() Nauticus:ToggleFaction() end)
 	Naut_TitanPanelRightClickMenu_AddToggleVar(L["Show only transports in your current zone"], Nauticus:IsZoneSpecific(), function() Nauticus:ToggleZone() end)
-	Naut_TitanPanelRightClickMenu_AddToggleVar(L["Display using city aliases"], Nauticus:IsAlias(), function() Nauticus:ToggleAlias() end)
 
 	TitanPanelRightClickMenu_AddSpacer()
-	TitanPanelRightClickMenu_AddCommand(YELLOW.."Select None", 0, "TitanPanelNauticusButton_SetTransport")
+	TitanPanelRightClickMenu_AddCommand(YELLOW..L["Select None"], 0, "TitanPanelNauticusButton_SetTransport")
 
 	local textdesc
 
 	for i = 1, #(transports), 1 do
 		if Nauticus:IsRouteShown(i) then
-			if Nauticus:IsAlias() then
-				textdesc = transports[i].namealias
-			else
-				textdesc = transports[i].name
-			end
+			textdesc = transports[i].name
 
 			if Nauticus:HasKnownCycle(transports[i].label) then
 				textdesc = GREEN..textdesc
@@ -200,7 +195,7 @@ function TitanPanelNauticusButton_OnClick(event)
 	end
 
 	-- set temporary button text so you know which one is currently selected
-	Nauticus.tempText = colour..Nauticus:GetActiveRouteName()
+	Nauticus.tempText = colour..transports[Nauticus.lookupIndex[Nauticus.activeTransit]].name
 	Nauticus.tempTextCount = 2
 	TitanPanelButton_SetButtonText(TITAN_NAUT_ID)
 	Nauticus:TransportSelectSetNone()
@@ -211,8 +206,16 @@ function TitanPanelNauticusButton_SetTransport()
 	Nauticus.activeTransit = transports[this.value].label
 	Nauticus.db.char.activeTransit = Nauticus.activeTransit
 
+	local colour
+
+	if Nauticus:HasKnownCycle(Nauticus.activeTransit) then
+		colour = GREEN
+	else
+		colour = RED
+	end
+
 	if Nauticus.activeTransit ~= -1 then
-		Nauticus.tempText = Nauticus:GetActiveRouteName()
+		Nauticus.tempText = colour..transports[this.value].name
 		Nauticus.tempTextCount = 2
 	end
 

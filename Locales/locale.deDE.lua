@@ -15,9 +15,9 @@ L:RegisterTranslations("deDE", function() return {
 ["Departure"] = "Abfahrt",
 ["Arr"] = "Arr", -- abbreviation for Arrival
 ["Dep"] = "Dep", -- abbreviation for Departure
-["None Selected"] = "Nichts gew\195\164hlt",
 ["Select Transport"] = "Route w\195\164hlen",
-["No Transit Selected"] = "No Transit Selected",
+["Select None"] = "Select None", -- to do
+["No Transport Selected"] = "No Transport Selected",
 ["Not Available"] = "Nicht Erreichbar",
 ["N/A"] = "N/A", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus Options",
@@ -32,10 +32,6 @@ L:RegisterTranslations("deDE", function() return {
 	"Zeige nur Transportmittel der momentanen Zone",
 ["Shows only transports in your current zone."] =
 	"Zeigt nur Transportmittel der momentanen Zone.",
-["Display using city aliases"] =
-	"Zeige Stadtnamen",
-["Displays destinations as city aliases instead of zone names (e.g. Undercity instead of Tirisfal Glades)."] =
-	"Zeigt Ziele als Stadtnamen nicht als Zonennamen an (bsp. Understadt <-> Tirisfal).",
 ["Click to cycle transport.|nAlt-Click to set up alarm"] =
 	"Klick - Reiseroute ausw\195\164hlen.|nAlt-Klick - Alarm aktivieren.",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
