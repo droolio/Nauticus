@@ -608,18 +608,18 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 		<Button name="TitanPanelNauticusButton" inherits="TitanPanelComboTemplate" frameStrata="FULLSCREEN" toplevel="true">
 			<Scripts>
 				<OnEvent>
-					TitanPanelNauticusButton_OnEvent()
+					Naut_TitanPanelButton_OnEvent()
 				</OnEvent>
 				<OnLoad>
 					if IsAddOnLoaded("Titan") then
-						TitanPanelNauticusButton_OnLoad()
+						Naut_TitanPanelButton_OnLoad()
 						TitanPanelButton_OnLoad()
 					else
 						this:Hide()
 					end
 				</OnLoad>
 				<OnClick>
-					TitanPanelNauticusButton_OnClick(arg1)
+					Naut_TitanPanelButton_OnClick(arg1)
 					TitanPanelButton_OnClick(arg1)
 				</OnClick>
 			</Scripts>

@@ -13,6 +13,8 @@ local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
+local tablet = AceLibrary("Tablet-2.0")
+
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 local rtts, platforms, transports, transitData =
@@ -281,8 +283,6 @@ function Nauticus:InitialiseUI()
 
 end
 
-Nauticus.tablet = AceLibrary("Tablet-2.0")
-local tablet = Nauticus.tablet
 function Nauticus:ShowTooltip(transit)
 
 	local cat
@@ -347,13 +347,27 @@ function Nauticus:ShowTooltip(transit)
 
 		if (self.debug and not IsShiftKeyDown()) or (not self.debug and IsShiftKeyDown()) then
 			cat = tablet:AddCategory(
-				'columns', 2
+				'text', "Debug",
+				'columns', 2,
+				'textR', 0.75, 'textG', 0.75, 'textB', 0.75,
+				'hideBlankLine', true
 			)
 
 			local since, boots, swaps = self:GetKnownCycle(transit)
 
-			cat:AddLine('text', "Age:", 'text2', SecondsToTime(since))
-			cat:AddLine('text', "Boots, Swaps:", 'text2', boots..", "..swaps)
+			cat:AddLine(
+				'text', "Age:",
+				'indentation', 10,
+				'text2', SecondsToTime(since),
+				'font2', Naut_NumberFont
+			)
+
+			cat:AddLine(
+				'text', "Boots, Swaps:",
+				'indentation', 10,
+				'text2', boots..", "..swaps,
+				'font2', Naut_NumberFont
+			)
 		end
 
 	elseif has == false then

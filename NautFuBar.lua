@@ -15,6 +15,10 @@ local Nauticus, NauticusFu = Nauticus, NauticusFu
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
+local tablet = AceLibrary("Tablet-2.0")
+
+local dewdrop = AceLibrary("Dewdrop-2.0")
+
 local transports, transitData =
 	Nauticus.transports, Nauticus.transitData
 
@@ -49,14 +53,11 @@ function NauticusFu:ToggleZone()
     self:Update()
 end
 
-local tablet = Nauticus.tablet
 function NauticusFu:OnTooltipUpdate()
 	Nauticus:ShowTooltip(Nauticus.activeTransit)
     tablet:SetHint(L["Click to cycle transport.|nAlt-Click to set up alarm"])
 end
 
--- NOT using an AceOptions data table
-local dewdrop = AceLibrary("Dewdrop-2.0")
 function NauticusFu:OnMenuRequest(level, value, inTooltip)
 
 	if inTooltip then return end

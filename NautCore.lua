@@ -19,6 +19,8 @@ Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEve
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
+local tablet = AceLibrary("Tablet-2.0")
+
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 local Nauticus = Nauticus
@@ -461,7 +463,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 	end
 
 	if self.iconTooltip then
-		self.tablet:Refresh(self.iconTooltip)
+		tablet:Refresh(self.iconTooltip)
 	end
 
 end

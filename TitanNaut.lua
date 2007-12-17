@@ -16,6 +16,10 @@ local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
+local tablet = AceLibrary("Tablet-2.0")
+
+local dewdrop = AceLibrary("Dewdrop-2.0")
+
 local rtts, platforms, transports, transitData =
 	Nauticus.rtts, Nauticus.platforms, Nauticus.transports, Nauticus.transitData
 
@@ -23,17 +27,19 @@ local rtts, platforms, transports, transitData =
 local TITAN_NAUT_ID = "Nauticus"
 local TITAN_NAUT_ARTWORK = "Interface\\AddOns\\Nauticus\\Artwork\\"
 
-local Naut_TitanPanelButton_OnTooltipUpdate
+local Naut_TitanPanelButton_OnTooltipUpdate, Naut_TitanPanelButton_SetTransport
+
+local Pre_TitanUtils_CloseRightClickMenu, Naut_TitanUtils_CloseRightClickMenu
 
 
-function TitanPanelNauticusButton_OnLoad()
+function Naut_TitanPanelButton_OnLoad()
 
 	this.registry = {
 		id = TITAN_NAUT_ID,
 		category = "Information",
 		version = Nauticus.versionStr,
 		menuText = "Nauticus", 
-		buttonTextFunction = "TitanPanelNauticusButton_GetButtonText",
+		buttonTextFunction = "Naut_TitanPanelButton_GetButtonText",
 		tooltipTitle = "Nauticus",
 		tooltipCustomFunction = Naut_TitanPanelButton_OnTooltipUpdate,
 		frequency = 1,
@@ -47,28 +53,28 @@ function TitanPanelNauticusButton_OnLoad()
 
 	this:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
-	Pre_TitanToggleVar = TitanToggleVar
-	TitanToggleVar = Naut_TitanToggleVar
+	Pre_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu
+	TitanUtils_CloseRightClickMenu = Naut_TitanUtils_CloseRightClickMenu
 
 end
 
--- hook toggle button
-function Naut_TitanToggleVar(id, var)
-	if id == TITAN_NAUT_ID then
-		TitanPanelRightClickMenu_Close()
+-- hook menu close
+function Naut_TitanUtils_CloseRightClickMenu()
+	Pre_TitanUtils_CloseRightClickMenu()
+
+	if dewdrop:GetOpenedParent() then
+		dewdrop:Close()
 	end
-
-	return Pre_TitanToggleVar(id, var)
 end
 
-function TitanPanelNauticusButton_OnEvent()
+function Naut_TitanPanelButton_OnEvent()
 	if event == "ZONE_CHANGED_NEW_AREA" then
 		TitanPanelRightClickMenu_Close()
 	end
 end
 
 function Naut_TitanPanelButton_OnTooltipUpdate()
-	local tablet = Nauticus.tablet
+	if dewdrop:IsOpen(this) then return; end
 
 	if not tablet:IsRegistered(this) then
 		tablet:Register(this,
@@ -78,20 +84,12 @@ function Naut_TitanPanelButton_OnTooltipUpdate()
 				tablet:SetHint(L["Click to cycle transport.|nAlt-Click to set up alarm"])
 			end,
 			'point', function(parent)
-				local x, y = GetCursorPosition()
-				local cx, cy = GetScreenWidth() / 2, GetScreenHeight() / 2
-				if x > cx then
-					if y < cy then
-						return "BOTTOMRIGHT", "TOPRIGHT"
-					else
-						return "TOPRIGHT", "BOTTOMRIGHT"
-					end
+				local _, y = GetCursorPosition()
+				local cy = GetScreenHeight() / 2
+				if y < cy then
+					return "BOTTOMLEFT", "TOPLEFT"
 				else
-					if y < cy then
-						return "BOTTOMLEFT", "TOPLEFT"
-					else
-						return "TOPLEFT", "BOTTOMLEFT"
-					end
+					return "TOPLEFT", "BOTTOMLEFT"
 				end
 			end,
 			'dontHook', true
@@ -102,49 +100,94 @@ function Naut_TitanPanelButton_OnTooltipUpdate()
 	tablet:Open(this)
 end
 
-local function Naut_TitanPanelButton_Close()
-	Nauticus.tablet:Close(this)
-end
-
-function Naut_TitanPanelRightClickMenu_AddToggleVar(text, var, toggleFunc)
-	local info = {}
-	info.text = text
-	info.func = toggleFunc
-	info.checked = var
-	info.keepShownOnClick = 1
-	UIDropDownMenu_AddButton(info)
-end
-
 function TitanPanelRightClickMenu_PrepareNauticusMenu()
 
-	TitanPanelRightClickMenu_AddTitle(TitanPlugins[TITAN_NAUT_ID].menuText)
+	if not dewdrop:IsRegistered(this) then
+		dewdrop:Register(this,
+			'children', function()
+				dewdrop:AddLine(
+					'text', TitanPlugins[TITAN_NAUT_ID].menuText,
+					'isTitle', true
+				)
 
-	Naut_TitanPanelRightClickMenu_AddToggleVar(L["Show only transports for your faction"], Nauticus:IsFactionSpecific(), function() Nauticus:ToggleFaction() end)
-	Naut_TitanPanelRightClickMenu_AddToggleVar(L["Show only transports in your current zone"], Nauticus:IsZoneSpecific(), function() Nauticus:ToggleZone() end)
+				dewdrop:AddLine(
+					'text', L["Show only transports for your faction"],
+					'arg1', Nauticus,
+					'func', "ToggleFaction",
+					'checked', Nauticus:IsFactionSpecific(),
+					'tooltipTitle', L["Show only transports for your faction"],
+					'tooltipText', L["Shows only neutral and transports specific to your faction."]
+				)
 
-	TitanPanelRightClickMenu_AddSpacer()
-	TitanPanelRightClickMenu_AddCommand(YELLOW..L["Select None"], 0, "TitanPanelNauticusButton_SetTransport")
+				dewdrop:AddLine(
+					'text', L["Show only transports in your current zone"],
+					'arg1', Nauticus,
+					'func', "ToggleZone",
+					'checked', Nauticus:IsZoneSpecific(),
+					'tooltipTitle', L["Show only transports in your current zone"],
+					'tooltipText', L["Shows only transports in your current zone."]
+				)
 
-	local textdesc
+				dewdrop:AddSeparator()
 
-	for i = 1, #(transports), 1 do
-		if Nauticus:IsRouteShown(i) then
-			textdesc = transports[i].name
+				dewdrop:AddLine(
+					'text', YELLOW..L["Select None"],
+					'checked', (Nauticus.activeTransit == -1),
+					'func', Naut_TitanPanelButton_SetTransport,
+					'arg1', 0
+				)
 
-			if Nauticus:HasKnownCycle(transports[i].label) then
-				textdesc = GREEN..textdesc
-			end
+				local textdesc
 
-			TitanPanelRightClickMenu_AddCommand(textdesc, i, "TitanPanelNauticusButton_SetTransport")
-		end
+				for i = 1, #(transports), 1 do
+					if Nauticus:IsRouteShown(i) then
+						textdesc = transports[i].name
+
+						if Nauticus:HasKnownCycle(transports[i].label) then
+							textdesc = GREEN..textdesc
+						end
+
+						dewdrop:AddLine(
+							'text', textdesc,
+							'checked', (transports[i].label == Nauticus.activeTransit),
+							'func', Naut_TitanPanelButton_SetTransport,
+							'arg1', i
+						)
+					end
+				end
+
+				dewdrop:AddSeparator()
+
+				dewdrop:AddLine(
+					'text', TITAN_PANEL_MENU_HIDE,
+					'func', function()
+						TitanPanel_RemoveButton(TITAN_NAUT_ID)
+						dewdrop:Close()
+					end
+				)
+			end,
+			'point', function(parent)
+				local _, y = GetCursorPosition()
+				local cy = GetScreenHeight() / 2
+				if y < cy then
+					return "BOTTOMLEFT", "TOPLEFT"
+				else
+					return "TOPLEFT", "BOTTOMLEFT"
+				end
+			end,
+			'dontHook', true
+		)
 	end
 
-	TitanPanelRightClickMenu_AddSpacer()
-	TitanPanelRightClickMenu_AddCommand(TITAN_PANEL_MENU_HIDE, TITAN_NAUT_ID, TITAN_PANEL_MENU_FUNC_HIDE)
+	if dewdrop:IsOpen(this) then
+		dewdrop:Close()
+	elseif this:IsShown() then
+		dewdrop:Open(this)
+	end
 
 end
 
-function TitanPanelNauticusButton_GetButtonText(id)
+function Naut_TitanPanelButton_GetButtonText(id)
 	if Nauticus:IsAlarmSet() then
 		TitanPanelNauticusButton.registry.icon = "Interface\\Icons\\INV_Misc_PocketWatch_02"
 	else
@@ -159,11 +202,15 @@ function TitanPanelNauticusButton_GetButtonText(id)
 	return Nauticus.lowestNameTime
 end
 
-function TitanPanelNauticusButton_OnClick(event)
+function Naut_TitanPanelButton_OnClick(event)
 
-	Naut_TitanPanelButton_Close()
+	tablet:Close()
 
 	if event ~= "LeftButton" then return; end
+
+	if dewdrop:IsOpen(this) then
+		dewdrop:Close()
+	end
 
 	if IsAltKeyDown() then
 		if Nauticus.activeTransit ~= -1 then
@@ -202,8 +249,8 @@ function TitanPanelNauticusButton_OnClick(event)
 
 end
 
-function TitanPanelNauticusButton_SetTransport()
-	Nauticus.activeTransit = transports[this.value].label
+function Naut_TitanPanelButton_SetTransport(id)
+	Nauticus.activeTransit = transports[id].label
 	Nauticus.db.char.activeTransit = Nauticus.activeTransit
 
 	local colour
@@ -215,7 +262,7 @@ function TitanPanelNauticusButton_SetTransport()
 	end
 
 	if Nauticus.activeTransit ~= -1 then
-		Nauticus.tempText = colour..transports[this.value].name
+		Nauticus.tempText = colour..transports[id].name
 		Nauticus.tempTextCount = 2
 	end
 
