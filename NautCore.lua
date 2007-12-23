@@ -483,7 +483,7 @@ function Nauticus:CheckTriggers_OnUpdate(elapse)
 
 	-- have we moved by at least 17 game yards since the last check? this equates to >~300% movement speed
 	if 17.0 < NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy) and
-		not IsFlying() then
+		not UnitOnTaxi("player") then
 
 		--check X/Y coords against all triggers for all transports in current zone
 		for transit, i in pairs(self.currentZoneTransports) do
