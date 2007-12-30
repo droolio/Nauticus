@@ -9,16 +9,22 @@ local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
 
+-- constants
+local ARTWORK_PATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
+local ARTWORK_LOGO = ARTWORK_PATH.."NauticusLogo"
+local ARTWORK_ALARM = "Interface\\Icons\\INV_Misc_PocketWatch_02"
+
 local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
 local tablet = AceLibrary("Tablet-2.0")
+local dewdrop = AceLibrary("Dewdrop-2.0")
 
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
-local rtts, platforms, transports, transitData =
-	Nauticus.rtts, Nauticus.platforms, Nauticus.transports, Nauticus.transitData
+local rtts, platforms, transports =
+	Nauticus.rtts, Nauticus.platforms, Nauticus.transports
 
 
 function Nauticus:IsZoneGUI()
@@ -41,6 +47,12 @@ end
 function Nauticus:ToggleZone()
     self.db.profile.zoneSpecific = not self.db.profile.zoneSpecific
 	NautOptionsFrameOptZoneSpecific:SetChecked(self.db.profile.zoneSpecific)
+end
+
+function Nauticus:GetButtonIconText()
+	return
+		self:IsAlarmSet() and ARTWORK_ALARM or self.icon,
+		self.tempTextCount > 0 and self.tempText or self.lowestNameTime
 end
 
 function Nauticus:IsRouteShown(i)
@@ -67,33 +79,53 @@ function Nauticus:IsRouteShown(i)
 	return addtrans
 end
 
-function Nauticus:GetNextShownRoute()
-	local isNotEmpty, isFound, addtrans, first
+function Nauticus:Button_OnClick()
 
-	for i = 1, #(transports), 1 do
-		addtrans = Nauticus:IsRouteShown(i)
-		isNotEmpty = isNotEmpty or addtrans
-		if not first and addtrans then first = i; end
+	if IsAltKeyDown() then
+		if self:HasKnownCycle(self.activeTransit) then
+			self:ToggleAlarm()
 
-		if not isFound then
-			if transports[i].label == Nauticus.activeTransit then
-				isFound = true
+			-- set temporary button text so you know what's happening
+			if self:IsAlarmSet() then
+				self.tempText = "Alarm "..RED.."ON"
+			else
+				self.tempText = "Alarm OFF"
 			end
-		else
-			if addtrans then
-				addtrans = i
-				break
+
+			self.tempTextCount = 2
+			NauticusFu:SetText(self.tempText)
+			if self.TitanPanelButton_SetText then self:TitanPanelButton_SetText(); end
+		end
+
+	else
+		local isNotEmpty, isFound, addtrans, first
+
+		for i = 1, #(transports), 1 do
+			addtrans = Nauticus:IsRouteShown(i)
+			isNotEmpty = isNotEmpty or addtrans
+			if not first and addtrans then first = i; end
+
+			if not isFound then
+				if transports[i].label == Nauticus.activeTransit then
+					isFound = true
+				end
+			else
+				if addtrans then
+					addtrans = i
+					break
+				end
 			end
 		end
+
+		if not isNotEmpty then
+			addtrans = 0
+		elseif type(addtrans) ~= "number" then
+			addtrans = first
+		end
+
+		self:SetTransport(addtrans)
 	end
 
-	if not isNotEmpty then
-		addtrans = 0
-	elseif type(addtrans) ~= "number" then
-		addtrans = first
-	end
-
-	return transports[addtrans].label
 end
 
 function Nauticus:TransportSelectInitialise(level)
@@ -130,9 +162,74 @@ function Nauticus:TransportSelectInitialise(level)
 
 end
 
+function Nauticus:ShowMenu()
+
+	dewdrop:AddLine(
+		'text', L["Show only transports for your faction"],
+		'arg1', self,
+		'func', "ToggleFaction",
+		'checked', self:IsFactionSpecific(),
+		'tooltipTitle', L["Show only transports for your faction"],
+		'tooltipText', L["Shows only neutral and transports specific to your faction."]
+	)
+
+	dewdrop:AddLine(
+		'text', L["Show only transports in your current zone"],
+		'arg1', self,
+		'func', "ToggleZone",
+		'checked', self:IsZoneSpecific(),
+		'tooltipTitle', L["Show only transports in your current zone"],
+		'tooltipText', L["Shows only transports in your current zone."]
+	)
+
+	dewdrop:AddSeparator()
+
+	dewdrop:AddLine(
+		'text', YELLOW..L["Select None"],
+		'checked', (self.activeTransit == -1),
+		'func', function() self:SetTransport(0) end
+	)
+
+	local textdesc
+
+	for i = 1, #(transports), 1 do
+		if Nauticus:IsRouteShown(i) then
+			textdesc = transports[i].name
+
+			if self:HasKnownCycle(transports[i].label) then
+				textdesc = GREEN..textdesc
+			end
+
+			dewdrop:AddLine(
+				'text', textdesc,
+				'checked', (transports[i].label == self.activeTransit),
+				'func', function(i) self:SetTransport(i) end,
+				'arg1', i
+			)
+		end
+	end
+
+	dewdrop:AddSeparator()
+
+end
+
 function Nauticus:TransportSelect_OnClick()
-	self.activeTransit = transports[this.value].label
+	self:SetTransport(this.value)
+end
+
+function Nauticus:SetTransport(id)
+	self.activeTransit = transports[id].label
 	self.db.char.activeTransit = self.activeTransit
+
+	if self:HasKnownCycle(self.activeTransit) then
+		self.tempText = GREEN..transports[id].name
+		self.tempTextCount = 2
+		NauticusFu:SetText(self.tempText)
+		if self.TitanPanelButton_SetText then self:TitanPanelButton_SetText(); end
+	else
+		self.tempTextCount = 0
+	end
+
 	self:TransportSelectSetNone()
 end
 
@@ -148,7 +245,7 @@ function Nauticus:TransportSelectSetNone()
 		end
 
 		self.lowestNameTime = "--"
-		self.icon = "NauticusLogo"
+		self.icon = ARTWORK_LOGO
 
 	elseif has == false then
 		local transit = self.activeTransit
@@ -160,12 +257,10 @@ function Nauticus:TransportSelectSetNone()
 		end
 
 		self.lowestNameTime = L["N/A"]
-		self.icon = "NauticusLogo"
+		self.icon = ARTWORK_LOGO
 	end
 
-	if NauticusFu then
-		NauticusFu:UpdateDisplay()
-	end
+	NauticusFu:UpdateDisplay()
 
 end
 
@@ -446,6 +541,25 @@ function Nauticus:WidgetTooltip_Hide()
 	GameTooltip:Hide()
 end
 
+local function GetAnchor()
+	local x, y = GetCursorPosition()
+	local cx, cy = GetScreenWidth() / 2, GetScreenHeight() / 2
+
+	if x > cx then
+		if y < cy then
+			return "BOTTOMRIGHT", "TOPLEFT"
+		else
+			return "TOPRIGHT", "BOTTOMLEFT"
+		end
+	else
+		if y < cy then
+			return "BOTTOMLEFT", "TOPRIGHT"
+		else
+			return "TOPLEFT", "BOTTOMRIGHT"
+		end
+	end
+end
+
 function Nauticus:MapIconButtonMouseEnter()
 
 	local id = this:GetID()
@@ -456,23 +570,7 @@ function Nauticus:MapIconButtonMouseEnter()
 		    'children', function()
 				self:ShowTooltip(transit)
 			end,
-			'point', function(parent)
-				local x, y = GetCursorPosition()
-				local cx, cy = GetScreenWidth() / 2, GetScreenHeight() / 2
-				if x > cx then
-					if y < cy then
-						return "BOTTOMRIGHT", "TOPLEFT"
-					else
-						return "TOPRIGHT", "BOTTOMLEFT"
-					end
-				else
-					if y < cy then
-						return "BOTTOMLEFT", "TOPRIGHT"
-					else
-						return "TOPLEFT", "BOTTOMRIGHT"
-					end
-				end
-			end,
+			'point', GetAnchor,
 			'dontHook', true
 		)
 		tablet:SetFontSizePercent(this, tablet:GetFontSizePercent(this) * 0.85)

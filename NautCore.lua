@@ -11,8 +11,10 @@ local ORANGE  = "|cffffba00"
 
 -- constants
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
-local ARTWORKPATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
-local ARTWORK_ZONING = ARTWORKPATH.."MapIcon_Zoning"
+local ARTWORK_PATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
+local ARTWORK_ZONING = ARTWORK_PATH.."MapIcon_Zoning"
+local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
+local ARTWORK_IN_TRANSIT = ARTWORK_PATH.."Transit"
 local MAX_FORMATTED_TIME = 256 -- the longest route minus 60
 
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
@@ -20,6 +22,7 @@ Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEve
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
 local tablet = AceLibrary("Tablet-2.0")
+local dewdrop = AceLibrary("Dewdrop-2.0")
 
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
@@ -36,7 +39,6 @@ Nauticus.dataVersion = 230 -- route calibration versioning
 
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
-Nauticus.icon = "NauticusLogo"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
 
@@ -430,7 +432,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 
 				lowestTime = -500
 				self.lowestNameTime = data.ebv.." "..colour..formatted_time
-				self.icon = "Departing"
+				self.icon = ARTWORK_DEPARTING
 
 			else
 				plat_time = self:CalcTripCycleTimeByIndex(transit, data.index-1) - cycle
@@ -446,7 +448,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 				if plat_time < lowestTime then
 					lowestTime = plat_time
 					self.lowestNameTime = data.ebv.." "..GREEN..formatted_time
-					self.icon = "Transit"
+					self.icon = ARTWORK_IN_TRANSIT
 				end
 			end
 
@@ -457,9 +459,11 @@ function Nauticus:Clock_OnUpdate(elapse)
 			end
 		end
 
-		if NauticusFu then
-			NauticusFu:UpdateDisplay()
-		end
+		NauticusFu:UpdateDisplay()
+	end
+
+	if self.tempTextCount > 0 then
+		self.tempTextCount = self.tempTextCount - 1
 	end
 
 	if self.iconTooltip then
@@ -733,7 +737,7 @@ function Nauticus:InitialiseConfig()
 			getglobal("Naut_MiniMapIconButton"..t.."Texture"),
 			getglobal("Naut_WorldMapIconButton"..t.."Texture")
 
-		transport.texture_name = ARTWORKPATH.."MapIcon_"..transport.ship_type
+		transport.texture_name = ARTWORK_PATH.."MapIcon_"..transport.ship_type
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)
@@ -751,6 +755,8 @@ function Nauticus:PLAYER_ENTERING_WORLD()
 end
 
 function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
+	if dewdrop:GetOpenedParent() then dewdrop:Refresh() end
+
 	if not loopback and self.currentZone == GetRealZoneText() then
 		self:ScheduleEvent(self.ZONE_CHANGED_NEW_AREA, 1, self, true)
 	else

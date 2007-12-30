@@ -15,8 +15,7 @@ local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
-local rtts, transports, transitData =
-	Nauticus.rtts, Nauticus.transports, Nauticus.transitData
+local rtts, transports = Nauticus.rtts, Nauticus.transports
 
 local GetLag
 
