@@ -17,7 +17,7 @@ local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
 local ARTWORK_IN_TRANSIT = ARTWORK_PATH.."Transit"
 local MAX_FORMATTED_TIME = 256 -- the longest route minus 60
 
-Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
+Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0", "FuBarPlugin-2.0")
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
@@ -204,6 +204,10 @@ Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.options)
 local Pre_ChatFrame_OnEvent, Naut_ChatFrame_OnEvent
 
 function Nauticus:OnInitialize()
+	self.hasIcon = true
+	self:SetIcon(ARTWORK_LOGO)
+	self.hideWithoutStandby = true
+
 	rtts, platforms, transports =
 		self.rtts, self.platforms, self.transports
 
@@ -459,7 +463,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 			end
 		end
 
-		NauticusFu:UpdateDisplay()
+		self:UpdateDisplay()
 	end
 
 	if self.tempTextCount > 0 then

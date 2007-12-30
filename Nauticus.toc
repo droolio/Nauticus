@@ -23,6 +23,4 @@ NautCore.lua
 data.lua
 NautComms.lua
 NautUI.lua
-TitanNaut.lua
 Nauticus.xml
-NautFuBar.lua
