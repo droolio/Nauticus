@@ -19,6 +19,9 @@ up-to-date schedule information between players automatically.
 
 For usage options, type /nauticus or /naut in the command line.
 
+If you don't use FuBar (e.g. you use Titan instead), you can right-click 
+the Mini-Map button and 'Hide plugin' to get rid of it.
+
 Uses the Ace2 framework (soon Ace3 when it becomes stable).
 
 ---
@@ -42,12 +45,13 @@ which are too close together to pick out due to overlap
 arrival/departure alarm when nearby (i.e. Zep horn or boat bell)
 - new compact UI window, listing schedules for all transports in the 
 zone, highlighting closest platform when standing still and nearby
-- more compact bar plugin tooltip to show schedules for all transports 
-in the zone, highlighting closest
 
-Note: Nauticus is in continual development [13th Nov 2007]. You should 
-always try to keep your version up-to-date - not least because the addon 
-interacts with other users and they rely on good quality data from you.
+Note: Nauticus is in continual development [13th Jan 2008]. You should
+always try to keep your version up-to-date - not least because the addon
+interacts with other users and they rely on good quality data from you. 
+The addon will notify you upon login when there's a new version 
+available - after other users are seen using a later version. For this 
+reason, please DON'T redistribute or include in a compilation pack!
 
 ---
 Frequently Asked Questions
@@ -110,11 +114,6 @@ Because Blizzard's SendAddonMessage() API alone - which was really
 designed and is effectively limited for guild and raid addon comms - is 
 insufficient to get the times spread further across your server. This 
 ultimately affects availability and accuracy of the times.
-
-However, we don't use a chat channel slot if you're in a guild, 
-preferring the API instead. Thus the chat channel 'NauticSync' is a 
-backup method for unguilded characters (mains, alts, bank alts etc.) as 
-a way to spread data.
 
 You shouldn't be concerned if you have the channel slot spare - we're 
 extra careful not to mess up channel numbers. If you experience issues, 

@@ -101,7 +101,7 @@ function Nauticus:Button_OnClick()
 		local isNotEmpty, isFound, addtrans, first
 
 		for i = 1, #(transports), 1 do
-			addtrans = Nauticus:IsRouteShown(i)
+			addtrans = self:IsRouteShown(i)
 			isNotEmpty = isNotEmpty or addtrans
 			if not first and addtrans then first = i; end
 
@@ -193,7 +193,7 @@ function Nauticus:ShowMenu()
 	local textdesc
 
 	for i = 1, #(transports), 1 do
-		if Nauticus:IsRouteShown(i) then
+		if self:IsRouteShown(i) then
 			textdesc = transports[i].name
 
 			if self:HasKnownCycle(transports[i].label) then
@@ -222,7 +222,7 @@ function Nauticus:SetTransport(id)
 	self.db.char.activeTransit = self.activeTransit
 
 	if self:HasKnownCycle(self.activeTransit) then
-		self.tempText = GREEN..transports[id].name
+		self.tempText = GREEN..transports[id].short_name
 		self.tempTextCount = 2
 		self:SetText(self.tempText)
 		if self.TitanPanelButton_SetText then self:TitanPanelButton_SetText(); end
