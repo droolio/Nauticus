@@ -34,8 +34,8 @@ local zonings
 local GetTexCoord, formattedTimeCache
 
 -- object variables
-Nauticus.versionStr = "2.3.2" -- for display
-Nauticus.versionNum = 232 -- for comparison
+Nauticus.versionStr = "2.3.3" -- for display
+Nauticus.versionNum = 233 -- for comparison
 Nauticus.dataVersion = 230 -- route calibration versioning
 
 Nauticus.activeTransit = -1

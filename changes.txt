@@ -1,5 +1,18 @@
 Version History
 
+v2.3.3
+- FIX: triggering coords on some flight paths (alliance druid)
+- NEW: add option to change World and Mini-Map icon sizes
+- CHANGE: better looking tooltip; more compact, add vessel names!
+- Titan now uses same FuBar code to generate tooltip & menu
+- re-do FuBar/Titan bar status icons
+- add new intermediate yellow icon for docking status (30->60 secs)
+- use full sub+zone names for transports, removing alias & options
+- main UI window being retired (not shown by default)
+- tweak round-trip-times ever-so-slightly again
+- many many other small cosmetic improvements
+
+
 v2.3.2
 - now blocks all ship talk; by npc name instead of specific strings
 - default to world channel for better sync reach
