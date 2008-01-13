@@ -15,6 +15,7 @@ local ARTWORK_PATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
 local ARTWORK_ZONING = ARTWORK_PATH.."MapIcon_Zoning"
 local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
 local ARTWORK_IN_TRANSIT = ARTWORK_PATH.."Transit"
+local ARTWORK_DOCKED = ARTWORK_PATH.."Docked"
 local MAX_FORMATTED_TIME = 256 -- the longest route minus 60
 
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0", "FuBarPlugin-2.0")
@@ -64,6 +65,8 @@ Nauticus:RegisterDefaults("profile", {
 	filterChat = true,
 	alarmOffset = 20,
 	dataChannel = DEFAULT_CHANNEL,
+	miniIconSize = 1,
+	worldIconSize = 1,
 } )
 Nauticus:RegisterDefaults("account", {
 	knownCycles = {},
@@ -71,7 +74,7 @@ Nauticus:RegisterDefaults("account", {
 } )
 Nauticus:RegisterDefaults("char", {
 	activeTransit = -1,
-	showGUI = true,
+	showGUI = false,
 	showLowerGUI = true,
 	showIcons = true,
 } )
@@ -80,7 +83,7 @@ Nauticus.options = { type = 'group', args = {
 	gui = {
 		type = 'group',
 		name = "GUI",
-		desc = "GUI commands",
+		desc = "GUI options",
 		args = {
 			show = {
 				type = 'execute',
@@ -108,21 +111,63 @@ Nauticus.options = { type = 'group', args = {
 				end
 			},
 			icons = {
-				type = 'toggle',
-				name = "Show icons",
-				desc = "Toggle on/off map icons.",
-				get = function()
-					return Nauticus.db.char.showIcons
-				end,
-				set = function(v)
-					Nauticus.db.char.showIcons = v
-					Nauticus.showIcons = v
-					if not v then
-						Nauticus:RemoveAllMinimapIcons()
-					end
-				end,
+				type = 'group',
+				name = "Icons",
+				desc = "Icon options.",
+				args = {
+					show = {
+						type = 'toggle',
+						name = "Show icons",
+						desc = "Toggle on/off map icons.",
+						get = function()
+							return Nauticus.db.char.showIcons
+						end,
+						set = function(v)
+							Nauticus.db.char.showIcons = v
+							Nauticus.showIcons = v
+							if not v then
+								Nauticus:RemoveAllMinimapIcons()
+							end
+						end,
+						order = 99,
+					},
+					minisize = {
+						type = 'range',
+						name = "Mini-Map icon size",
+						desc = "Change the size of the Mini-Map icons.",
+						get = function()
+							return Nauticus.db.profile.miniIconSize
+						end,
+						set = function(v)
+							for t = 1, #(transports), 1 do
+								transports[t].minimap_icon:SetHeight(v * 18)
+								transports[t].minimap_icon:SetWidth(v * 18)
+							end
+							Nauticus.db.profile.miniIconSize = v
+						end,
+						isPercent = true,
+						min = .5, max = 2, step = .01,
+					},
+					worldsize = {
+						type = 'range',
+						name = "World Map icon size",
+						desc = "Change the size of the World Map icons.",
+						get = function()
+							return Nauticus.db.profile.worldIconSize
+						end,
+						set = function(v)
+							for t = 1, #(transports), 1 do
+								transports[t].worldmap_icon:SetHeight(v * 18)
+								transports[t].worldmap_icon:SetWidth(v * 18)
+							end
+							Nauticus.db.profile.worldIconSize = v
+						end,
+						isPercent = true,
+						min = .5, max = 2, step = .01,
+					},
+				},
 			},
-		}
+		},
 	},
 	filter = {
 		type = 'toggle',
@@ -147,9 +192,7 @@ Nauticus.options = { type = 'group', args = {
 			alarmOffset = v
 			Nauticus.db.profile.alarmOffset = v
 		end,
-		min = 0,
-		max = 80,
-		step = 5,
+		min = 0, max = 80, step = 5,
 	},
 	channel = {
 		type = 'text',
@@ -303,7 +346,7 @@ end
 
 function Nauticus:OnDisable()
 	self.distribution = nil
-	Nauticus:RemoveAllMinimapIcons()
+	self:RemoveAllMinimapIcons()
 	NautHeaderFrame:Hide()
 end
 
@@ -427,8 +470,10 @@ function Nauticus:Clock_OnUpdate(elapse)
 
 				if plat_time > 30 then
 					colour = YELLOW
+					self.icon = ARTWORK_DOCKED
 				else
 					colour = RED
+					self.icon = ARTWORK_DEPARTING
 				end
 
 				depOrArr = L["Departure"]
@@ -436,7 +481,6 @@ function Nauticus:Clock_OnUpdate(elapse)
 
 				lowestTime = -500
 				self.lowestNameTime = data.ebv.." "..colour..formatted_time
-				self.icon = ARTWORK_DEPARTING
 
 			else
 				plat_time = self:CalcTripCycleTimeByIndex(transit, data.index-1) - cycle
@@ -673,6 +717,9 @@ function Nauticus:InitialiseConfig()
 	local args = {}
 	local j, oldX, oldY, oldOffset, oldDir, transport, transit, transit_data, liveData
 
+	local miniIconSize = self.db.profile.miniIconSize * 18
+	local worldIconSize = self.db.profile.worldIconSize * 18
+
 	self.transitData = {}
 	self.liveData = {}
 	self.zonings = {}
@@ -742,6 +789,11 @@ function Nauticus:InitialiseConfig()
 			getglobal("Naut_WorldMapIconButton"..t.."Texture")
 
 		transport.texture_name = ARTWORK_PATH.."MapIcon_"..transport.ship_type
+
+		transport.minimap_icon:SetHeight(miniIconSize)
+		transport.minimap_icon:SetWidth(miniIconSize)
+		transport.worldmap_icon:SetHeight(worldIconSize)
+		transport.worldmap_icon:SetWidth(worldIconSize)
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)
