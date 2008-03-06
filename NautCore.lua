@@ -232,8 +232,10 @@ Nauticus.options = { type = 'group', args = {
 	reset = {
 		type = 'execute',
 		name = "Reset",
-		desc = "Reset all known cycles.",
-		confirm = true,
+		desc = "Reset cycle data for all known transports. Emergency usage only!",
+		confirm = RED.."WARNING: "..
+			YELLOW.."ONLY perform this if you are told to do so by the author. "..
+			"|rAre you sure you want to reset cycle data for all known transports?",
 		func = function()
 			Nauticus:RemoveAllMinimapIcons()
 			Nauticus.db.account.knownCycles = {}
@@ -508,6 +510,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 		end
 
 		self:UpdateDisplay()
+		if self.TitanPanelButton_UpdateButton then self:TitanPanelButton_UpdateButton(); end
 	end
 
 	if self.tempTextCount > 0 then

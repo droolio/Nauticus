@@ -261,6 +261,7 @@ function Nauticus:TransportSelectSetNone()
 	end
 
 	self:UpdateDisplay()
+	if self.TitanPanelButton_UpdateButton then self:TitanPanelButton_UpdateButton(); end
 
 end
 
@@ -636,7 +637,6 @@ function Nauticus:TitanPanelButton_OnLoad()
 		buttonTextFunction = "Naut_TitanPanelButton_GetButtonText",
 		tooltipTitle = "Nauticus",
 		tooltipCustomFunction = function() Nauticus:TitanPanelButton_OnTooltipUpdate() end,
-		frequency = 1,
 		icon = self.logo,
 		iconWidth = 16,
 		savedVariables = {
@@ -694,18 +694,18 @@ function TitanPanelRightClickMenu_PrepareNauticusMenu()
 	if not dewdrop:IsRegistered(this) then
 		dewdrop:Register(this,
 			'children', function()
-				dewdrop:AddLine(
-					'text', TitanPlugins[TITAN_ID].menuText,
-					'isTitle', true
-				)
+					dewdrop:AddLine(
+						'text', TitanPlugins[TITAN_ID].menuText,
+						'isTitle', true
+					)
 				Nauticus:ShowMenu()
-				dewdrop:AddLine(
-					'text', TITAN_PANEL_MENU_HIDE,
-					'func', function()
-						TitanPanel_RemoveButton(TITAN_ID)
-						dewdrop:Close()
-					end
-				)
+					dewdrop:AddLine(
+						'text', TITAN_PANEL_MENU_HIDE,
+						'func', function()
+							TitanPanel_RemoveButton(TITAN_ID)
+							dewdrop:Close()
+						end
+					)
 			end,
 			'point', GetTitanAnchor,
 			'dontHook', true
@@ -728,6 +728,10 @@ end
 
 function Nauticus:TitanPanelButton_SetText()
 	TitanPanelButton_SetButtonText(TITAN_ID)
+end
+
+function Nauticus:TitanPanelButton_UpdateButton()
+	TitanPanelButton_UpdateButton(TITAN_ID)
 end
 
 function Nauticus:TitanPanelButton_OnClick(event)
