@@ -2,6 +2,9 @@ Version History
 
 v2.4.0
 - UPDATE: all routes recalibrated for patch 2.4, finally
+- FIX: Titan button update for newer v3.20+ (backward compatible)
+- FIX: updated embedded Astrolabe lib; no more lockups during zoning
+- warn that cycle data reset is for emergency usage only!
 
 
 v2.3.3
