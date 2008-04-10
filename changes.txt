@@ -1,5 +1,9 @@
 Version History
 
+v2.4.0
+- UPDATE: all routes recalibrated for patch 2.4, finally
+
+
 v2.3.3
 - FIX: triggering coords on some flight paths (alliance druid)
 - NEW: add option to change World and Mini-Map icon sizes
