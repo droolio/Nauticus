@@ -4,38 +4,34 @@ local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 L:RegisterTranslations("esES", function() return {
 
 -- general
---[[
-["Save"] = "Save",
-["Close"] = "Close",
-["Minimise"] = "Minimise",
-["Maximise"] = "Maximise",
-["Options"] = "Options",
+["Save"] = "Guardar",
+["Close"] = "Cerrar",
+["Minimise"] = "Minimizar",
+["Maximise"] = "Maximizar",
+["Options"] = "Opciones",
 
 -- miscellaneous
-["Arrival"] = "Arrival",
-["Departure"] = "Departure",
-["Arr"] = "Arr", -- abbreviation for Arrival
-["Dep"] = "Dep", -- abbreviation for Departure
-["Select Transport"] = "Select Transport",
-["Select None"] = "Select None", -- to do
-["No Transport Selected"] = "No Transport Selected",
-["Not Available"] = "Not Available",
-["N/A"] = "N/A", -- abbreviation for Not Available
-["Nauticus Options"] = "Nauticus Options",
-]]
+["Arrival"] = "Llegada",
+["Departure"] = "Salida",
+["Arr"] = "Lle", -- abbreviation for Arrival
+["Dep"] = "Sal", -- abbreviation for Departure
+["Select Transport"] = "Seleccionar Transporte",
+["Select None"] = "Seleccionar Ninguno", -- to do
+["No Transport Selected"] = "Ningun Transporte Seleccionado",
+["Not Available"] = "No Disponible",
+["N/A"] = "N/D", -- abbreviation for Not Available
+["Nauticus Options"] = "Opciones de Nauticus",
 
---[[
-["Show GUI when zone change contains a transport"] = true,
-["Show only transports for your faction"] = true,
-["Shows only neutral and transports specific to your faction."] = true,
-["Show only transports in your current zone"] = true,
-["Shows only transports in your current zone."] = true,
-["Click to cycle transport.|nAlt-Click to set up alarm"] = true,
-["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = true,
-["Type /nauticus or /naut gui show to show again."] = true,
-["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = true,
-["Thank you for upgrading."] = true,
-]]
+["Show GUI when zone change contains a transport"] = "Mostrar GUI cuando cambio de zona contiene un transporte",
+["Show only transports for your faction"] = "Mostrar s\195\179lo transportes para su facci\195\179n",
+["Shows only neutral and transports specific to your faction."] = "Muestra s\195\179lo neutrales y transportes espec\195\173ficos para su facci\195\179n.",
+["Show only transports in your current zone"] = "Mostrar s\195\179lo transportes en su zona actual ",
+["Shows only transports in your current zone."] = "Muestra s\195\179lo transportes en su zona actual.",
+["Click to cycle transport.|nAlt-Click to set up alarm"] = "Click para rotar transporte. | NAlt-Click para crear alarma",
+["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "\194\161Hay una nueva versi\195\179n de Nauticus disponible! Por favor, visite http://drool.me.uk/naut.",
+["Type /nauticus or /naut gui show to show again."] = "Teclea /nauticus o /naut para mostrar GUI.",
+["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Usted ha estado utilizando una versi\195\179n antigua de Nauticus por m\195\161s de 10 d\195\173as, las comunicaciones salientes ser\195\161n ahora deshabilitadas.",
+["Thank you for upgrading."] = "Gracias por actualizar.",
 
 -- zones
 ["Orgrimmar"] = "Orgrimmar",
@@ -57,7 +53,6 @@ L:RegisterTranslations("esES", function() return {
 ["Twisting Nether"] = "El Vac\195\173o Abisal",
 
 -- subzones
---[[
 ["Grom'gol"] = "Grom'gol",
 ["Booty Bay"] = "Booty Bay",
 ["Ratchet"] = "Ratchet",
@@ -68,7 +63,6 @@ L:RegisterTranslations("esES", function() return {
 ["Sardor Isle"] = "Sardor Isle",
 ["Feathermoon"] = "Feathermoon",
 ["Forgotten Coast"] = "Forgotten Coast",
-]]
 
 -- abbreviations
 ["Org"]	= "Org",	-- Orgrimmar
