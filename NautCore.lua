@@ -83,13 +83,15 @@ Nauticus:RegisterDefaults("char", {
 local options = {
 	gui = {
 		type = 'group',
-		name = "GUI",
-		desc = "GUI options",
+		name = "Legacy GUI",
+		desc = "Options for legacy GUI window.",
+		order = 3,
 		args = {
 			show = {
 				type = 'execute',
 				name = "Show GUI",
-				desc = "Show the main GUI window.",
+				desc = "Show the legacy GUI window.",
+				order = 2,
 				func = function()
 					Nauticus.db.char.showGUI = true
 					Nauticus.db.char.showLowerGUI = true
@@ -99,7 +101,8 @@ local options = {
 			reset = {
 				type = 'execute',
 				name = "Reset GUI",
-				desc = "Reset the main GUI window position.",
+				desc = "Unhide and reset the legacy GUI window position to centre.",
+				order = 3,
 				func = function()
 					Nauticus.db.char.showGUI = true
 					Nauticus.db.char.showLowerGUI = true
@@ -111,62 +114,78 @@ local options = {
 					Nauticus:UpdateUI()
 				end
 			},
-			icons = {
-				type = 'group',
-				name = "Icons",
-				desc = "Icon options.",
-				args = {
-					show = {
-						type = 'toggle',
-						name = "Show icons",
-						desc = "Toggle on/off map icons.",
-						get = function()
-							return Nauticus.db.char.showIcons
-						end,
-						set = function(v)
-							Nauticus.db.char.showIcons = v
-							Nauticus.showIcons = v
-							if not v then
-								Nauticus:RemoveAllIcons()
-							end
-						end,
-						order = 99,
-					},
-					minisize = {
-						type = 'range',
-						name = "Mini-Map icon size",
-						desc = "Change the size of the Mini-Map icons.",
-						get = function()
-							return Nauticus.db.profile.miniIconSize
-						end,
-						set = function(v)
-							for t = 1, #(transports), 1 do
-								transports[t].minimap_icon:SetHeight(v * ICON_DEFAULT_SIZE)
-								transports[t].minimap_icon:SetWidth(v * ICON_DEFAULT_SIZE)
-							end
-							Nauticus.db.profile.miniIconSize = v
-						end,
-						isPercent = true,
-						min = .5, max = 2, step = .01,
-					},
-					worldsize = {
-						type = 'range',
-						name = "World Map icon size",
-						desc = "Change the size of the World Map icons.",
-						get = function()
-							return Nauticus.db.profile.worldIconSize
-						end,
-						set = function(v)
-							for t = 1, #(transports), 1 do
-								transports[t].worldmap_icon:SetHeight(v * ICON_DEFAULT_SIZE)
-								transports[t].worldmap_icon:SetWidth(v * ICON_DEFAULT_SIZE)
-							end
-							Nauticus.db.profile.worldIconSize = v
-						end,
-						isPercent = true,
-						min = .5, max = 2, step = .01,
-					},
-				},
+			autoshow = {
+				type = 'toggle',
+				name = "Auto show GUI",
+				desc = "Auto show the legacy GUI window when zone change contains a transport.",
+				order = 1,
+				get = function()
+					return Nauticus.db.profile.zoneGUI
+				end,
+				set = function(v)
+					Nauticus.db.profile.zoneGUI = v
+					NautOptionsFrameOptZoneGUI:SetChecked(v)
+				end,
+			},
+		},
+	},
+	icons = {
+		type = 'group',
+		name = "Icons",
+		desc = "Icon options.",
+		order = 1,
+		args = {
+			show = {
+				type = 'toggle',
+				name = "Show icons",
+				desc = "Toggle on/off map icons.",
+				order = 1,
+				get = function()
+					return Nauticus.db.char.showIcons
+				end,
+				set = function(v)
+					Nauticus.db.char.showIcons = v
+					Nauticus.showIcons = v
+					if not v then
+						Nauticus:RemoveAllIcons()
+					end
+				end,
+			},
+			minisize = {
+				type = 'range',
+				name = "Mini-Map icon size",
+				desc = "Change the size of the Mini-Map icons.",
+				order = 3,
+				get = function()
+					return Nauticus.db.profile.miniIconSize
+				end,
+				set = function(v)
+					for t = 1, #(transports), 1 do
+						transports[t].minimap_icon:SetHeight(v * ICON_DEFAULT_SIZE)
+						transports[t].minimap_icon:SetWidth(v * ICON_DEFAULT_SIZE)
+					end
+					Nauticus.db.profile.miniIconSize = v
+				end,
+				isPercent = true,
+				min = .5, max = 2, step = .01,
+			},
+			worldsize = {
+				type = 'range',
+				name = "World Map icon size",
+				desc = "Change the size of the World Map icons.",
+				order = 2,
+				get = function()
+					return Nauticus.db.profile.worldIconSize
+				end,
+				set = function(v)
+					for t = 1, #(transports), 1 do
+						transports[t].worldmap_icon:SetHeight(v * ICON_DEFAULT_SIZE)
+						transports[t].worldmap_icon:SetWidth(v * ICON_DEFAULT_SIZE)
+					end
+					Nauticus.db.profile.worldIconSize = v
+				end,
+				isPercent = true,
+				min = .5, max = 2, step = .01,
 			},
 		},
 	},
@@ -174,6 +193,7 @@ local options = {
 		type = 'toggle',
 		name = "Goblin chat filter",
 		desc = "Toggle on/off chat filter for yelling goblin spam.",
+		order = 4,
 		get = function()
 			return Nauticus.db.profile.filterChat
 		end,
@@ -186,6 +206,7 @@ local options = {
 		type = 'range',
 		name = "Alarm delay",
 		desc = "Change the alarm delay (in seconds).",
+		order = 2,
 		get = function()
 			return Nauticus.db.profile.alarmOffset
 		end,
@@ -193,12 +214,17 @@ local options = {
 			alarmOffset = v
 			Nauticus.db.profile.alarmOffset = v
 		end,
-		min = 0, max = 80, step = 5,
+		min = 0, max = 90, step = 5,
+	},
+	spacer1 = {
+		type = 'header',
+		order = 10,
 	},
 	channel = {
 		type = 'text',
-		name = "Sync channel",
-		desc = "Set custom sync channel.",
+		name = "Sync channel name",
+		desc = "Set custom sync channel name.",
+		order = 11,
 		--hidden = true,
 		usage = "{<name> | default | none | guild}",
 		get = function()
@@ -232,8 +258,9 @@ local options = {
 	},
 	reset = {
 		type = 'execute',
-		name = "Reset",
+		name = "Reset data",
 		desc = "Reset cycle data for all known transports. Emergency usage only!",
+		order = 12,
 		confirm = RED.."WARNING: "..
 			YELLOW.."ONLY perform this if you are told to do so by the author. "..
 			"|rAre you sure you want to reset cycle data for all known transports?",
@@ -245,6 +272,14 @@ local options = {
 	},
 }
 Nauticus.options = options
+Nauticus.optionsFu = { type = 'group', args = {
+	options = {
+		type = 'group',
+		name = "Options",
+		desc = "Options",
+		args = options,
+	}
+} }
 Nauticus.cmdOptions = { type = 'group', args = {
 	gui = options.gui,
 	icons = options.icons,
@@ -262,6 +297,7 @@ function Nauticus:OnInitialize()
 	self.hasIcon = true
 	self:SetIcon(ARTWORK_LOGO)
 	self.hideWithoutStandby = true
+	self.overrideMenu = true
 
 	local a = self.cmdOptions.args
 	a.icon, a.text, a.colorText, a.detachTooltip, a.lockTooltip, a.position, a.minimapAttach = nil

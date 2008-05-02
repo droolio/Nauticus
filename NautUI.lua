@@ -162,54 +162,65 @@ function Nauticus:TransportSelectInitialise(level)
 
 end
 
-function Nauticus:ShowMenu()
+function Nauticus:ShowMenu(level)
 
-	dewdrop:AddLine(
-		'text', L["Show only transports for your faction"],
-		'arg1', self,
-		'func', "ToggleFaction",
-		'checked', self:IsFactionSpecific(),
-		'tooltipTitle', L["Show only transports for your faction"],
-		'tooltipText', L["Shows only neutral and transports specific to your faction."]
-	)
+	if level == 1 then
 
-	dewdrop:AddLine(
-		'text', L["Show only transports in your current zone"],
-		'arg1', self,
-		'func', "ToggleZone",
-		'checked', self:IsZoneSpecific(),
-		'tooltipTitle', L["Show only transports in your current zone"],
-		'tooltipText', L["Shows only transports in your current zone."]
-	)
+		dewdrop:AddLine(
+			'text', L["Show only transports for your faction"],
+			'arg1', self,
+			'func', "ToggleFaction",
+			'checked', self:IsFactionSpecific(),
+			'tooltipTitle', L["Show only transports for your faction"],
+			'tooltipText', L["Shows only neutral and transports specific to your faction."]
+		)
 
-	dewdrop:AddSeparator()
+		dewdrop:AddLine(
+			'text', L["Show only transports in your current zone"],
+			'arg1', self,
+			'func', "ToggleZone",
+			'checked', self:IsZoneSpecific(),
+			'tooltipTitle', L["Show only transports in your current zone"],
+			'tooltipText', L["Shows only transports in your current zone."]
+		)
 
-	dewdrop:AddLine(
-		'text', YELLOW..L["Select None"],
-		'checked', (self.activeTransit == -1),
-		'func', function() self:SetTransport(0) end
-	)
+		dewdrop:AddSeparator()
 
-	local textdesc
+		dewdrop:AddLine(
+			'text', YELLOW..L["Select None"],
+			'checked', (self.activeTransit == -1),
+			'func', function() self:SetTransport(0) end
+		)
 
-	for i = 1, #(transports), 1 do
-		if self:IsRouteShown(i) then
-			textdesc = transports[i].name
+		local textdesc
 
-			if self:HasKnownCycle(transports[i].label) then
-				textdesc = GREEN..textdesc
+		for i = 1, #(transports), 1 do
+			if self:IsRouteShown(i) then
+				textdesc = transports[i].name
+
+				if self:HasKnownCycle(transports[i].label) then
+					textdesc = GREEN..textdesc
+				end
+
+				dewdrop:AddLine(
+					'text', textdesc,
+					'checked', (transports[i].label == self.activeTransit),
+					'func', function(i) self:SetTransport(i) end,
+					'arg1', i
+				)
 			end
-
-			dewdrop:AddLine(
-				'text', textdesc,
-				'checked', (transports[i].label == self.activeTransit),
-				'func', function(i) self:SetTransport(i) end,
-				'arg1', i
-			)
 		end
-	end
 
-	dewdrop:AddSeparator()
+		dewdrop:AddSeparator()
+
+		dewdrop:FeedAceOptionsTable(self.optionsFu, level)
+
+		dewdrop:AddSeparator()
+
+	else
+		dewdrop:FeedAceOptionsTable(self.optionsFu, level)
+
+	end
 
 end
 
@@ -602,7 +613,8 @@ end
 
 function Nauticus:OnMenuRequest(level, value, inTooltip)
 	if inTooltip then return; end
-	self:ShowMenu()
+	self:ShowMenu(level)
+	self:AddImpliedMenuOptions()
 end
 
 function Nauticus:OnTextUpdate()
@@ -691,12 +703,15 @@ function TitanPanelRightClickMenu_PrepareNauticusMenu()
 
 	if not dewdrop:IsRegistered(this) then
 		dewdrop:Register(this,
-			'children', function()
+			'children', function(level)
+				if level == 1 then
 					dewdrop:AddLine(
 						'text', TitanPlugins[TITAN_ID].menuText,
 						'isTitle', true
 					)
-				Nauticus:ShowMenu()
+				end
+				Nauticus:ShowMenu(level)
+				if level == 1 then
 					dewdrop:AddLine(
 						'text', TITAN_PANEL_MENU_HIDE,
 						'func', function()
@@ -704,6 +719,7 @@ function TitanPanelRightClickMenu_PrepareNauticusMenu()
 							dewdrop:Close()
 						end
 					)
+				end
 			end,
 			'point', GetTitanAnchor,
 			'dontHook', true
