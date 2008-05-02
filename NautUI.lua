@@ -587,12 +587,10 @@ function Nauticus:MapIconButtonMouseExit()
 	self.iconTooltip = nil
 end
 
-function Nauticus:RemoveAllMinimapIcons()
-	local buttonMini
-
+function Nauticus:RemoveAllIcons()
 	for t = 1, #(transports), 1 do
-		buttonMini = getglobal("Naut_MiniMapIconButton"..t)
-		NautAstrolabe:RemoveIconFromMinimap(buttonMini)
+		NautAstrolabe:RemoveIconFromMinimap(getglobal("Naut_MiniMapIconButton"..t))
+		getglobal("Naut_WorldMapIconButton"..t):Hide()
 	end
 end
 

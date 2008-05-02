@@ -17,6 +17,7 @@ local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
 local ARTWORK_IN_TRANSIT = ARTWORK_PATH.."Transit"
 local ARTWORK_DOCKED = ARTWORK_PATH.."Docked"
 local MAX_FORMATTED_TIME = 256 -- the longest route minus 60
+local ICON_DEFAULT_SIZE = 18
 
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0", "FuBarPlugin-2.0")
 
@@ -79,7 +80,7 @@ Nauticus:RegisterDefaults("char", {
 	showIcons = true,
 } )
 
-Nauticus.options = { type = 'group', args = {
+local options = {
 	gui = {
 		type = 'group',
 		name = "GUI",
@@ -126,7 +127,7 @@ Nauticus.options = { type = 'group', args = {
 							Nauticus.db.char.showIcons = v
 							Nauticus.showIcons = v
 							if not v then
-								Nauticus:RemoveAllMinimapIcons()
+								Nauticus:RemoveAllIcons()
 							end
 						end,
 						order = 99,
@@ -140,8 +141,8 @@ Nauticus.options = { type = 'group', args = {
 						end,
 						set = function(v)
 							for t = 1, #(transports), 1 do
-								transports[t].minimap_icon:SetHeight(v * 18)
-								transports[t].minimap_icon:SetWidth(v * 18)
+								transports[t].minimap_icon:SetHeight(v * ICON_DEFAULT_SIZE)
+								transports[t].minimap_icon:SetWidth(v * ICON_DEFAULT_SIZE)
 							end
 							Nauticus.db.profile.miniIconSize = v
 						end,
@@ -157,8 +158,8 @@ Nauticus.options = { type = 'group', args = {
 						end,
 						set = function(v)
 							for t = 1, #(transports), 1 do
-								transports[t].worldmap_icon:SetHeight(v * 18)
-								transports[t].worldmap_icon:SetWidth(v * 18)
+								transports[t].worldmap_icon:SetHeight(v * ICON_DEFAULT_SIZE)
+								transports[t].worldmap_icon:SetWidth(v * ICON_DEFAULT_SIZE)
 							end
 							Nauticus.db.profile.worldIconSize = v
 						end,
@@ -237,13 +238,22 @@ Nauticus.options = { type = 'group', args = {
 			YELLOW.."ONLY perform this if you are told to do so by the author. "..
 			"|rAre you sure you want to reset cycle data for all known transports?",
 		func = function()
-			Nauticus:RemoveAllMinimapIcons()
+			Nauticus:RemoveAllIcons()
 			Nauticus.db.account.knownCycles = {}
 			Nauticus:TransportSelectSetNone()
 		end
 	},
+}
+Nauticus.options = options
+Nauticus.cmdOptions = { type = 'group', args = {
+	gui = options.gui,
+	icons = options.icons,
+	filter = options.filter,
+	alarm = options.alarm,
+	channel = options.channel,
+	reset = options.reset,
 } }
-Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.options)
+Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.cmdOptions)
 
 
 local Pre_ChatFrame_OnEvent, Naut_ChatFrame_OnEvent
@@ -252,6 +262,9 @@ function Nauticus:OnInitialize()
 	self.hasIcon = true
 	self:SetIcon(ARTWORK_LOGO)
 	self.hideWithoutStandby = true
+
+	local a = self.cmdOptions.args
+	a.icon, a.text, a.colorText, a.detachTooltip, a.lockTooltip, a.position, a.minimapAttach = nil
 
 	rtts, platforms, transports =
 		self.rtts, self.platforms, self.transports
@@ -348,7 +361,7 @@ end
 
 function Nauticus:OnDisable()
 	self.distribution = nil
-	self:RemoveAllMinimapIcons()
+	self:RemoveAllIcons()
 	NautHeaderFrame:Hide()
 end
 
@@ -720,8 +733,8 @@ function Nauticus:InitialiseConfig()
 	local args = {}
 	local j, oldX, oldY, oldOffset, oldDir, transport, transit, transit_data, liveData
 
-	local miniIconSize = self.db.profile.miniIconSize * 18
-	local worldIconSize = self.db.profile.worldIconSize * 18
+	local miniIconSize = self.db.profile.miniIconSize * ICON_DEFAULT_SIZE
+	local worldIconSize = self.db.profile.worldIconSize * ICON_DEFAULT_SIZE
 
 	self.transitData = {}
 	self.liveData = {}
