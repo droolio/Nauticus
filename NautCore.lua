@@ -37,7 +37,6 @@ local GetTexCoord, formattedTimeCache
 -- object variables
 Nauticus.versionStr = "2.4.0" -- for display
 Nauticus.versionNum = 240 -- for comparison
-Nauticus.dataVersion = 240 -- route calibration versioning
 
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"

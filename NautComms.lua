@@ -10,6 +10,7 @@ local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
+local DATA_VERSION = 241 -- route calibration versioning
 
 local Nauticus = Nauticus
 
@@ -72,7 +73,7 @@ function Nauticus:BroadcastTransportData(to, requestList)
 
 	if trans_str ~= "" then
 		trans_str = string.sub(trans_str, 1, -2) -- remove the last comma
-		self:SendMessage(to, "KNW "..self.dataVersion.." "..trans_str)
+		self:SendMessage(to, "KNW "..DATA_VERSION.." "..trans_str)
 		self:DebugMessage("tell our transports")
 	else
 		self:DebugMessage("nothing to tell")
@@ -221,7 +222,7 @@ end
 
 function Nauticus:ReceiveMessage_known(sender, distribution, version, transports)
 
-	if version < self.dataVersion then return; end
+	if version ~= DATA_VERSION then return; end
 
 	local lag = GetLag()
 	local set, respond, since, boots, swaps, requestList
@@ -327,24 +328,34 @@ function Nauticus:IsBetter(transit, since, boots, swaps)
 		if ourSince == nil then
 			return true -- set, no response
 
-		elseif since >= 0 then
+		elseif 0 <= since then
 			if boots < ourBoots then
 				return true -- set, no response
 			elseif boots > ourBoots then
 				return false, true -- no set, respond
 			else
-				-- age difference; positive = better, negative = worse
-				local ageDiff = math.floor((ourSince - since) / rtts[transit] + .5)
+				-- swap difference; positive = better, less than -2 = worse, 0, -1, -2 = depends!
+				local swapDiff = ourSwaps - swaps
 
-				if 0 < ageDiff then -- (age < ourAge)
+				if 0 < swapDiff then -- (swaps < ourSwaps)
 					return true -- set, no response
-				elseif 0 > ageDiff then -- (age > ourAge)
+				elseif -2 > swapDiff then -- (swaps > ourSwaps+2); imagine data is being transmitted
 					return false, true -- no set, respond
 				else
-					if swaps < ourSwaps then
-						return true -- set, no response
-					elseif swaps > ourSwaps+2 then --imagine data is being transmitted (+1 plus +1 for previous transmit)
-						return false, true -- no set, respond
+					-- age difference; positive = better, negative = worse
+					local ageDiff = math.floor((ourSince - since) / rtts[transit] + .5)
+					local SET, RESPOND = true, true
+
+					--  0 = maybe better for us but response pointless
+					-- -1 = ignore/pointless
+					-- -2 = worse for us but respond if better time
+					if  0 ~= swapDiff then SET = false; end
+					if -2 ~= swapDiff then RESPOND = nil; end
+
+					if 0 < ageDiff then -- (age < ourAge)
+						return SET -- set, no response
+					elseif 0 > ageDiff then -- (age > ourAge)
+						return false, RESPOND -- no set, respond
 					else
 						return false -- no set, no response
 					end
