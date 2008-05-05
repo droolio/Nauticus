@@ -407,7 +407,8 @@ function Nauticus:ShowTooltip(transit)
 			'columns', 1,
 			'font', GameFontHighlightLarge,
 			'textR', 0.25, 'textG', 0.75, 'textB', 1,
-			'justify', "CENTER"
+			'justify', "CENTER",
+			'hideBlankLine', true
 		)
 
 		cat:AddLine('text', "")
@@ -581,6 +582,21 @@ function Nauticus:MapIconButtonMouseEnter()
 		tablet:Register(this,
 		    'children', function()
 				self:ShowTooltip(transit)
+				for t = 1, #(transports), 1 do
+					if transit ~= transports[t].label and
+						(MouseIsOver(transports[t].minimap_icon) or
+						MouseIsOver(transports[t].worldmap_icon))
+					then
+						local cat = tablet:AddCategory(
+							'text', "•", -- ascii 149
+							'textR', 0.5, 'textG', 0.5, 'textB', 0,
+							'showWithoutChildren', true,
+							'justify', "CENTER",
+							'hideBlankLine', true
+						)
+						self:ShowTooltip(transports[t].label)
+					end
+				end
 			end,
 			'point', GetMapIconAnchor,
 			'dontHook', true
