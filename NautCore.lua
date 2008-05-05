@@ -20,6 +20,7 @@ local MAX_FORMATTED_TIME = 256 -- the longest route minus 60
 local ICON_DEFAULT_SIZE = 18
 
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0", "FuBarPlugin-2.0")
+local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
@@ -27,12 +28,6 @@ local tablet = AceLibrary("Tablet-2.0")
 local dewdrop = AceLibrary("Dewdrop-2.0")
 
 local NautAstrolabe = DongleStub("Astrolabe-0.4-NC")
-
-local Nauticus = Nauticus
-local rtts, platforms, triggers, transports, transitData
-local zonings
-
-local GetTexCoord, formattedTimeCache
 
 -- object variables
 Nauticus.versionStr = "2.4.0" -- for display
@@ -43,19 +38,22 @@ Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
 
-Nauticus.lastcheck_timeout = 30
-Nauticus.requestVersion = false
 Nauticus.requestList = {}
 
 Nauticus.debug = false
 
 -- local variables
 local oldx, oldy = 0, 0 -- old player coords
+local lastcheck_timeout = 30
 
 local alarmOffset
 local alarmSet = false
 local alarmDinged = false
 local alarmCountdown = 0
+
+local rtts, platforms, triggers, transports, transitData, zonings
+local GetTexCoord, formattedTimeCache
+local filterChat, autoSelect
 
 Nauticus:RegisterDB("NauticusDB", "NauticusDBPC")
 Nauticus:RegisterDefaults("profile", {
@@ -77,6 +75,7 @@ Nauticus:RegisterDefaults("char", {
 	showGUI = false,
 	showLowerGUI = true,
 	showIcons = true,
+	autoSelect = true,
 } )
 
 local options = {
@@ -188,17 +187,30 @@ local options = {
 			},
 		},
 	},
+	autoselect = {
+		type = 'toggle',
+		name = "Auto select transport",
+		desc = "Automatically select nearest transport when standing at platform.",
+		order = 4,
+		get = function()
+			return Nauticus.db.char.autoSelect
+		end,
+		set = function(v)
+			Nauticus.db.char.autoSelect = v
+			autoSelect = v
+		end,
+	},
 	filter = {
 		type = 'toggle',
 		name = "Goblin chat filter",
 		desc = "Toggle on/off chat filter for yelling goblin spam.",
-		order = 4,
+		order = 5,
 		get = function()
 			return Nauticus.db.profile.filterChat
 		end,
 		set = function(v)
 			Nauticus.db.profile.filterChat = v
-			Nauticus.filterChat = v
+			filterChat = v
 		end,
 	},
 	alarm = {
@@ -282,6 +294,7 @@ Nauticus.optionsFu = { type = 'group', args = {
 Nauticus.cmdOptions = { type = 'group', args = {
 	gui = options.gui,
 	icons = options.icons,
+	autoselect = options.autoselect,
 	filter = options.filter,
 	alarm = options.alarm,
 	channel = options.channel,
@@ -342,7 +355,7 @@ function Naut_ChatFrame_OnEvent(event)
 			return Pre_ChatFrame_OnEvent(event)
 		end
 
-	elseif not Nauticus.filterChat then
+	elseif not filterChat then
 		return Pre_ChatFrame_OnEvent(event)
 
 	elseif (event == "CHAT_MSG_MONSTER_SAY" or
@@ -527,7 +540,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 				end
 
 				depOrArr = L["Departure"]
-				formatted_time = self.formattedTimeCache[floor(plat_time)]
+				formatted_time = formattedTimeCache[floor(plat_time)]
 
 				lowestTime = -500
 				self.lowestNameTime = data.ebv.." "..colour..formatted_time
@@ -541,7 +554,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 
 				colour = GREEN
 				depOrArr = L["Arrival"]
-				formatted_time = self.formattedTimeCache[floor(plat_time)]
+				formatted_time = formattedTimeCache[floor(plat_time)]
 
 				if plat_time < lowestTime then
 					lowestTime = plat_time
@@ -576,8 +589,8 @@ function Nauticus:CheckTriggers_OnUpdate(elapse)
 	if self.currentZoneTransports == nil or self.currentZoneTransports.virtual then return; end
 
 	-- if we've already triggered a set of coords, don't check again for another 30 secs
-	self.lastcheck_timeout = self.lastcheck_timeout + elapse
-	if 30.0 > self.lastcheck_timeout then return; end
+	lastcheck_timeout = lastcheck_timeout + elapse
+	if 30.0 > lastcheck_timeout then return; end
 
 	local c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
 	if not x then return; end
@@ -589,7 +602,7 @@ function Nauticus:CheckTriggers_OnUpdate(elapse)
 		not UnitOnTaxi("player") then
 
 		--check X/Y coords against all triggers for all transports in current zone
-		for transit, i in pairs(self.currentZoneTransports) do
+		for transit in pairs(self.currentZoneTransports) do
 			for i, index in pairs(triggers[transit]) do
 				-- within 20 game yards of trigger coords?
 				if 20.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
@@ -600,6 +613,24 @@ function Nauticus:CheckTriggers_OnUpdate(elapse)
 				end
 			end
 		end
+
+	elseif autoSelect and x == oldx and y == oldy and not IsSwimming() then
+		--check X/Y coords against all platforms in current zone
+		for transit in pairs(self.currentZoneTransports) do
+			if transit ~= self.activeTransit then
+				for i, data in pairs(platforms[transit]) do
+					-- within 25 game yards of platform coords?
+					if 25.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
+						0, 0, transitData[transit].x[data.index], transitData[transit].y[data.index]) then
+
+						self:DebugMessage("near: "..transit)
+						self:SetTransport(self.lookupIndex[transit])
+						return
+					end
+				end
+			end
+		end
+
 	end
 
 	oldx, oldy = x, y
@@ -608,7 +639,7 @@ end
 
 function Nauticus:SetKnownTime(transit, index, x, y)
 
-	self.lastcheck_timeout = 0
+	lastcheck_timeout = 0
 
 	local transitData = transitData[transit]
 	local ix, iy = transitData.x[index-1], transitData.y[index-1]
@@ -723,10 +754,11 @@ function Nauticus:InitialiseConfig()
 	end
 
 	alarmOffset = self.db.profile.alarmOffset
+	autoSelect = self.db.char.autoSelect
+	filterChat = self.db.profile.filterChat
 
 	self.activeTransit = self.db.char.activeTransit
 	self.showIcons = self.db.char.showIcons
-	self.filterChat = self.db.profile.filterChat
 
 	local now = GetTime()
 	local the_time = time()

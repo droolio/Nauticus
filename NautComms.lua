@@ -20,21 +20,23 @@ local rtts, transports = Nauticus.rtts, Nauticus.transports
 
 local GetLag
 
+local requestVersion = false
+
 
 function Nauticus:DoRequest()
 	if next(self.requestList) ~= nil then
 		self:BroadcastTransportData()
 
-		if self.requestVersion then
+		if requestVersion then
 			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5, self)
 			return
 		end
 	end
 
-	if self.requestVersion then
+	if requestVersion then
 		local versionNum = self.versionNum
 
-		self.requestVersion = false
+		requestVersion = false
 		self:SendMessage(nil, "VER "..versionNum)
 	end
 end
@@ -201,7 +203,7 @@ function Nauticus:ReceiveMessage_version(sender, distribution, clientversion)
 		if isDirect then
 			self:SendMessage(sender, "version", self.versionNum)
 		else
-			self.requestVersion = true
+			requestVersion = true
 			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
 		end
 
@@ -209,7 +211,7 @@ function Nauticus:ReceiveMessage_version(sender, distribution, clientversion)
 	end
 
 	if not isDirect then
-		self.requestVersion = false
+		requestVersion = false
 
 		-- if we don't need to send back any data, cancel our scheduler immediately
 		if self:IsEventScheduled("NAUT_REQUEST") and next(self.requestList) == nil then
@@ -301,7 +303,7 @@ function Nauticus:ReceiveMessage_known(sender, distribution, version, transports
 		-- if we don't need to send back any data, cancel our scheduler immediately
 		if next(requestList) then
 			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
-		elseif not self.requestVersion and self:IsEventScheduled("NAUT_REQUEST") and
+		elseif not requestVersion and self:IsEventScheduled("NAUT_REQUEST") and
 			next(requestList) == nil then
 
 			self:DebugMessage("we should cancel request schedule")
@@ -447,7 +449,7 @@ function Nauticus:UpdateDistribution(wait)
 				end
 			end
 
-			self.requestVersion = true
+			requestVersion = true
 			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
 		end
 

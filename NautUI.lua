@@ -106,7 +106,7 @@ function Nauticus:Button_OnClick()
 			if not first and addtrans then first = i; end
 
 			if not isFound then
-				if transports[i].label == Nauticus.activeTransit then
+				if transports[i].label == self.activeTransit then
 					isFound = true
 				end
 			else
