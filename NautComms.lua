@@ -106,22 +106,7 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 		self:DebugMessage("joined: "..channel)
 		local channel_lower = strlower(channel)
 
-		-- legacy channel
-		if channel_lower == "zeppelinmaster" then
-			if self.debug then
-				ListChannelByName(channel)
-				SendChatMessage("VER:1.7:2", "CHANNEL", nil, GetChannelName(channel))
-
-				self:ScheduleEvent(function()
-					SendChatMessage("VER:1.7:x", "CHANNEL", nil, GetChannelName(channel))
-				end, 5, self)
-			else
-				LeaveChannelByName(channel)
-			end
-
-			return
-
-		elseif self.dataChannel and channel_lower ~= strlower(self.dataChannel) and
+		if self.dataChannel and channel_lower ~= strlower(self.dataChannel) and
 			GetChannelName(self.dataChannel) == 0 then
 
 			self:ScheduleEvent("NAUT_CHAN_JOIN", function()

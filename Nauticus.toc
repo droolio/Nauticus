@@ -1,7 +1,7 @@
 ﻿## Interface: 20400
 ## Title: Nauticus |cff7fff7f -Ace2-|r
 ## Author: Drool
-## Version: 2.4.0
+## Version: 2.4.1
 ## Notes: Track the precise location and arrival & departure times of boats and zeppelins
 ## Notes-zhCN: 显示艾泽拉斯的交通船抵达/离开的时间
 ## Notes-zhTW: 顯示艾澤拉斯的交通船抵達/離開的時間
@@ -10,13 +10,13 @@
 ## eMail: droolio@gmail.com
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: NauticusDB,nautSavedVars
+## SavedVariables: NauticusDB
 ## SavedVariablesPerCharacter: NauticusDBPC
 ## X-Embeds: Ace2,TabletLib,DewdropLib,FuBarPlugin-2.0
 ## X-Category: Map
 ## X-eMail: droolio@gmail.com
 ## X-Website: http://drool.me.uk/naut
-## X-Date: 2008-11-04
+## X-Date: 2008-05-24
 embeds.xml
 libs\Astrolabe\Load.xml
 Locales\Locales.xml

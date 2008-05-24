@@ -39,11 +39,9 @@ extracting this package.
 ---
 TO DO
 
-- show multiple transport details in tooltip when mousing-over map icons 
-which are too close together to pick out due to overlap
-- detect closest platform to auto pop-up tooltip and/or sound 
-arrival/departure alarm when nearby (i.e. Zep horn or boat bell)
-- new compact UI window, listing schedules for all transports in the 
+- auto pop-up tooltip and/or sound arrival/departure alarm (i.e. Zep 
+horn or boat bell) when at platform
+- new compact UI window, listing schedules for all transports in the
 zone, highlighting closest platform when standing still and nearby
 
 Note: Nauticus is in continual development [13th Jan 2008]. You should

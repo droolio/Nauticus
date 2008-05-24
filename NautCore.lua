@@ -30,8 +30,8 @@ local dewdrop = AceLibrary("Dewdrop-2.0")
 local NautAstrolabe = DongleStub("Astrolabe-0.4-NC")
 
 -- object variables
-Nauticus.versionStr = "2.4.0" -- for display
-Nauticus.versionNum = 240 -- for comparison
+Nauticus.versionStr = "2.4.1" -- for display
+Nauticus.versionNum = 241 -- for comparison
 
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
@@ -707,27 +707,6 @@ function Nauticus:InitialiseConfig()
 
 	self:DebugMessage("init config...")
 
-	-- convert legacy timers
-	if nautSavedVars then
-		if nautSavedVars.knownCycleData then
-			self:DebugMessage("convert beta timers")
-			self.db.account.knownCycles = nautSavedVars.knownCycleData
-		elseif nautSavedVars.knownTimes then
-			local knownCycles = self.db.account.knownCycles
-
-			self:DebugMessage("convert old timers")
-
-			for transport, since in pairs(nautSavedVars.knownTimes) do
-				knownCycles[transport] = { ['since'] = since, ['boots'] = 9, ['swaps'] = 9, }
-			end
-		end
-
-		self.db.account.uptime = nautSavedVars.uptime
-		self.db.account.timestamp = nautSavedVars.timestamp
-		nautSavedVars = nil
-	end
-
-	--self.dataChannel = self.db.profile.dataChannel
 	self.debug = self.db.account.debug
 
 	if self.db.account.newerVersion then

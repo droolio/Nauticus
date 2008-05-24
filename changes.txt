@@ -1,5 +1,17 @@
 Version History
 
+v2.4.1
+- IMPROVED data accuracy; prioritise quality on boots < swaps < since
+- NEW: auto select transport option when standing near platform
+- FIX: world map icons staying when trying to hide them
+- show multiple transports in tooltip for all map icons under mouse
+- slightly tweaked round-trip-times again (15 day period)
+- added all options to Titan/FuBar right-click menu
+- remove some irrelevant FuBar options from slash command
+- more complete French translation (thanks thelys/yann!)
+- esES updated (thanks StiviS!)
+
+
 v2.4.0
 - UPDATE: all routes recalibrated for patch 2.4, finally
 - FIX: Titan button update for newer v3.20+ (backward compatible)
