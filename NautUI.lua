@@ -583,9 +583,8 @@ function Nauticus:MapIconButtonMouseEnter()
 		    'children', function()
 				self:ShowTooltip(transit)
 				for t = 1, #(transports), 1 do
-					if transit ~= transports[t].label and
-						(MouseIsOver(transports[t].minimap_icon) or
-						MouseIsOver(transports[t].worldmap_icon))
+					if transit ~= transports[t].label and (MouseIsOver(transports[t].worldmap_icon) or
+						(transports[t].minimap_icon:IsVisible() and MouseIsOver(transports[t].minimap_icon)))
 					then
 						local cat = tablet:AddCategory(
 							'text', "•", -- ascii 149
