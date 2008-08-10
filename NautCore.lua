@@ -303,30 +303,6 @@ Nauticus.cmdOptions = { type = 'group', args = {
 Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.cmdOptions)
 
 
-local Pre_ChatFrame_OnEvent, Naut_ChatFrame_OnEvent
-
-function Nauticus:OnInitialize()
-	self.hasIcon = true
-	self:SetIcon(ARTWORK_LOGO)
-	self.hideWithoutStandby = true
-	self.overrideMenu = true
-
-	local a = self.cmdOptions.args
-	a.icon, a.text, a.colorText, a.detachTooltip, a.lockTooltip, a.position, a.minimapAttach = nil
-
-	rtts, platforms, transports =
-		self.rtts, self.platforms, self.transports
-
-	self:InitialiseConfig()
-	self:InitialiseUI()
-
-	this:RegisterEvent("CHAT_MSG_MONSTER_YELL")
-	this:RegisterEvent("CHAT_MSG_MONSTER_SAY")
-
-	Pre_ChatFrame_OnEvent = ChatFrame_OnEvent
-	ChatFrame_OnEvent = Naut_ChatFrame_OnEvent
-end
-
 local FILTER_NPC = {
 -- orc2uc:
 ["Frezza"] = true, -- yells
@@ -343,30 +319,49 @@ local FILTER_NPC = {
 ["Captain \"Stash\" Torgoley"] = true,
 ["First Mate Kowalski"] = true,
 ["Navigator Mehran"] = true,
+-- uc2ven
+["Meefi Farthrottle"] = true,
+["Drenk Spannerspark"] = true,
 }
 
-function Naut_ChatFrame_OnEvent(event)
-
-	if event == "CHAT_MSG_CHANNEL" and Nauticus.dataChannel and
-		strlower(arg9) == strlower(Nauticus.dataChannel) then
+local function ChatFilter_DataChannel(msg)
+	if Nauticus.dataChannel and
+		strlower(arg9) == strlower(Nauticus.dataChannel) and
+		not Nauticus.debug then
 
 		-- silence
-		if Nauticus.debug then
-			return Pre_ChatFrame_OnEvent(event)
-		end
-
-	elseif not filterChat then
-		return Pre_ChatFrame_OnEvent(event)
-
-	elseif (event == "CHAT_MSG_MONSTER_SAY" or
-		event == "CHAT_MSG_MONSTER_YELL") and FILTER_NPC[arg2] then
-
-		Nauticus:DebugMessage(arg2.." yells: "..arg1)
-		return
+		return true
 	end
+end
 
-	return Pre_ChatFrame_OnEvent(event)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", ChatFilter_DataChannel)
 
+local function ChatFilter_CrewChat(msg)
+	if not filterChat then
+		return false
+	elseif FILTER_NPC[arg2] then
+		Nauticus:DebugMessage(arg2.." yells: "..arg1)
+		return true
+	end
+end
+
+ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", ChatFilter_CrewChat)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", ChatFilter_CrewChat)
+
+function Nauticus:OnInitialize()
+	self.hasIcon = true
+	self:SetIcon(ARTWORK_LOGO)
+	self.hideWithoutStandby = true
+	self.overrideMenu = true
+
+	local a = self.cmdOptions.args
+	a.icon, a.text, a.colorText, a.detachTooltip, a.lockTooltip, a.position, a.minimapAttach = nil
+
+	rtts, platforms, transports =
+		self.rtts, self.platforms, self.transports
+
+	self:InitialiseConfig()
+	self:InitialiseUI()
 end
 
 function Nauticus:OnEnable()
