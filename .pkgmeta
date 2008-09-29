@@ -1,0 +1,14 @@
+package-as: Nauticus
+
+externals:
+    /libs/AceAddon-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceAddon-2.0/
+    /libs/AceOO-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceOO-2.0/
+    /libs/AceLocale-2.2: http://svn.wowace.com/wowace/trunk/Ace2/AceLocale-2.2/
+    /libs/AceLibrary: http://svn.wowace.com/wowace/trunk/Ace2/AceLibrary/
+    /libs/Tablet-2.0: http://svn.wowace.com/wowace/trunk/TabletLib/Tablet-2.0/
+    /libs/AceEvent-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceEvent-2.0/
+    /libs/AceDB-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceDB-2.0/
+    /libs/FuBarPlugin-2.0: http://svn.wowace.com/wowace/trunk/FuBarPlugin-2.0/FuBarPlugin-2.0/
+    /libs/AceConsole-2.0: http://svn.wowace.com/wowace/trunk/Ace2/AceConsole-2.0/
+    /libs/Astrolabe: http://svn.esamynn.org/astrolabe/tags/0.4-NC/
+    /libs/Dewdrop-2.0: http://svn.wowace.com/wowace/trunk/DewdropLib/Dewdrop-2.0/
