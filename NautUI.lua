@@ -21,7 +21,7 @@ local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 local tablet = AceLibrary("Tablet-2.0")
 local dewdrop = AceLibrary("Dewdrop-2.0")
 
-local NautAstrolabe = DongleStub("Astrolabe-0.4-NC")
+local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 local rtts, platforms, transports =
 	Nauticus.rtts, Nauticus.platforms, Nauticus.transports

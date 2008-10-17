@@ -1,5 +1,5 @@
-﻿## Interface: 20400
-## Title: Nauticus |cff7fff7f -Ace2-|r
+﻿## Interface: 30000
+## Title: Nauticus
 ## Author: Drool
 ## Version: 2.4.1
 ## Notes: Track the precise location and arrival & departure times of boats and zeppelins
@@ -16,7 +16,7 @@
 ## X-Category: Map
 ## X-eMail: droolio@gmail.com
 ## X-Website: http://drool.me.uk/naut
-## X-Date: 2008-05-24
+## X-Date: 2008-10-18
 embeds.xml
 libs\Astrolabe\Load.xml
 Locales\Locales.xml
