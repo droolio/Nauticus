@@ -232,20 +232,20 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 	</Frames>
 	<Scripts>
 		<OnLoad>
-			this:SetBackdropColor(103/255, 2/255, 6/255, 1)
-			this:SetBackdropBorderColor(1, 0, 0, 0.5)
+			self:SetBackdropColor(103/255, 2/255, 6/255, 1)
+			self:SetBackdropBorderColor(1, 0, 0, 0.5)
 		</OnLoad>
 		<OnMouseUp>
-			if this.isMoving then
-				this:StopMovingOrSizing()
-				this.isMoving = false
+			if self.isMoving then
+				self:StopMovingOrSizing()
+				self.isMoving = false
 				Nauticus:UpdateUI()
 			end
 		</OnMouseUp>
 		<OnMouseDown>
-			if (not this.isLocked or this.isLocked == 0) and arg1 == "LeftButton" then
-				this:StartMoving()
-				this.isMoving = true
+			if (not self.isLocked or self.isLocked == 0) and arg1 == "LeftButton" then
+				self:StartMoving()
+				self.isMoving = true
 			end
 		</OnMouseDown>
 	</Scripts>
@@ -353,8 +353,8 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 		<Frame name="Naut_TransportSelectFrame" inherits="UIDropDownMenuTemplate">
 			<Scripts>
 				<OnLoad>
-					UIDropDownMenu_Initialize(this,
-						function(level) Nauticus:TransportSelectInitialise(level) end, "MENU")
+					UIDropDownMenu_Initialize(self,
+						function(self, level) Nauticus:TransportSelectInitialise(level); end, "MENU")
 				</OnLoad>
 			</Scripts>
 		</Frame>
@@ -371,7 +371,7 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 			</Anchors>
 			<Scripts>
 				<OnLoad>
-					this:Hide()
+					self:Hide()
 				</OnLoad>
 				<OnEnter>
 					Nauticus:CancelScheduledEvent("NAUT_HIDE_NautFrameTransportSelectButton")
@@ -384,7 +384,7 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 				</OnLeave>
 				<OnClick>
 					Nauticus:WidgetTooltip_Hide()
-					ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame, this, -20, 0)
+					ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame, self, -20, 0)
 				</OnClick>
 			</Scripts>
 			<Layers>
@@ -420,8 +420,8 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 			Nauticus:TransportSelectButton_Fade("NautFrameTransportSelectButton")
 		</OnLeave>
 		<OnLoad>
-			this:SetBackdropColor(1, 0, 0, 0.3)
-			this:SetBackdropBorderColor(1, 0, 0, 0.5)
+			self:SetBackdropColor(1, 0, 0, 0.3)
+			self:SetBackdropBorderColor(1, 0, 0, 0.5)
 		</OnLoad>
 	</Scripts>
 </Frame>
@@ -525,15 +525,15 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 	</Frames>
 	<Scripts>
 		<OnMouseUp>
-			if this.isMoving then
-				this:StopMovingOrSizing()
-				this.isMoving = false
+			if self.isMoving then
+				self:StopMovingOrSizing()
+				self.isMoving = false
 			end
 		</OnMouseUp>
 		<OnMouseDown>
-			if (not this.isLocked or this.isLocked == 0) and arg1 == "LeftButton" then
-				this:StartMoving()
-				this.isMoving = true
+			if (not self.isLocked or self.isLocked == 0) and arg1 == "LeftButton" then
+				self:StartMoving()
+				self.isMoving = true
 			end
 		</OnMouseDown>
 	</Scripts>
@@ -611,7 +611,7 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 					if IsAddOnLoaded("Titan") then
 						Nauticus:TitanPanelButton_OnLoad()
 					else
-						this:Hide()
+						self:Hide()
 					end
 				</OnLoad>
 				<OnClick>
