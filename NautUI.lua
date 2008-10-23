@@ -673,7 +673,7 @@ function Nauticus:TitanPanelButton_OnLoad()
 	Pre_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu
 	TitanUtils_CloseRightClickMenu = Naut_TitanUtils_CloseRightClickMenu
 
-	TitanPanelButton_OnLoad()
+	TitanPanelButton_OnLoad(TitanPanelNauticusButton)
 end
 
 -- hook menu close
@@ -771,5 +771,5 @@ function Nauticus:TitanPanelButton_OnClick(event)
 		self:Button_OnClick()
 	end
 
-	TitanPanelButton_OnClick(event)
+	TitanPanelButton_OnClick(TitanPanelNauticusButton, event)
 end
