@@ -47,6 +47,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["Orgrimmar"] = "奧格瑪",
 ["Undercity"] = "幽暗城",
 ["The Exodar"] = "艾克索達",
+["Stormwind City"] = "暴風城",
 
 ["Durotar"] = "杜洛塔",
 ["Tirisfal Glades"] = "提里斯法林地",
@@ -78,6 +79,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["Org"]	= "奧格",		-- Orgrimmar
 ["UC"]	= "幽暗",		-- Undercity
 ["Exo"]	= "艾克",		-- The Exodar
+["SC"]	= "SC",		-- Stormwind City
 
 ["GG"]	= "格羅姆高",	-- Grom'gol
 ["BB"]	= "藏寶",		-- Booty Bay

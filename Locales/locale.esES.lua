@@ -37,6 +37,7 @@ L:RegisterTranslations("esES", function() return {
 ["Orgrimmar"] = "Orgrimmar",
 ["Undercity"] = "Entrañas",
 ["The Exodar"] = "El Exodar",
+["Stormwind City"] = "Stormwind City",
 
 ["Durotar"] = "Durotar",
 ["Tirisfal Glades"] = "Claros de Tirisfal",
@@ -68,6 +69,7 @@ L:RegisterTranslations("esES", function() return {
 ["Org"]	= "Org",	-- Orgrimmar
 ["UC"]	= "UC",		-- Undercity
 ["Exo"]	= "Exo",	-- The Exodar
+["SC"]	= "SC",		-- Stormwind City
 
 ["GG"]	= "GG",		-- Grom'gol
 ["BB"]	= "BB",		-- Booty Bay

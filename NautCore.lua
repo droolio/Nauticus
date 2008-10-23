@@ -309,13 +309,14 @@ local FILTER_NPC = {
 ["Zapetta"] = true, -- yell + says
 ["Sky-Captain Cloudkicker"] = true,
 ["Chief Officer Coppernut"] = true,
--- grom2uc:
+-- uc2gg:
 ["Hin Denburg"] = true, -- yells
 ["Navigator Hatch"] = true,
 ["Chief Officer Hammerflange"] = true,
+["Sky-Captain Cableclamp"] = true,
 -- org2gg:
 ["Snurk Bucksquick"] = true, -- yells
--- mh2thera:
+-- mh2ther:
 ["Captain \"Stash\" Torgoley"] = true,
 ["First Mate Kowalski"] = true,
 ["Navigator Mehran"] = true,

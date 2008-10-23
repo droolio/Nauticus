@@ -48,6 +48,7 @@ L:RegisterTranslations("frFR", function() return {
 ["Orgrimmar"] = "Orgrimmar",
 ["Undercity"] = "Fossoyeuse",
 ["The Exodar"] = "L'Exodar",
+["Stormwind City"] = "Hurlevent",
 
 ["Durotar"] = "Durotar",
 ["Tirisfal Glades"] = "Clairi\195\168res de Tirisfal",
@@ -76,18 +77,19 @@ L:RegisterTranslations("frFR", function() return {
 ["Forgotten Coast"] = "Cote oubli\195\169e",
 
 -- abbreviations
-["Org"] = "Org", -- Orgrimmar
-["UC"] = "Fos", -- Undercity
-["Exo"] = "Exo", -- The Exodar
+["Org"] = "Org",	-- Orgrimmar
+["UC"] = "Fos",		-- Undercity
+["Exo"] = "Exo",	-- The Exodar
+["SC"]	= "Hur",	-- Stormwind City
 
-["GG"] = "GrG", -- Grom'gol
-["BB"] = "BdB", -- Booty Bay
-["Ra"] = "Cab", -- Ratchet
-["MH"] = "PdM", -- Menethil Harbor
-["Aub"] = "Aub", -- Auberdine
-["Th"] = "The", -- Theramore
-["RTV"] = "Rut", -- Rut'Theran Village
-["FMS"] = "Pen", -- Feathermoon
-["Fer"] = "Fer", -- Feralas
+["GG"] = "GrG",		-- Grom'gol
+["BB"] = "BdB",		-- Booty Bay
+["Ra"] = "Cab",		-- Ratchet
+["MH"] = "PdM",		-- Menethil Harbor
+["Aub"] = "Aub",	-- Auberdine
+["Th"] = "The",		-- Theramore
+["RTV"] = "Rut",	-- Rut'Theran Village
+["FMS"] = "Pen",	-- Feathermoon
+["Fer"] = "Fer",	-- Feralas
 
 } end)

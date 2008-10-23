@@ -47,6 +47,7 @@ L:RegisterTranslations("koKR", function() return {
 ["Orgrimmar"] = "오그리마",
 ["Undercity"] = "언더시티",
 ["The Exodar"] = "엑소다르",
+["Stormwind City"] = "스톰윈드",
 
 ["Durotar"] = "듀로타",
 ["Tirisfal Glades"] = "티리스팔 숲",
@@ -78,6 +79,7 @@ L:RegisterTranslations("koKR", function() return {
 ["Org"]	= "오그",		-- Orgrimmar
 ["UC"]	= "언더",		-- Undercity
 ["Exo"]	= "Exo",	-- The Exodar
+["SC"]	= "SC",		-- Stormwind City
 
 ["GG"]	= "가덤",		-- Grom'gol
 ["BB"]	= "무법",		-- Booty Bay

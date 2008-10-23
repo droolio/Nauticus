@@ -37,6 +37,7 @@ L:RegisterTranslations("enUS", function() return {
 ["Orgrimmar"] = true,
 ["Undercity"] = true,
 ["The Exodar"] = true,
+["Stormwind City"] = true,
 
 ["Durotar"] = true,
 ["Tirisfal Glades"] = true,
@@ -68,6 +69,7 @@ L:RegisterTranslations("enUS", function() return {
 ["Org"]	= true,	-- Orgrimmar
 ["UC"]	= true,	-- Undercity
 ["Exo"]	= true,	-- The Exodar
+["SC"]	= true,	-- Stormwind City
 
 ["GG"]	= true,	-- Grom'gol
 ["BB"]	= true,	-- Booty Bay

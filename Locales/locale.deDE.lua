@@ -66,6 +66,7 @@ L:RegisterTranslations("deDE", function() return {
 ["Orgrimmar"] = "Orgrimmar",
 ["Undercity"] = "Unterstadt",
 ["The Exodar"] = "Die Exodar",
+["Stormwind City"] = "Stormwind",
 
 ["Durotar"] = "Durotar",
 ["Tirisfal Glades"] = "Tirisfal",
@@ -97,6 +98,7 @@ L:RegisterTranslations("deDE", function() return {
 ["Org"]	= "Org",	-- Orgrimmar
 ["UC"]	= "Us",		-- Undercity
 ["Exo"]	= "Exo",	-- The Exodar
+["SC"]	= "Stor",	-- Stormwind City
 
 ["GG"]	= "GG",		-- Grom'gol
 ["BB"]	= "BB",		-- Booty Bay
