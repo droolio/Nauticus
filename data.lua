@@ -104,15 +104,15 @@ Nauticus.lookupIndex = {
 
 -- accurate round trip times
 Nauticus.rtts = {
-["org2uc"] =	239.260,
-["org2gg"] =	248.923,
-["uc2gg"] =		315.017,
-["rat2bb"] =	231.171,
-["aub2sc"] =	234.729,
-["mh2ther"] =	229.991,
-["rtv2ds"] =	312.352,
-["fms2fer"] =	259.756,
-["exo2aub"] =	238.766,
+["org2uc"] =	239.260+0.000337,
+["org2gg"] =	248.923+0.071415,
+["uc2gg"] =		315.017+0.018707,
+["rat2bb"] =	231.171+0.071925,
+["aub2sc"] =	234.729-0.210945,
+["mh2ther"] =	229.991+0.175675,
+["rtv2ds"] =	312.352-0.025831,
+["fms2fer"] =	259.756-0.002028,
+["exo2aub"] =	238.766-0.052198,
 }
 
 Nauticus.transitZones = {
