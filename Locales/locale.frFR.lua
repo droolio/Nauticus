@@ -33,8 +33,8 @@ L:RegisterTranslations("frFR", function() return {
 	"Show only transports in your current zone",
 ["Shows only transports in your current zone."] =
 	"Shows only transports in your current zone.",
-["Click to cycle transport.|nAlt-Click to set up alarm"] =
-	"Click to cycle transport.|nAlt-Click to set up alarm",
+["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
+	"Astuce: Click to cycle transport. Alt-Click to set up alarm",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
 	"There is a new version of Nauticus available! Please visit http://drool.me.uk/naut.",
 ["Type /nauticus or /naut gui show to show again."] =

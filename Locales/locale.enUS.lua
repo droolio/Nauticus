@@ -27,7 +27,7 @@ L:RegisterTranslations("enUS", function() return {
 ["Shows only neutral and transports specific to your faction."] = true,
 ["Show only transports in your current zone"] = true,
 ["Shows only transports in your current zone."] = true,
-["Click to cycle transport.|nAlt-Click to set up alarm"] = true,
+["Hint: Click to cycle transport. Alt-Click to set up alarm"] = true,
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = true,
 ["Type /nauticus or /naut gui show to show again."] = true,
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = true,

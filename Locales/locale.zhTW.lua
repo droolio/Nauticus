@@ -32,8 +32,8 @@ L:RegisterTranslations("zhTW", function() return {
 	"只顯示你目前區域可用的傳輸點",
 ["Shows only transports in your current zone."] =
 	"只顯示你目前區域可用的傳輸點",
-["Click to cycle transport.|nAlt-Click to set up alarm"] =
-	"左鍵：運輸週期 |nAlt+左鍵：設定鬧鈴",
+["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
+	"提示: 左鍵：運輸週期 Alt+左鍵：設定鬧鈴",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
 	"有新版的 Nauticus 釋出！ 請訪問 http://drool.me.uk/naut.",
 ["Type /nauticus or /naut gui show to show again."] =

@@ -32,8 +32,8 @@ L:RegisterTranslations("zhCN", function() return {
 	"只显示你目前所在区域可用的传送点",
 ["Shows only transports in your current zone."] =
 	"只显示你目前所在区域可用的传送点",
-["Click to cycle transport.|nAlt-Click to set up alarm"] =
-	"左键：传送周期 |nAlt+左键：设置报警",
+["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
+	"提示: 左键：传送周期 Alt+左键：设置报警",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
 	"有新版本 Nauticus 发布！ 请访问 http://drool.me.uk/naut.",
 ["Type /nauticus or /naut gui show to show again."] =

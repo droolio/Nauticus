@@ -18,7 +18,20 @@ local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
-local tablet = AceLibrary("Tablet-2.0")
+local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
+	position = { point = "CENTER", x = 0, y = 0 },
+	lock = true,
+	scale = 1,
+	strata = "TOOLTIP",
+	fade = 1,
+	opacity = 1,
+	width = 150,
+	border = { 1, 1, 1, 1 },
+	background = { 0, 0, 0, 1 },
+	min_height = 20,
+} )
+tablet:SetFrameLevel(10)
+
 local dewdrop = AceLibrary("Dewdrop-2.0")
 
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
@@ -392,8 +405,6 @@ end
 
 function Nauticus:ShowTooltip(transit)
 
-	local cat
-
 	local has = self:HasKnownCycle(transit)
 
 	if has then
@@ -402,23 +413,14 @@ function Nauticus:ShowTooltip(transit)
 		local liveData = self.liveData[transit]
 		local cycle, platform = liveData.cycle, liveData.index
 
-		cat = tablet:AddCategory(
-			'text', transports[self.lookupIndex[transit]].vessel_name,
-			'columns', 1,
-			'font', GameFontHighlightLarge,
-			'textR', 0.25, 'textG', 0.75, 'textB', 1,
-			'justify', "CENTER",
-			'hideBlankLine', true
-		)
-
-		cat:AddLine('text', "")
+		tablet:AddLine(transports[self.lookupIndex[transit]].vessel_name)
+			:Color(0.25, 0.75, 1, 1)
+			:Font(GameFontHighlightLarge:GetFont())
+			.left:SetJustifyH('CENTER')
 
 		for index, data in pairs(platforms[transit]) do
-			cat = tablet:AddCategory(
-				'text', data.name,
-				'columns', 2,
-				'hideBlankLine', true
-			)
+			tablet:AddLine(data.name)
+				:Color(1, 1, 1, 1)
 
 			if data.index == platform then
 				-- we're at a platform and waiting to depart
@@ -444,73 +446,45 @@ function Nauticus:ShowTooltip(transit)
 
 			formatted_time = self.formattedTimeCache[floor(plat_time)]
 
-			cat:AddLine(
-				'text', depOrArr..":",
-				'indentation', 10,
-				'text2', formatted_time,
-				'font2', Naut_NumberFont,
-				'text2R', r, 'text2G', g, 'text2B', b
-			)
+			tablet:AddLine(depOrArr..":", formatted_time, false, 10)
+				:Color(1, 0.82, 0, 1, r, g, b, 1)
+				:Font(nil, nil, nil, Naut_NumberFont:GetFont())
+
 		end
 
 		if (self.debug and not IsShiftKeyDown()) or (not self.debug and IsShiftKeyDown()) then
-			cat = tablet:AddCategory(
-				'text', "Debug",
-				'columns', 2,
-				'textR', 0.75, 'textG', 0.75, 'textB', 0.75,
-				'hideBlankLine', true
-			)
+			tablet:AddLine("Debug")
+				:Color(0.75, 0.75, 0.75, 1)
 
 			local since, boots, swaps = self:GetKnownCycle(transit)
 
-			cat:AddLine(
-				'text', "Age:",
-				'indentation', 10,
-				'text2', SecondsToTime(since),
-				'font2', Naut_NumberFont
-			)
+			tablet:AddLine("Age:", SecondsToTime(since), false, 10)
+				:Font(nil, nil, nil, Naut_NumberFont:GetFont())
 
-			cat:AddLine(
-				'text', "Boots, Swaps:",
-				'indentation', 10,
-				'text2', boots..", "..swaps,
-				'font2', Naut_NumberFont
-			)
+			tablet:AddLine("Boots, Swaps:", boots..", "..swaps, false, 10)
+				:Font(nil, nil, nil, Naut_NumberFont:GetFont())
+
 		end
 
 	elseif has == false then
-		cat = tablet:AddCategory(
-			'text', transports[self.lookupIndex[transit]].vessel_name,
-			'columns', 1,
-			'font', GameFontHighlightLarge,
-			'textR', 0.25, 'textG', 0.75, 'textB', 1,
-			'justify', "CENTER"
-		)
-
-		cat:AddLine('text', "")
+		tablet:AddLine(transports[self.lookupIndex[transit]].vessel_name)
+			:Color(0.25, 0.75, 1, 1)
+			:Font(GameFontHighlightLarge:GetFont())
+			.left:SetJustifyH('CENTER')
 
 		for index, data in pairs(platforms[transit]) do
-			cat = tablet:AddCategory(
-				'text', data.name,
-				'columns', 1,
-				'hideBlankLine', true
-			)
+			tablet:AddLine(data.name)
+				:Color(1, 1, 1, 1)
 
-			cat:AddLine(
-				'text', L["Not Available"],
-				'justify', "CENTER"
-			)
+			tablet:AddLine(L["Not Available"])
+				.left:SetJustifyH('CENTER')
 		end
 
 	elseif has == nil then
-		cat = tablet:AddCategory(
-			'text', L["No Transport Selected"],
-			'columns', 1,
-			'font', GameFontHighlightLarge,
-			'textR', 1, 'textG', 0.25, 'textB', 0,
-			'showWithoutChildren', true,
-			'justify', "CENTER"
-		)
+		tablet:AddLine(L["No Transport Selected"])
+			:Color(1, 0.25, 0, 1)
+			:Font(GameFontHighlightLarge:GetFont())
+			.left:SetJustifyH('CENTER')
 
 	end
 
@@ -573,44 +547,66 @@ local function GetMapIconAnchor()
 	end
 end
 
-function Nauticus:MapIconButtonMouseEnter()
-
-	local id = this:GetID()
-	local transit = self.transports[id].label
-
-	if not tablet:IsRegistered(this) then
-		tablet:Register(this,
-		    'children', function()
-				self:ShowTooltip(transit)
-				for t = 1, #(transports), 1 do
-					if transit ~= transports[t].label and (MouseIsOver(transports[t].worldmap_icon) or
-						(transports[t].minimap_icon:IsVisible() and MouseIsOver(transports[t].minimap_icon)))
-					then
-						local cat = tablet:AddCategory(
-							'text', "•", -- ascii 149
-							'textR', 0.5, 'textG', 0.5, 'textB', 0,
-							'showWithoutChildren', true,
-							'justify', "CENTER",
-							'hideBlankLine', true
-						)
-						self:ShowTooltip(transports[t].label)
-					end
-				end
-			end,
-			'point', GetMapIconAnchor,
-			'dontHook', true
-		)
-		tablet:SetFontSizePercent(this, tablet:GetFontSizePercent(this) * 0.85)
+local function GetBarAnchor()
+	local _, y = GetCursorPosition()
+	local cy = GetScreenHeight() / 2
+	if y < cy then
+		return "BOTTOMLEFT", "TOPLEFT"
+	else
+		return "TOPLEFT", "BOTTOMLEFT"
 	end
-
-	self.iconTooltip = this
-	tablet:Open(this)
-
 end
 
-function Nauticus:MapIconButtonMouseExit()
-	tablet:Close(this)
+local function GetParentFrame()
+	if UIParent:IsShown() then
+		return UIParent
+	end
+	local f = GetUIPanel("fullscreen")
+	if f and f:IsShown() then
+		return f
+	end
+	return nil
+end
+
+function Nauticus:MapIconButtonMouseEnter(frame)
+	local id = frame:GetID()
+	local transit = self.transports[id].label
+	local point, rel = GetMapIconAnchor()
+
+	tablet:Attach(point, frame, rel, 0, 0)
+	tablet.db.scale = 0.85
+	tablet:Clear():SetParent(GetParentFrame())
+
+	self:ShowTooltip(transit)
+
+	for t = 1, #(transports), 1 do
+		if transit ~= transports[t].label and (MouseIsOver(transports[t].worldmap_icon) or
+			(transports[t].minimap_icon:IsVisible() and MouseIsOver(transports[t].minimap_icon)))
+		then
+			tablet:AddLine("•") -- ascii 149
+				:Color(0.5, 0.5, 0, 1)
+				.left:SetJustifyH('CENTER')
+			self:ShowTooltip(transports[t].label)
+		end
+	end
+
+	self.iconTooltip = frame
+	tablet:SetPosition():Size():Show()
+end
+
+function Nauticus:MapIconButtonMouseExit(frame)
+	tablet:Hide()
 	self.iconTooltip = nil
+end
+
+function Nauticus:RefreshTooltip()
+	if not self.iconTooltip then return; end
+	if self.iconTooltip == self.barTooltipFrame then
+		this = self.iconTooltip
+		self:UpdateTooltip()
+	else
+		self:MapIconButtonMouseEnter(self.iconTooltip)
+	end
 end
 
 function Nauticus:RemoveAllIcons()
@@ -622,12 +618,50 @@ end
 
 -- FuBar stuff...
 function Nauticus:OnTooltipUpdate()
+	if self.iconTooltip ~= this or dewdrop:IsOpen(this) then return; end
+
+	local point, rel
+
+	if not self:IsMinimapAttached() or this == TitanPanelNauticusButton then
+		point, rel = GetBarAnchor()
+	else
+		point, rel = GetMapIconAnchor()
+	end
+
+	tablet:Attach(point, this, rel, 0, 0)
+	tablet.db.scale = 1
+	tablet:Clear():SetParent(GetParentFrame())
+
+	tablet:AddLine("Nauticus")
+		:Font(GameTooltipHeaderText:GetFont())
+		.left:SetJustifyH('CENTER')
+
 	self:ShowTooltip(self.activeTransit)
-    tablet:SetHint(L["Click to cycle transport.|nAlt-Click to set up alarm"])
+
+	tablet:AddLine("")
+	tablet:AddLine(L["Hint: Click to cycle transport. Alt-Click to set up alarm"], nil, true)
+		:Color(0, 1, 0, 1)
+
+	tablet:SetPosition():Size():Show()
+end
+
+function Nauticus:OnEnter()
+	self.iconTooltip = this
+	self.barTooltipFrame = this
+	self:UpdateTooltip()
+end
+
+function Nauticus:OnLeave()
+	self.iconTooltip = nil
+	tablet:Hide()
+end
+
+function Nauticus:CloseTooltip()
+	self.iconTooltip = nil
+	tablet:Hide()
 end
 
 function Nauticus:OnMenuRequest(level, value, inTooltip)
-	if inTooltip then return; end
 	self:ShowMenu(level)
 	self:AddImpliedMenuOptions()
 end
@@ -685,33 +719,10 @@ function Naut_TitanUtils_CloseRightClickMenu()
 	end
 end
 
-local function GetTitanAnchor()
-	local _, y = GetCursorPosition()
-	local cy = GetScreenHeight() / 2
-	if y < cy then
-		return "BOTTOMLEFT", "TOPLEFT"
-	else
-		return "TOPLEFT", "BOTTOMLEFT"
-	end
-end
-
 function Nauticus:TitanPanelButton_OnTooltipUpdate()
-	if dewdrop:IsOpen(this) then return; end
-
-	if not tablet:IsRegistered(this) then
-		tablet:Register(this,
-			'children', function()
-				tablet:SetTitle(self.title)
-				self:ShowTooltip(self.activeTransit)
-				tablet:SetHint(L["Click to cycle transport.|nAlt-Click to set up alarm"])
-			end,
-			'point', GetTitanAnchor,
-			'dontHook', true
-		)
-	end
-
 	self.iconTooltip = this
-	tablet:Open(this)
+	self.barTooltipFrame = this
+	self:UpdateTooltip()
 end
 
 function TitanPanelRightClickMenu_PrepareNauticusMenu()
@@ -736,7 +747,7 @@ function TitanPanelRightClickMenu_PrepareNauticusMenu()
 					)
 				end
 			end,
-			'point', GetTitanAnchor,
+			'point', GetBarAnchor,
 			'dontHook', true
 		)
 	end
@@ -764,12 +775,19 @@ function Nauticus:TitanPanelButton_UpdateButton()
 end
 
 function Nauticus:TitanPanelButton_OnClick(event)
-	tablet:Close()
-
 	if event == "LeftButton" then
 		if dewdrop:IsOpen(this) then dewdrop:Close(); end
 		self:Button_OnClick()
+	elseif event == "RightButton" then
+		self.iconTooltip = nil
+		tablet:Hide()
 	end
 
 	TitanPanelButton_OnClick(TitanPanelNauticusButton, event)
+end
+
+function Nauticus:TitanPanelButton_OnLeave()
+	self.iconTooltip = nil
+	tablet:Hide()
+	TitanPanelButton_OnLeave(TitanPanelNauticusButton)
 end

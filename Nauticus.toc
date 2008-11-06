@@ -6,19 +6,21 @@
 ## Notes-zhCN: 显示艾泽拉斯的交通船抵达/离开的时间
 ## Notes-zhTW: 顯示艾澤拉斯的交通船抵達/離開的時間
 ## Notes-esES: Rastrea la ubicacion precisa y la llegada y salida de barcos y zeppelins
-## OptionalDeps: Ace2,FuBar,TabletLib,DewdropLib,FuBarPlugin-2.0,Titan
+## OptionalDeps: Ace2,FuBar,DewdropLib,FuBarPlugin-2.0,Titan
 ## eMail: droolio@gmail.com
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: NauticusDB
 ## SavedVariablesPerCharacter: NauticusDBPC
-## X-Embeds: Ace2,TabletLib,DewdropLib,FuBarPlugin-2.0
+## X-Embeds: Ace2,DewdropLib,FuBarPlugin-2.0
 ## X-Category: Map
 ## X-eMail: droolio@gmail.com
 ## X-Website: http://drool.me.uk/naut
-## X-Date: 2008-10-18
+## X-Date: 2008-11-06
+libs\LibStub\LibStub.lua
 embeds.xml
 libs\Astrolabe\Load.xml
+libs\LibSimpleFrame-Mod-1.0\lib.xml
 Locales\Locales.xml
 NautCore.lua
 data.lua

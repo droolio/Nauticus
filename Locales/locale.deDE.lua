@@ -32,8 +32,8 @@ L:RegisterTranslations("deDE", function() return {
 	"Zeige nur Transportmittel der momentanen Zone",
 ["Shows only transports in your current zone."] =
 	"Zeigt nur Transportmittel der momentanen Zone.",
-["Click to cycle transport.|nAlt-Click to set up alarm"] =
-	"Klick - Reiseroute ausw\195\164hlen.|nAlt-Klick - Alarm aktivieren.",
+["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
+	"Hinweis: Klick - Reiseroute ausw\195\164hlen. Alt-Klick - Alarm aktivieren.",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
 	"Neue Versionen findest Du bei http://drool.me.uk/naut.",
 ["Type /nauticus or /naut gui show to show again."] =

@@ -24,7 +24,6 @@ local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
-local tablet = AceLibrary("Tablet-2.0")
 local dewdrop = AceLibrary("Dewdrop-2.0")
 
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
@@ -354,6 +353,7 @@ function Nauticus:OnInitialize()
 	self:SetIcon(ARTWORK_LOGO)
 	self.hideWithoutStandby = true
 	self.overrideMenu = true
+	self.overrideTooltip = true
 
 	local a = self.cmdOptions.args
 	a.icon, a.text, a.colorText, a.detachTooltip, a.lockTooltip, a.position, a.minimapAttach = nil
@@ -574,9 +574,7 @@ function Nauticus:Clock_OnUpdate(elapse)
 		self.tempTextCount = self.tempTextCount - 1
 	end
 
-	if self.iconTooltip then
-		tablet:Refresh(self.iconTooltip)
-	end
+	self:RefreshTooltip()
 
 end
 
@@ -652,10 +650,12 @@ function Nauticus:SetKnownTime(transit, index, x, y)
 			local old_time = self:GetKnownCycle(transit)
 			local oldCycle = math.fmod(old_time, rtts[transit])
 			local diff = oldCycle-sum_time
+			local drift = format("%0.6f", diff / ((old_time-sum_time) / rtts[transit]))
+			self.db.account.knownCycles[transit].drift = drift
 			self:DebugMessage(transit..", cycle time: "..sum_time
 				.." ; old: "..format("%0.3f", oldCycle)
 				.." ; diff: "..format("%0.3f", diff)
-				.." ; drift: "..format("%0.6f", diff / ((old_time-sum_time) / rtts[transit])))
+				.." ; drift: "..drift)
 		else
 			self:DebugMessage(transit..", cycle time: "..sum_time)
 		end
