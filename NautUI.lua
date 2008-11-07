@@ -16,6 +16,9 @@ local ARTWORK_ALARM = "Interface\\Icons\\INV_Misc_PocketWatch_02"
 
 local Nauticus = Nauticus
 
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+local dataobj = ldb:NewDataObject("Nauticus", { type = "data source", text = "Nauticus", icon = ARTWORK_LOGO } )
+
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
 local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
@@ -36,8 +39,8 @@ local dewdrop = AceLibrary("Dewdrop-2.0")
 
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
-local rtts, platforms, transports =
-	Nauticus.rtts, Nauticus.platforms, Nauticus.transports
+local rtts, platforms, transports = Nauticus.rtts, Nauticus.platforms, Nauticus.transports
+local iconTooltip, barTooltipFrame
 
 
 function Nauticus:IsZoneGUI()
@@ -106,8 +109,7 @@ function Nauticus:Button_OnClick()
 			end
 
 			self.tempTextCount = 2
-			self:SetText(self.tempText)
-			if self.TitanPanelButton_SetText then self:TitanPanelButton_SetText(); end
+			self:UpdateDisplay()
 		end
 
 	else
@@ -248,8 +250,6 @@ function Nauticus:SetTransport(id)
 	if self:HasKnownCycle(self.activeTransit) then
 		self.tempText = GREEN..transports[id].short_name
 		self.tempTextCount = 2
-		self:SetText(self.tempText)
-		if self.TitanPanelButton_SetText then self:TitanPanelButton_SetText(); end
 	else
 		self.tempTextCount = 0
 	end
@@ -285,7 +285,6 @@ function Nauticus:TransportSelectSetNone()
 	end
 
 	self:UpdateDisplay()
-	if self.TitanPanelButton_UpdateButton then self:TitanPanelButton_UpdateButton(); end
 
 end
 
@@ -533,27 +532,28 @@ local function GetMapIconAnchor()
 	local cx, cy = GetScreenWidth() / 2, GetScreenHeight() / 2
 
 	if x > cx then
-		if y < cy then
-			return "BOTTOMRIGHT", "TOPLEFT"
-		else
-			return "TOPRIGHT", "BOTTOMLEFT"
-		end
+		if y < cy then return "BOTTOMRIGHT", "TOPLEFT"
+		else return "TOPRIGHT", "BOTTOMLEFT"; end
 	else
-		if y < cy then
-			return "BOTTOMLEFT", "TOPRIGHT"
-		else
-			return "TOPLEFT", "BOTTOMRIGHT"
-		end
+		if y < cy then return "BOTTOMLEFT", "TOPRIGHT"
+		else return "TOPLEFT", "BOTTOMRIGHT"; end
 	end
 end
 
-local function GetBarAnchor()
-	local _, y = GetCursorPosition()
-	local cy = GetScreenHeight() / 2
-	if y < cy then
-		return "BOTTOMLEFT", "TOPLEFT"
+local function GetBarAnchor(frame)
+	local x, y = frame:GetCenter()
+	if not x or not y then return "TOPLEFT", "BOTTOMLEFT"; end
+	local cx, cy = UIParent:GetWidth() / 3, UIParent:GetHeight() / 2
+
+	if x < cx then
+		if y < cy then return "BOTTOMLEFT", "TOPLEFT"
+		else return "TOPLEFT", "BOTTOMLEFT"; end
+	elseif x > 2 * cx then
+		if y < cy then return "BOTTOMRIGHT", "TOPRIGHT"
+		else return "TOPRIGHT", "BOTTOMRIGHT"; end
 	else
-		return "TOPLEFT", "BOTTOMLEFT"
+		if y < cy then return "BOTTOM", "TOP"
+		else return "TOP", "BOTTOM"; end
 	end
 end
 
@@ -590,22 +590,23 @@ function Nauticus:MapIconButtonMouseEnter(frame)
 		end
 	end
 
-	self.iconTooltip = frame
+	iconTooltip = frame
 	tablet:SetPosition():Size():Show()
 end
 
 function Nauticus:MapIconButtonMouseExit(frame)
 	tablet:Hide()
-	self.iconTooltip = nil
+	iconTooltip = nil
 end
 
-function Nauticus:RefreshTooltip()
-	if not self.iconTooltip then return; end
-	if self.iconTooltip == self.barTooltipFrame then
-		this = self.iconTooltip
-		self:UpdateTooltip()
+function Nauticus:UpdateDisplay()
+	dataobj.icon, dataobj.text = self:GetButtonIconText()
+	if not iconTooltip then return; end
+
+	if iconTooltip == barTooltipFrame then
+		dataobj.OnTooltipShow(iconTooltip)
 	else
-		self:MapIconButtonMouseEnter(self.iconTooltip)
+		self:MapIconButtonMouseEnter(iconTooltip)
 	end
 end
 
@@ -616,19 +617,13 @@ function Nauticus:RemoveAllIcons()
 	end
 end
 
--- FuBar stuff...
-function Nauticus:OnTooltipUpdate()
-	if self.iconTooltip ~= this or dewdrop:IsOpen(this) then return; end
+-- LDB stuff...
+function dataobj:OnTooltipShow()
+	if iconTooltip ~= self or dewdrop:IsOpen(self) then return; end
 
-	local point, rel
+	local point, rel = GetBarAnchor(self)
 
-	if not self:IsMinimapAttached() or this == TitanPanelNauticusButton then
-		point, rel = GetBarAnchor()
-	else
-		point, rel = GetMapIconAnchor()
-	end
-
-	tablet:Attach(point, this, rel, 0, 0)
+	tablet:Attach(point, self, rel, 0, 0)
 	tablet.db.scale = 1
 	tablet:Clear():SetParent(GetParentFrame())
 
@@ -636,7 +631,7 @@ function Nauticus:OnTooltipUpdate()
 		:Font(GameTooltipHeaderText:GetFont())
 		.left:SetJustifyH('CENTER')
 
-	self:ShowTooltip(self.activeTransit)
+	Nauticus:ShowTooltip(Nauticus.activeTransit)
 
 	tablet:AddLine("")
 	tablet:AddLine(L["Hint: Click to cycle transport. Alt-Click to set up alarm"], nil, true)
@@ -645,149 +640,56 @@ function Nauticus:OnTooltipUpdate()
 	tablet:SetPosition():Size():Show()
 end
 
-function Nauticus:OnEnter()
-	self.iconTooltip = this
-	self.barTooltipFrame = this
-	self:UpdateTooltip()
+function dataobj:OnEnter()
+	iconTooltip = self
+	barTooltipFrame = self
+	dataobj.OnTooltipShow(self)
 end
 
-function Nauticus:OnLeave()
-	self.iconTooltip = nil
+function dataobj:OnLeave()
+	iconTooltip = nil
 	tablet:Hide()
 end
 
-function Nauticus:CloseTooltip()
-	self.iconTooltip = nil
-	tablet:Hide()
-end
+function dataobj:OnClick(button)
+	if button == "LeftButton" then
+		if dewdrop:IsOpen(self) then dewdrop:Close(); end
+		Nauticus:Button_OnClick()
+	elseif button == "RightButton" then
+		iconTooltip = nil
+		tablet:Hide()
 
-function Nauticus:OnMenuRequest(level, value, inTooltip)
-	self:ShowMenu(level)
-	self:AddImpliedMenuOptions()
-end
+		if not dewdrop:IsRegistered(self) then
+			dewdrop:Register(self,
+				'children', function(level)
+					if level == 1 then
+						dewdrop:AddLine(
+							'text', "Nauticus",
+							'isTitle', true
+						)
+					end
+					Nauticus:ShowMenu(level)
+				end,
+				'point', GetBarAnchor,
+				'dontHook', true
+			)
+		end
 
-function Nauticus:OnTextUpdate()
-	local icon, text = self:GetButtonIconText()
-	self:SetIcon(icon); self:SetText(text)
-end
-
-function Nauticus:OnClick()
-	self:Button_OnClick()
+		if dewdrop:IsOpen(self) then
+			dewdrop:Close()
+		elseif self:IsShown() then
+			dewdrop:Open(self)
+		end
+	end
 end
 
 -- Titan stuff...
 -- don't go any further if Titan isn't loaded
 if not IsAddOnLoaded("Titan") then Nauticus:DebugMessage("no titan"); return; end
 
--- constants
-local TITAN_ID = "Nauticus"
-
-local Naut_TitanPanelButton_OnTooltipUpdate
-
-local Pre_TitanUtils_CloseRightClickMenu, Naut_TitanUtils_CloseRightClickMenu
-
-function Nauticus:TitanPanelButton_OnLoad()
-
-	this.registry = {
-		id = TITAN_ID,
-		category = "Information",
-		version = self.versionStr,
-		menuText = "Nauticus",
-		buttonTextFunction = "Naut_TitanPanelButton_GetButtonText",
-		tooltipTitle = "Nauticus",
-		tooltipCustomFunction = function() Nauticus:TitanPanelButton_OnTooltipUpdate() end,
-		icon = self.logo,
-		iconWidth = 16,
-		savedVariables = {
-			ShowLabelText = 1,
-			ShowIcon = 1,
-		}
-	}
-
-	Pre_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu
-	TitanUtils_CloseRightClickMenu = Naut_TitanUtils_CloseRightClickMenu
-
-	TitanPanelButton_OnLoad(TitanPanelNauticusButton)
-end
-
 -- hook menu close
-function Naut_TitanUtils_CloseRightClickMenu()
-	Pre_TitanUtils_CloseRightClickMenu()
-
-	if dewdrop:GetOpenedParent() then
-		dewdrop:Close()
-	end
-end
-
-function Nauticus:TitanPanelButton_OnTooltipUpdate()
-	self.iconTooltip = this
-	self.barTooltipFrame = this
-	self:UpdateTooltip()
-end
-
-function TitanPanelRightClickMenu_PrepareNauticusMenu()
-
-	if not dewdrop:IsRegistered(this) then
-		dewdrop:Register(this,
-			'children', function(level)
-				if level == 1 then
-					dewdrop:AddLine(
-						'text', TitanPlugins[TITAN_ID].menuText,
-						'isTitle', true
-					)
-				end
-				Nauticus:ShowMenu(level)
-				if level == 1 then
-					dewdrop:AddLine(
-						'text', TITAN_PANEL_MENU_HIDE,
-						'func', function()
-							TitanPanel_RemoveButton(TITAN_ID)
-							dewdrop:Close()
-						end
-					)
-				end
-			end,
-			'point', GetBarAnchor,
-			'dontHook', true
-		)
-	end
-
-	if dewdrop:IsOpen(this) then
-		dewdrop:Close()
-	elseif this:IsShown() then
-		dewdrop:Open(this)
-	end
-
-end
-
-function Naut_TitanPanelButton_GetButtonText()
-	local icon, text = Nauticus:GetButtonIconText()
-	TitanPanelNauticusButton.registry.icon = icon
-	return text
-end
-
-function Nauticus:TitanPanelButton_SetText()
-	TitanPanelButton_SetButtonText(TITAN_ID)
-end
-
-function Nauticus:TitanPanelButton_UpdateButton()
-	TitanPanelButton_UpdateButton(TITAN_ID)
-end
-
-function Nauticus:TitanPanelButton_OnClick(event)
-	if event == "LeftButton" then
-		if dewdrop:IsOpen(this) then dewdrop:Close(); end
-		self:Button_OnClick()
-	elseif event == "RightButton" then
-		self.iconTooltip = nil
-		tablet:Hide()
-	end
-
-	TitanPanelButton_OnClick(TitanPanelNauticusButton, event)
-end
-
-function Nauticus:TitanPanelButton_OnLeave()
-	self.iconTooltip = nil
-	tablet:Hide()
-	TitanPanelButton_OnLeave(TitanPanelNauticusButton)
+local orig_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu
+function TitanUtils_CloseRightClickMenu(...)
+	if dewdrop:GetOpenedParent() then dewdrop:Close(); end
+	return orig_TitanUtils_CloseRightClickMenu(...)
 end

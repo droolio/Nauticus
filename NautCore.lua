@@ -19,7 +19,7 @@ local ARTWORK_DOCKED = ARTWORK_PATH.."Docked"
 local MAX_FORMATTED_TIME = 256 -- the longest route minus 60
 local ICON_DEFAULT_SIZE = 18
 
-Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0", "FuBarPlugin-2.0")
+Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
 local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
@@ -349,12 +349,6 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", ChatFilter_CrewChat)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", ChatFilter_CrewChat)
 
 function Nauticus:OnInitialize()
-	self.hasIcon = true
-	self:SetIcon(ARTWORK_LOGO)
-	self.hideWithoutStandby = true
-	self.overrideMenu = true
-	self.overrideTooltip = true
-
 	local a = self.cmdOptions.args
 	a.icon, a.text, a.colorText, a.detachTooltip, a.lockTooltip, a.position, a.minimapAttach = nil
 
@@ -565,16 +559,13 @@ function Nauticus:Clock_OnUpdate(elapse)
 				getglobal("NautFramePlat"..index.."Time"):SetText(colour..formatted_time)
 			end
 		end
-
-		self:UpdateDisplay()
-		if self.TitanPanelButton_UpdateButton then self:TitanPanelButton_UpdateButton(); end
 	end
 
 	if self.tempTextCount > 0 then
 		self.tempTextCount = self.tempTextCount - 1
 	end
 
-	self:RefreshTooltip()
+	self:UpdateDisplay()
 
 end
 
