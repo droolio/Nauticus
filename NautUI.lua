@@ -43,10 +43,6 @@ local rtts, platforms, transports = Nauticus.rtts, Nauticus.platforms, Nauticus.
 local iconTooltip, barTooltipFrame
 
 
-function Nauticus:IsZoneGUI()
-    return self.db.profile.zoneGUI
-end
-
 function Nauticus:IsFactionSpecific()
     return self.db.profile.factionSpecific
 end
@@ -143,40 +139,6 @@ function Nauticus:Button_OnClick()
 
 end
 
-function Nauticus:TransportSelectInitialise(level)
-
-	if level == 1 then
-		local info, textdesc
-
-		info = UIDropDownMenu_CreateInfo()
-		info.text = YELLOW..L["Select None"]
-		info.value = 0
-		if self.activeTransit == -1 then info.checked = true; end
-		info.func = function() Nauticus:TransportSelect_OnClick() end
-
-		UIDropDownMenu_AddButton(info)
-
-		for i = 1, #(transports), 1 do
-			if self:IsRouteShown(i) then
-				textdesc = transports[i].name
-
-				if self:HasKnownCycle(transports[i].label) then
-					textdesc = GREEN..textdesc
-				end
-
-				info = UIDropDownMenu_CreateInfo()
-				info.text = textdesc
-				info.value = i
-				if transports[i].label == self.activeTransit then info.checked = true; end
-				info.func = function() Nauticus:TransportSelect_OnClick() end
-
-				UIDropDownMenu_AddButton(info)
-			end
-		end
-	end
-
-end
-
 function Nauticus:ShowMenu(level)
 
 	if level == 1 then
@@ -239,10 +201,6 @@ function Nauticus:ShowMenu(level)
 
 end
 
-function Nauticus:TransportSelect_OnClick()
-	self:SetTransport(this.value)
-end
-
 function Nauticus:SetTransport(id)
 	self.activeTransit = transports[id].label
 	self.db.char.activeTransit = self.activeTransit
@@ -258,148 +216,17 @@ function Nauticus:SetTransport(id)
 end
 
 function Nauticus:TransportSelectSetNone()
-
 	local has = self:HasKnownCycle(self.activeTransit)
 
 	if has == nil then
-		for index = 1, 2 do
-			getglobal("NautFramePlat"..index.."Name"):SetText(L["No Transport Selected"])
-			getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(L["Not Available"])
-			getglobal("NautFramePlat"..index.."Time"):SetText(L["N/A"])
-		end
-
 		self.lowestNameTime = "--"
 		self.icon = ARTWORK_LOGO
-
 	elseif has == false then
-		local transit = self.activeTransit
-
-		for index, data in pairs(platforms[transit]) do
-			getglobal("NautFramePlat"..index.."Name"):SetText(data.name)
-			getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(L["Not Available"])
-			getglobal("NautFramePlat"..index.."Time"):SetText(L["N/A"])
-		end
-
 		self.lowestNameTime = L["N/A"]
 		self.icon = ARTWORK_LOGO
 	end
 
 	self:UpdateDisplay()
-
-end
-
-function Nauticus:Minimise_OnClick()
-	self.db.char.showLowerGUI = not self.db.char.showLowerGUI
-	self:UpdateUI()
-end
-
-function Nauticus:UpdateUI()
-
-	if self.db.char.showGUI then
-		NautHeaderFrame:Show()
-	else
-		NautHeaderFrame:Hide()
-		return
-	end
-
-	if self.db.char.showLowerGUI then
-		NautHeaderFrame:SetWidth(195)
-		NautHeaderFrameAddonName:Show()
-		NautHeaderFrameOptionsButton:Show()
-		self:CancelScheduledEvent("NAUT_HIDE_NautFrame")
-		NautFrame:SetAlpha(1)
-		NautFrame:Show()
-		self:Clock_OnUpdate(0)
-		NautHeaderFrameMinimiseButton:SetNormalTexture("Interface\\Buttons\\UI-MinusButton-UP")
-		NautHeaderFrameMinimiseButton:SetPushedTexture("Interface\\Buttons\\UI-MinusButton-DOWN")
-
-		local _, centre = NautHeaderFrame:GetCenter()
-		NautFrame:ClearAllPoints()
-
-		if centre < (GetScreenHeight()/2) then
-			NautFrame:SetPoint("BOTTOM", NautHeaderFrame, "TOP", 0, -5)
-		else
-			NautFrame:SetPoint("TOP", NautHeaderFrame, "BOTTOM", 0, 5)
-		end
-
-	else
-		if NautFrame:IsVisible() then
-			self:TransportSelectButton_Fade("NautFrame", 0.85, function() self:UpdateUI() end)
-			return
-		end
-
-		NautHeaderFrameMinimiseButton:SetNormalTexture("Interface\\Buttons\\UI-PlusButton-UP")
-		NautHeaderFrameMinimiseButton:SetPushedTexture("Interface\\Buttons\\UI-PlusButton-DOWN")
-		NautHeaderFrameOptionsButton:Hide()
-		NautHeaderFrameAddonName:Hide()
-
-		-- initialise anchor
-		local top, right = NautHeaderFrame:GetTop(), NautHeaderFrame:GetRight()
-
-		if top ~= nil and right ~= nil then
-			NautHeaderFrame:ClearAllPoints()
-			NautHeaderFrame:SetPoint("TOPRIGHT", UIParent, "BOTTOMLEFT", right, top)
-		end
-
-		NautHeaderFrame:SetWidth(64)
-	end
-
-	self.db.char.top, self.db.char.right = NautHeaderFrame:GetTop(), NautHeaderFrame:GetRight()
-
-end
-
-function Nauticus:Close_OnClick()
-	self.db.char.showGUI = false
-	self:UpdateUI()
-end
-
-function Nauticus:Options_OnClick()
-	if not NautOptionsFrame:IsVisible() then
-		NautOptionsFrame:Show()
-	else
-		NautOptionsFrame:Hide()
-	end
-end
-
-function Nauticus:OptionsSave_OnClick()
-	self.db.profile.zoneGUI = NautOptionsFrameOptZoneGUI:GetChecked() ~= nil
-	self.db.profile.factionSpecific = NautOptionsFrameOptFactionSpecific:GetChecked() ~= nil
-	self.db.profile.zoneSpecific = NautOptionsFrameOptZoneSpecific:GetChecked() ~= nil
-
-	NautOptionsFrame:Hide()
-end
-
-function Nauticus:OptionsClose_OnClick()
-	NautOptionsFrameOptZoneGUI:SetChecked(self:IsZoneGUI())
-	NautOptionsFrameOptFactionSpecific:SetChecked(self:IsFactionSpecific())
-	NautOptionsFrameOptZoneSpecific:SetChecked(self:IsZoneSpecific())
-
-	NautOptionsFrame:Hide()
-end
-
-function Nauticus:InitialiseUI()
-
-	-- set GUI options
-	NautOptionsFrameOptZoneGUI:SetChecked(self:IsZoneGUI())
-	NautOptionsFrameOptFactionSpecific:SetChecked(self:IsFactionSpecific())
-	NautOptionsFrameOptZoneSpecific:SetChecked(self:IsZoneSpecific())
-
-	NautHeaderFrameAddonName:SetText("Nauticus v"..self.versionStr)
-
-	if (GetLocale() == "deDE") then
-		NautOptionsFrame:SetWidth(365)
-		NautOptionsFrameCloseOptionsButton:SetWidth(75)
-		NautOptionsFrameSaveOptionsButton:SetWidth(75)
-	end
-
-	NautOptionsFrameOptionsTitle:SetText(L["Nauticus Options"])
-	NautOptionsFrameOptZoneGUIText:SetText(L["Show GUI when zone change contains a transport"])
-	NautOptionsFrameOptFactionSpecificText:SetText(L["Show only transports for your faction"])
-	NautOptionsFrameOptZoneSpecificText:SetText(L["Show only transports in your current zone"])
-
-	NautOptionsFrameCloseOptionsButtonText:SetText(L["Close"])
-	NautOptionsFrameSaveOptionsButtonText:SetText(L["Save"])
-
 end
 
 function Nauticus:ShowTooltip(transit)
@@ -487,44 +314,6 @@ function Nauticus:ShowTooltip(transit)
 
 	end
 
-end
-
--- recursively fade the frame
--- if fade is nil, first pause 1.5sec then fade over 0.5sec @ ~13.33fps
--- callback is function to call when frame eventually hidden (optional)
-function Nauticus:TransportSelectButton_Fade(frame_name, fade, callback)
-	frame = getglobal(frame_name)
-
-	if not fade then
-		self:ScheduleEvent("NAUT_HIDE_"..frame_name,
-			self.TransportSelectButton_Fade, 1.5, self, frame_name, 0.85, callback)
-	else
-		if fade < 0 then
-			frame:Hide()
-			if callback then callback(); end
-		else
-			frame:SetAlpha(fade)
-
-			self:ScheduleEvent("NAUT_HIDE_"..frame_name,
-				self.TransportSelectButton_Fade, 0.075, self, frame_name, fade-0.15, callback)
-		end
-	end
-end
-
-function Nauticus:WidgetTooltip_Show(text, desc)
-	self:ScheduleEvent("NAUT_SHOW_TOOLTIP", function(frame, text, desc)
-		GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
-		GameTooltip:SetText(L[text])
-		if desc then
-			GameTooltip:AddLine(L[desc], 1, 1, 1, 1)
-			GameTooltip:Show()
-		end
-	end, 1, this, text, desc)
-end
-
-function Nauticus:WidgetTooltip_Hide()
-	self:CancelScheduledEvent("NAUT_SHOW_TOOLTIP")
-	GameTooltip:Hide()
 end
 
 local function GetMapIconAnchor()

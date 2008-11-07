@@ -56,7 +56,6 @@ local filterChat, autoSelect
 
 Nauticus:RegisterDB("NauticusDB", "NauticusDBPC")
 Nauticus:RegisterDefaults("profile", {
-	zoneGUI = false,
 	factionSpecific = true,
 	zoneSpecific = false,
 	filterChat = true,
@@ -71,61 +70,11 @@ Nauticus:RegisterDefaults("account", {
 } )
 Nauticus:RegisterDefaults("char", {
 	activeTransit = -1,
-	showGUI = false,
-	showLowerGUI = true,
 	showIcons = true,
 	autoSelect = true,
 } )
 
 local options = {
-	gui = {
-		type = 'group',
-		name = "Legacy GUI",
-		desc = "Options for legacy GUI window.",
-		order = 3,
-		args = {
-			show = {
-				type = 'execute',
-				name = "Show GUI",
-				desc = "Show the legacy GUI window.",
-				order = 2,
-				func = function()
-					Nauticus.db.char.showGUI = true
-					Nauticus.db.char.showLowerGUI = true
-					Nauticus:UpdateUI()
-				end
-			},
-			reset = {
-				type = 'execute',
-				name = "Reset GUI",
-				desc = "Unhide and reset the legacy GUI window position to centre.",
-				order = 3,
-				func = function()
-					Nauticus.db.char.showGUI = true
-					Nauticus.db.char.showLowerGUI = true
-					local top, right = GetScreenHeight()/2 + 68, GetScreenWidth()/2 + 98
-					if top ~= nil and right ~= nil then
-						NautHeaderFrame:ClearAllPoints()
-						NautHeaderFrame:SetPoint("TOPRIGHT", UIParent, "BOTTOMLEFT", right, top)
-					end
-					Nauticus:UpdateUI()
-				end
-			},
-			autoshow = {
-				type = 'toggle',
-				name = "Auto show GUI",
-				desc = "Auto show the legacy GUI window when zone change contains a transport.",
-				order = 1,
-				get = function()
-					return Nauticus.db.profile.zoneGUI
-				end,
-				set = function(v)
-					Nauticus.db.profile.zoneGUI = v
-					NautOptionsFrameOptZoneGUI:SetChecked(v)
-				end,
-			},
-		},
-	},
 	icons = {
 		type = 'group',
 		name = "Icons",
@@ -356,7 +305,6 @@ function Nauticus:OnInitialize()
 		self.rtts, self.platforms, self.transports
 
 	self:InitialiseConfig()
-	self:InitialiseUI()
 end
 
 function Nauticus:OnEnable()
@@ -383,24 +331,11 @@ function Nauticus:OnEnable()
 	self:DebugMessage("enabled: "..self.currentZone)
 
 	self:TransportSelectSetNone()
-
-	local top, right = self.db.char.top, self.db.char.right
-
-	if not top then
-		top, right = GetScreenHeight()/2 + 68, GetScreenWidth()/2 + 98
-		self:DebugMessage("no ui!")
-	end
-
-	NautHeaderFrame:ClearAllPoints()
-	NautHeaderFrame:SetPoint("TOPRIGHT", UIParent, "BOTTOMLEFT", right, top)
-
-	self:UpdateUI()
 end
 
 function Nauticus:OnDisable()
 	self.distribution = nil
 	self:RemoveAllIcons()
-	NautHeaderFrame:Hide()
 end
 
 function Nauticus:DrawMapIcons()
@@ -409,8 +344,6 @@ function Nauticus:DrawMapIcons()
 		isZoning, isZoneInteresting, buttonMini, buttonWorld
 
 	local isWorldMapVisible = NautAstrolabe.WorldMapVisible
-
-	if NautHeaderFrame.isMoving then self:UpdateUI() end
 
 	for t = 1, #(transports), 1 do
 		transport = transports[t]
@@ -551,12 +484,6 @@ function Nauticus:Clock_OnUpdate(elapse)
 					self.lowestNameTime = data.ebv.." "..GREEN..formatted_time
 					self.icon = ARTWORK_IN_TRANSIT
 				end
-			end
-
-			if NautFrame:IsVisible() then
-				getglobal("NautFramePlat"..index.."Name"):SetText(data.name)
-				getglobal("NautFramePlat"..index.."ArrivalDepature"):SetText(YELLOW..depOrArr..":")
-				getglobal("NautFramePlat"..index.."Time"):SetText(colour..formatted_time)
 			end
 		end
 	end
@@ -868,15 +795,6 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 		self.currentZone = GetRealZoneText()
 		self.currentZoneTransports = self.transitZones[self.currentZone]
 		self:DebugMessage("zoned: "..self.currentZone)
-
-		-- show GUI when zone change contains a transport
-		if self.currentZoneTransports and self:IsZoneGUI() and
-			not self.currentZoneTransports.virtual then
-
-			self.db.char.showLowerGUI = true
-			self.db.char.showGUI = true
-			self:UpdateUI()
-		end
 	end
 end
 	
