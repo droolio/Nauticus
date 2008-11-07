@@ -37,17 +37,16 @@ function Nauticus:DoRequest()
 		local versionNum = self.versionNum
 
 		requestVersion = false
-		self:SendMessage(nil, "VER "..versionNum)
+		self:SendMessage("VER "..versionNum)
 	end
 end
 
-function Nauticus:BroadcastTransportData(to, requestList)
+function Nauticus:BroadcastTransportData()
 
 	local since, boots, swaps
 	local lag = GetLag()
 	local trans_str = ""
-
-	if not requestList then requestList = self.requestList; end
+	local requestList = self.requestList
 
 	for transit in pairs(requestList) do
 		since, boots, swaps = self:GetKnownCycle(transit)
@@ -75,7 +74,7 @@ function Nauticus:BroadcastTransportData(to, requestList)
 
 	if trans_str ~= "" then
 		trans_str = string.sub(trans_str, 1, -2) -- remove the last comma
-		self:SendMessage(to, "KNW "..DATA_VERSION.." "..trans_str)
+		self:SendMessage("KNW "..DATA_VERSION.." "..trans_str)
 		self:DebugMessage("tell our transports")
 	else
 		self:DebugMessage("nothing to tell")
@@ -83,19 +82,9 @@ function Nauticus:BroadcastTransportData(to, requestList)
 
 end
 
-function Nauticus:SendMessage(to, msg)
-	if self.comm_disable then return; end
-
-	if to then
-		SendAddonMessage("Naut2", msg, "WHISPER", to)
-	elseif self.distribution == "CUSTOM" then
-		if self.debug and UnitName("player") == "Naute" then
-			SendAddonMessage("Naut2", msg, "WHISPER", "Nauticus")
-		elseif self.dataChannel and GetChannelName(self.dataChannel) then
-			SendChatMessage(msg, "CHANNEL", nil, GetChannelName(self.dataChannel))
-		end
-	elseif self.distribution then
-		SendAddonMessage("Naut2", msg, self.distribution)
+function Nauticus:SendMessage(msg)
+	if not self.comm_disable and self.dataChannel and GetChannelName(self.dataChannel) then
+		SendChatMessage(msg, "CHANNEL", nil, GetChannelName(self.dataChannel))
 	end
 end
 
@@ -113,7 +102,7 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 				if self.dataChannel and GetChannelName(self.dataChannel) == 0 then
 					self:DebugMessage("joining: "..self.dataChannel)
 					JoinChannelByName(self.dataChannel)
-					self:UpdateDistribution()
+					self:UpdateChannel()
 					if self.debug then ListChannelByName(self.dataChannel); end
 				end
 			end, 5, self)
@@ -139,40 +128,30 @@ end
 
 function Nauticus:CHAT_MSG_CHANNEL(msg, sender, _, numAndName, _, _, _, _, channel)
 	if sender ~= UnitName("player") and self.dataChannel and
-		strlower(channel) == strlower(self.dataChannel) and self.distribution == "CUSTOM" then
+		strlower(channel) == strlower(self.dataChannel) then
 
 		local Args = self:GetArgs(msg, " ")
-		self:ReceiveMessage("Naut2", sender, "CUSTOM", Args[1], Args[2], Args[3])
+		self:ReceiveMessage("Naut2", sender, Args[1], Args[2], Args[3])
 	end
 end
 
-function Nauticus:CHAT_MSG_ADDON(prefix, msg, distribution, sender)
-	if prefix == "Naut2" and sender ~= UnitName("player") then
-		local Args = self:GetArgs(msg, " ")
-		self:ReceiveMessage(prefix, sender, distribution, Args[1], Args[2], Args[3])
-	end
-end
-
-function Nauticus:ReceiveMessage(prefix, sender, distribution, command, arg1, arg2)
+function Nauticus:ReceiveMessage(prefix, sender, command, arg1, arg2)
 	if command == nil then self:DebugMessage("nil command!"); return; end
 
-	self:DebugMessage("pre: "..prefix.." ; sender: "..sender.." ; dis: "
-		..distribution.." ; cmd: "..command)
+	self:DebugMessage("pre: "..prefix.." ; sender: "..sender.." ; cmd: "..command)
 
 	-- version, num
 	if command == "VER" then
-		self:ReceiveMessage_version(sender, distribution, tonumber(arg1))
+		self:ReceiveMessage_version(sender, tonumber(arg1))
 
 	-- known, { transports }
 	elseif command == "KNW" then
-		self:ReceiveMessage_known(sender, distribution, tonumber(arg1), self:StringToKnown(arg2))
+		self:ReceiveMessage_known(sender, tonumber(arg1), self:StringToKnown(arg2))
 
 	end
 end
 
-function Nauticus:ReceiveMessage_version(sender, distribution, clientversion)
-
-	local isDirect = distribution == "WHISPER"
+function Nauticus:ReceiveMessage_version(sender, clientversion)
 
 	self:DebugMessage(sender.." says: version "..clientversion)
 
@@ -185,41 +164,28 @@ function Nauticus:ReceiveMessage_version(sender, distribution, clientversion)
 		end
 
 	elseif clientversion < self.versionNum then
-		if isDirect then
-			self:SendMessage(sender, "version", self.versionNum)
-		else
-			requestVersion = true
-			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
-		end
-
+		requestVersion = true
+		self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
 		return
 	end
 
-	if not isDirect then
-		requestVersion = false
+	requestVersion = false
 
-		-- if we don't need to send back any data, cancel our scheduler immediately
-		if self:IsEventScheduled("NAUT_REQUEST") and next(self.requestList) == nil then
-			self:DebugMessage("we should cancel request schedule")
-			self:CancelScheduledEvent("NAUT_REQUEST")
-		end
+	-- if we don't need to send back any data, cancel our scheduler immediately
+	if self:IsEventScheduled("NAUT_REQUEST") and next(self.requestList) == nil then
+		self:DebugMessage("we should cancel request schedule")
+		self:CancelScheduledEvent("NAUT_REQUEST")
 	end
 
 end
 
-function Nauticus:ReceiveMessage_known(sender, distribution, version, transports)
+function Nauticus:ReceiveMessage_known(sender, version, transports)
 
 	if version ~= DATA_VERSION then return; end
 
 	local lag = GetLag()
-	local set, respond, since, boots, swaps, requestList
-	local isDirect = distribution == "WHISPER"
-
-	if isDirect then
-		requestList = {}
-	else
-		requestList = self.requestList
-	end
+	local set, respond, since, boots, swaps
+	local requestList = self.requestList
 
 	for transit, values in pairs(transports) do
 		since, boots, swaps = values.since, values.boots, values.swaps
@@ -280,20 +246,14 @@ function Nauticus:ReceiveMessage_known(sender, distribution, version, transports
 		end
 	end
 
-	if isDirect then
-		if next(requestList) then
-			self:BroadcastTransportData(sender, requestList)
-		end
-	else
-		-- if we don't need to send back any data, cancel our scheduler immediately
-		if next(requestList) then
-			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
-		elseif not requestVersion and self:IsEventScheduled("NAUT_REQUEST") and
-			next(requestList) == nil then
+	-- if we don't need to send back any data, cancel our scheduler immediately
+	if next(requestList) then
+		self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
+	elseif not requestVersion and self:IsEventScheduled("NAUT_REQUEST") and
+		next(requestList) == nil then
 
-			self:DebugMessage("we should cancel request schedule")
-			self:CancelScheduledEvent("NAUT_REQUEST")
-		end
+		self:DebugMessage("we should cancel request schedule")
+		self:CancelScheduledEvent("NAUT_REQUEST")
 	end
 
 end
@@ -388,46 +348,27 @@ function Nauticus:StringToKnown(transports)
 	return trans_tab
 end
 
-function Nauticus:UpdateDistribution(wait)
+local inChannel
+
+function Nauticus:UpdateChannel(wait)
 
 	if wait then
 		self:ScheduleEvent("NAUT_UPD_DISTRO", function()
-			self:UpdateDistribution()
+			self:UpdateChannel()
 		end, wait, self)
 
 		return
 	end
 
-	local distribution = self.distribution
-	local newDistrib
-
-	if GetNumPartyMembers() > 0 then
-		newDistrib = "RAID"
-	elseif IsInGuild() and self.db.profile.dataChannel == "guild" then
-		newDistrib = "GUILD"
-	elseif self.dataChannel then
-		newDistrib = "CUSTOM"
-	else
-		newDistrib = nil
-	end
-
-	if newDistrib ~= distribution then
+	if self.dataChannel ~= inChannel then
 		if self:IsEventScheduled("NAUT_REQUEST") then
 			self:DebugMessage("distribution change - cancel request schedule")
 			self:CancelScheduledEvent("NAUT_REQUEST")
 		end
 
-		if newDistrib == "CUSTOM" then
-			if distribution == "RAID" or distribution == "GUILD" then
-				self:UnregisterEvent("CHAT_MSG_ADDON")
-			end
-		elseif newDistrib == "RAID" or newDistrib == "GUILD" then
-			self:RegisterEvent("CHAT_MSG_ADDON")
-		end
+		inChannel = self.dataChannel
 
-		self.distribution = newDistrib
-
-		if newDistrib then
+		if self.dataChannel then
 			for index, data in pairs(transports) do
 				if data.label ~= -1 then
 					self.requestList[data.label] = true
@@ -438,10 +379,7 @@ function Nauticus:UpdateDistribution(wait)
 			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
 		end
 
-		if self.debug then
-			if not newDistrib then newDistrib = "NONE" end
-			self:DebugMessage("distrib: "..newDistrib)
-		end
+		self:DebugMessage("distrib: "..(self.dataChannel and self.dataChannel or "NONE"))
 	end
 
 end
@@ -449,11 +387,7 @@ end
 function Nauticus:GetChannel(dataChannel)
 	if not dataChannel then dataChannel = self.db.profile.dataChannel; end
 	if dataChannel == "none" then return nil
-	elseif dataChannel == "guild" then
-		if IsInGuild() then return nil
-		else return DEFAULT_CHANNEL; end
-	end
-
+	elseif dataChannel == "guild" then return DEFAULT_CHANNEL; end
 	return dataChannel
 end
 

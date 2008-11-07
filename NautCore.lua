@@ -185,14 +185,14 @@ local options = {
 		desc = "Set custom sync channel name.",
 		order = 11,
 		--hidden = true,
-		usage = "{<name> | default | none | guild}",
+		usage = "{<name> | default | none}",
 		get = function()
 			return Nauticus.db.profile.dataChannel
 		end,
 		set = function(name)
 			local name_lower = strlower(name)
 			if name_lower == "" or name_lower == "default" or name_lower == strlower(DEFAULT_CHANNEL) then name = DEFAULT_CHANNEL
-			elseif name_lower == "none" or name_lower == "guild" then name = name_lower; end
+			elseif name_lower == "none" then name = name_lower; end
 			local dataChannel = Nauticus.dataChannel
 			local newChan = Nauticus:GetChannel(name)
 			Nauticus.db.profile.dataChannel = name
@@ -208,7 +208,7 @@ local options = {
 				end
 				Nauticus.dataChannel = newChan
 			end
-			Nauticus:UpdateDistribution()
+			Nauticus:UpdateChannel()
 			if name ~= DEFAULT_CHANNEL then
 				DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..RED..
 					format("WARNING: Setting the sync channel to anything other than '%s' will impact the addon's accuracy.", DEFAULT_CHANNEL))
@@ -311,10 +311,7 @@ function Nauticus:OnEnable()
 	self:RegisterEvent("CHAT_MSG_CHANNEL")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 	self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE")
-
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterBucketEvent("PARTY_MEMBERS_CHANGED", 2)
-	self:RegisterBucketEvent("PLAYER_GUILD_UPDATE", 2)
 
 	self:ScheduleRepeatingEvent(self.DrawMapIcons, 0.2, self) -- every 1/5th of a second
 	self:ScheduleRepeatingEvent(self.Clock_OnUpdate, 1, self, 1) -- every second (clock tick)
@@ -324,7 +321,7 @@ function Nauticus:OnEnable()
 
 	-- wait 10 seconds before sending to any comms channels
 	self.dataChannel = self:GetChannel()
-	self:UpdateDistribution(10)
+	self:UpdateChannel(10)
 
 	self.currentZone = GetRealZoneText()
 	self.currentZoneTransports = self.transitZones[self.currentZone]
@@ -334,7 +331,6 @@ function Nauticus:OnEnable()
 end
 
 function Nauticus:OnDisable()
-	self.distribution = nil
 	self:RemoveAllIcons()
 end
 
@@ -777,7 +773,7 @@ function Nauticus:InitialiseConfig()
 end
 
 function Nauticus:PLAYER_ENTERING_WORLD()
-	self:UpdateDistribution(10)
+	self:UpdateChannel(10)
 
 	if GetRealZoneText() ~= "" then
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
@@ -796,16 +792,6 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 		self.currentZoneTransports = self.transitZones[self.currentZone]
 		self:DebugMessage("zoned: "..self.currentZone)
 	end
-end
-	
-function Nauticus:PARTY_MEMBERS_CHANGED()
-	self:DebugMessage("update distro: party")
-	self:UpdateDistribution(10)
-end
-
-function Nauticus:PLAYER_GUILD_UPDATE()
-	self:DebugMessage("update distro: guild")
-	self:UpdateDistribution(10)
 end
 
 local last_map_update = 0
