@@ -604,7 +604,7 @@ function Nauticus:UpdateDisplay()
 	if not iconTooltip then return; end
 
 	if iconTooltip == barTooltipFrame then
-		dataobj.OnTooltipShow(iconTooltip)
+		dataobj.OnEnter(iconTooltip)
 	else
 		self:MapIconButtonMouseEnter(iconTooltip)
 	end
@@ -618,8 +618,11 @@ function Nauticus:RemoveAllIcons()
 end
 
 -- LDB stuff...
-function dataobj:OnTooltipShow()
-	if iconTooltip ~= self or dewdrop:IsOpen(self) then return; end
+function dataobj:OnEnter()
+	if dewdrop:IsOpen(self) then return; end
+
+	iconTooltip = self
+	barTooltipFrame = self
 
 	local point, rel = GetBarAnchor(self)
 
@@ -638,12 +641,6 @@ function dataobj:OnTooltipShow()
 		:Color(0, 1, 0, 1)
 
 	tablet:SetPosition():Size():Show()
-end
-
-function dataobj:OnEnter()
-	iconTooltip = self
-	barTooltipFrame = self
-	dataobj.OnTooltipShow(self)
 end
 
 function dataobj:OnLeave()
