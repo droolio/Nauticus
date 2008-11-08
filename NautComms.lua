@@ -23,7 +23,19 @@ local GetLag
 local requestVersion = false
 
 
-function Nauticus:DoRequest()
+function Nauticus:CancelRequest()
+	if self:IsEventScheduled("NAUT_REQUEST") then
+		self:DebugMessage("cancel request schedule")
+		self:CancelScheduledEvent("NAUT_REQUEST")
+	end
+end
+
+function Nauticus:DoRequest(wait)
+	if wait then
+		self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, wait, self)
+		return
+	end
+
 	if next(self.requestList) ~= nil then
 		self:BroadcastTransportData()
 
@@ -165,16 +177,16 @@ function Nauticus:ReceiveMessage_version(sender, clientversion)
 
 	elseif clientversion < self.versionNum then
 		requestVersion = true
-		self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
+		self:DoRequest(5 + math.random() * 15)
 		return
 	end
 
 	requestVersion = false
 
 	-- if we don't need to send back any data, cancel our scheduler immediately
-	if self:IsEventScheduled("NAUT_REQUEST") and next(self.requestList) == nil then
-		self:DebugMessage("we should cancel request schedule")
-		self:CancelScheduledEvent("NAUT_REQUEST")
+	if not next(self.requestList) then
+		self:DebugMessage("received: version; no more to send")
+		self:CancelRequest()
 	end
 
 end
@@ -248,12 +260,10 @@ function Nauticus:ReceiveMessage_known(sender, version, transports)
 
 	-- if we don't need to send back any data, cancel our scheduler immediately
 	if next(requestList) then
-		self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
-	elseif not requestVersion and self:IsEventScheduled("NAUT_REQUEST") and
-		next(requestList) == nil then
-
-		self:DebugMessage("we should cancel request schedule")
-		self:CancelScheduledEvent("NAUT_REQUEST")
+		self:DoRequest(5 + math.random() * 15)
+	elseif not requestVersion then
+		self:DebugMessage("received: known; no more to send")
+		self:CancelRequest()
 	end
 
 end
@@ -361,10 +371,8 @@ function Nauticus:UpdateChannel(wait)
 	end
 
 	if self.dataChannel ~= inChannel then
-		if self:IsEventScheduled("NAUT_REQUEST") then
-			self:DebugMessage("distribution change - cancel request schedule")
-			self:CancelScheduledEvent("NAUT_REQUEST")
-		end
+		self:DebugMessage("distribution change")
+		self:CancelRequest()
 
 		inChannel = self.dataChannel
 
@@ -376,7 +384,7 @@ function Nauticus:UpdateChannel(wait)
 			end
 
 			requestVersion = true
-			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5+math.floor(math.random()*15), self)
+			self:DoRequest(5 + math.random() * 15)
 		end
 
 		self:DebugMessage("distrib: "..(self.dataChannel and self.dataChannel or "NONE"))

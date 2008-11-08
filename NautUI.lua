@@ -49,7 +49,6 @@ end
 
 function Nauticus:ToggleFaction()
     self.db.profile.factionSpecific = not self.db.profile.factionSpecific
-	NautOptionsFrameOptFactionSpecific:SetChecked(self.db.profile.factionSpecific)
 end
 
 function Nauticus:IsZoneSpecific()
@@ -58,7 +57,6 @@ end
 
 function Nauticus:ToggleZone()
     self.db.profile.zoneSpecific = not self.db.profile.zoneSpecific
-	NautOptionsFrameOptZoneSpecific:SetChecked(self.db.profile.zoneSpecific)
 end
 
 function Nauticus:GetButtonIconText()

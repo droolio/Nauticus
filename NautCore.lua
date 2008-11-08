@@ -314,8 +314,8 @@ function Nauticus:OnEnable()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	self:ScheduleRepeatingEvent(self.DrawMapIcons, 0.2, self) -- every 1/5th of a second
-	self:ScheduleRepeatingEvent(self.Clock_OnUpdate, 1, self, 1) -- every second (clock tick)
-	self:ScheduleRepeatingEvent(self.CheckTriggers_OnUpdate, 0.8, self, 0.8) -- every 4/5th of a second
+	self:ScheduleRepeatingEvent(self.Clock_OnUpdate, 1, self) -- every second (clock tick)
+	self:ScheduleRepeatingEvent(self.CheckTriggers_OnUpdate, 0.8, self) -- every 4/5th of a second
 
 	self:RegisterEvent("WORLD_MAP_UPDATE")
 
@@ -418,12 +418,12 @@ function Nauticus:DrawMapIcons()
 
 end
 
-function Nauticus:Clock_OnUpdate(elapse)
+function Nauticus:Clock_OnUpdate()
 
 	local transit, liveData, cycle, platform
 
 	if alarmDinged then
-		alarmCountdown = alarmCountdown - elapse
+		alarmCountdown = alarmCountdown - 1
 
 		if 0 > alarmCountdown then
 			alarmSet, alarmDinged = false, false
@@ -492,12 +492,12 @@ function Nauticus:Clock_OnUpdate(elapse)
 
 end
 
-function Nauticus:CheckTriggers_OnUpdate(elapse)
+function Nauticus:CheckTriggers_OnUpdate()
 
 	if self.currentZoneTransports == nil or self.currentZoneTransports.virtual then return; end
 
 	-- if we've already triggered a set of coords, don't check again for another 30 secs
-	lastcheck_timeout = lastcheck_timeout + elapse
+	lastcheck_timeout = lastcheck_timeout + 0.8
 	if 30.0 > lastcheck_timeout then return; end
 
 	local c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
@@ -582,7 +582,7 @@ function Nauticus:SetKnownTime(transit, index, x, y)
 	self.db.account.timestamp = time()
 
 	self.requestList[transit] = true
-	self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 10+math.floor(math.random()*10), self)
+	self:DoRequest(10 + math.random() * 10)
 
 end
 
