@@ -95,8 +95,8 @@ function Nauticus:BroadcastTransportData()
 end
 
 function Nauticus:SendMessage(msg)
-	if not self.comm_disable and self.dataChannel and GetChannelName(self.dataChannel) then
-		SendChatMessage(msg, "CHANNEL", nil, GetChannelName(self.dataChannel))
+	if not self.comm_disable and GetChannelName(DEFAULT_CHANNEL) then
+		SendChatMessage(msg, "CHANNEL", nil, GetChannelName(DEFAULT_CHANNEL))
 	end
 end
 
@@ -107,15 +107,15 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 		self:DebugMessage("joined: "..channel)
 		local channel_lower = strlower(channel)
 
-		if self.dataChannel and channel_lower ~= strlower(self.dataChannel) and
-			GetChannelName(self.dataChannel) == 0 then
+		if channel_lower ~= strlower(DEFAULT_CHANNEL) and
+			GetChannelName(DEFAULT_CHANNEL) == 0 then
 
 			self:ScheduleEvent("NAUT_CHAN_JOIN", function()
-				if self.dataChannel and GetChannelName(self.dataChannel) == 0 then
-					self:DebugMessage("joining: "..self.dataChannel)
-					JoinChannelByName(self.dataChannel)
+				if GetChannelName(DEFAULT_CHANNEL) == 0 then
+					self:DebugMessage("joining: "..DEFAULT_CHANNEL)
+					JoinChannelByName(DEFAULT_CHANNEL)
 					self:UpdateChannel()
-					if self.debug then ListChannelByName(self.dataChannel); end
+					if self.debug then ListChannelByName(DEFAULT_CHANNEL); end
 				end
 			end, 5, self)
 
@@ -139,9 +139,7 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 end
 
 function Nauticus:CHAT_MSG_CHANNEL(msg, sender, _, numAndName, _, _, _, _, channel)
-	if sender ~= UnitName("player") and self.dataChannel and
-		strlower(channel) == strlower(self.dataChannel) then
-
+	if sender ~= UnitName("player") and strlower(channel) == strlower(DEFAULT_CHANNEL) then
 		local Args = self:GetArgs(msg, " ")
 		self:ReceiveMessage("Naut2", sender, Args[1], Args[2], Args[3])
 	end
@@ -370,33 +368,23 @@ function Nauticus:UpdateChannel(wait)
 		return
 	end
 
-	if self.dataChannel ~= inChannel then
+	if not inChannel then
+		inChannel = true
 		self:DebugMessage("distribution change")
 		self:CancelRequest()
 
-		inChannel = self.dataChannel
-
-		if self.dataChannel then
-			for index, data in pairs(transports) do
-				if data.label ~= -1 then
-					self.requestList[data.label] = true
-				end
+		for index, data in pairs(transports) do
+			if data.label ~= -1 then
+				self.requestList[data.label] = true
 			end
-
-			requestVersion = true
-			self:DoRequest(5 + math.random() * 15)
 		end
 
-		self:DebugMessage("distrib: "..(self.dataChannel and self.dataChannel or "NONE"))
+		requestVersion = true
+		self:DoRequest(5 + math.random() * 15)
+
+		self:DebugMessage("distrib: "..DEFAULT_CHANNEL)
 	end
 
-end
-
-function Nauticus:GetChannel(dataChannel)
-	if not dataChannel then dataChannel = self.db.profile.dataChannel; end
-	if dataChannel == "none" then return nil
-	elseif dataChannel == "guild" then return DEFAULT_CHANNEL; end
-	return dataChannel
 end
 
 function GetLag()

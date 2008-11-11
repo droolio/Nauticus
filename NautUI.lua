@@ -8,6 +8,7 @@ local YELLOW  = "|cffffff00"
 local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
+local GREY    = "|cffbababa"
 
 -- constants
 local ARTWORK_PATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
@@ -174,7 +175,15 @@ function Nauticus:ShowMenu(level)
 				textdesc = transports[i].name
 
 				if self:HasKnownCycle(transports[i].label) then
-					textdesc = GREEN..textdesc
+					if transports[i].faction == UnitFactionGroup("player") then
+						textdesc = GREEN..textdesc
+					elseif transports[i].faction == "Neutral" then
+						textdesc = YELLOW..textdesc
+					else
+						textdesc = RED..textdesc
+					end
+				else
+					textdesc = GREY..textdesc
 				end
 
 				dewdrop:AddLine(

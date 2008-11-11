@@ -60,7 +60,6 @@ Nauticus:RegisterDefaults("profile", {
 	zoneSpecific = false,
 	filterChat = true,
 	alarmOffset = 20,
-	dataChannel = DEFAULT_CHANNEL,
 	miniIconSize = 1,
 	worldIconSize = 1,
 } )
@@ -175,60 +174,6 @@ local options = {
 		end,
 		min = 0, max = 90, step = 5,
 	},
-	spacer1 = {
-		type = 'header',
-		order = 10,
-	},
-	channel = {
-		type = 'text',
-		name = "Sync channel name",
-		desc = "Set custom sync channel name.",
-		order = 11,
-		--hidden = true,
-		usage = "{<name> | default | none}",
-		get = function()
-			return Nauticus.db.profile.dataChannel
-		end,
-		set = function(name)
-			local name_lower = strlower(name)
-			if name_lower == "" or name_lower == "default" or name_lower == strlower(DEFAULT_CHANNEL) then name = DEFAULT_CHANNEL
-			elseif name_lower == "none" then name = name_lower; end
-			local dataChannel = Nauticus.dataChannel
-			local newChan = Nauticus:GetChannel(name)
-			Nauticus.db.profile.dataChannel = name
-			if newChan ~= dataChannel then
-				if dataChannel and GetChannelName(dataChannel) ~= 0 then
-					Nauticus:DebugMessage("leaving: "..dataChannel)
-					LeaveChannelByName(dataChannel)
-				end
-				if newChan and GetChannelName(newChan) == 0 then
-					Nauticus:DebugMessage("joining: "..newChan)
-					JoinChannelByName(newChan)
-					if Nauticus.debug then ListChannelByName(newChan); end
-				end
-				Nauticus.dataChannel = newChan
-			end
-			Nauticus:UpdateChannel()
-			if name ~= DEFAULT_CHANNEL then
-				DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..RED..
-					format("WARNING: Setting the sync channel to anything other than '%s' will impact the addon's accuracy.", DEFAULT_CHANNEL))
-			end
-		end,
-	},
-	reset = {
-		type = 'execute',
-		name = "Reset data",
-		desc = "Reset cycle data for all known transports. Emergency usage only!",
-		order = 12,
-		confirm = RED.."WARNING: "..
-			YELLOW.."ONLY perform this if you are told to do so by the author. "..
-			"|rAre you sure you want to reset cycle data for all known transports?",
-		func = function()
-			Nauticus:RemoveAllIcons()
-			Nauticus.db.account.knownCycles = {}
-			Nauticus:TransportSelectSetNone()
-		end
-	},
 }
 Nauticus.options = options
 Nauticus.optionsFu = { type = 'group', args = {
@@ -245,8 +190,6 @@ Nauticus.cmdOptions = { type = 'group', args = {
 	autoselect = options.autoselect,
 	filter = options.filter,
 	alarm = options.alarm,
-	channel = options.channel,
-	reset = options.reset,
 } }
 Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.cmdOptions)
 
@@ -274,12 +217,8 @@ local FILTER_NPC = {
 }
 
 local function ChatFilter_DataChannel(msg)
-	if Nauticus.dataChannel and
-		strlower(arg9) == strlower(Nauticus.dataChannel) and
-		not Nauticus.debug then
-
-		-- silence
-		return true
+	if strlower(arg9) == strlower(DEFAULT_CHANNEL) and not Nauticus.debug then
+		return true -- silence
 	end
 end
 
@@ -320,7 +259,6 @@ function Nauticus:OnEnable()
 	self:RegisterEvent("WORLD_MAP_UPDATE")
 
 	-- wait 10 seconds before sending to any comms channels
-	self.dataChannel = self:GetChannel()
 	self:UpdateChannel(10)
 
 	self.currentZone = GetRealZoneText()
