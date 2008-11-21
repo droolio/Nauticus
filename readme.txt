@@ -44,12 +44,12 @@ horn or boat bell) when at platform
 - new compact UI window, listing schedules for all transports in the
 zone, highlighting closest platform when standing still and nearby
 
-Note: Nauticus is in continual development [13th Jan 2008]. You should
-always try to keep your version up-to-date - not least because the addon
-interacts with other users and they rely on good quality data from you. 
-The addon will notify you upon login when there's a new version 
-available - after other users are seen using a later version. For this 
-reason, please DON'T redistribute or include in a compilation pack!
+Note: Nauticus is in continual development. You should always try to 
+keep your version up-to-date - not least because the addon interacts 
+with other users and they rely on good quality data from you. The addon 
+will notify you upon login when there's a new version available - after 
+other users are seen using a later version. For this reason, please 
+DON'T redistribute or include in a compilation pack!
 
 ---
 Frequently Asked Questions
@@ -108,8 +108,8 @@ transmit up-to-date timing data to everyone that needs it.
 
 Q. Why does Nauticus have to use a chat channel?
 
-Because Blizzard's SendAddonMessage() API alone - which was really 
-designed and is effectively limited for guild and raid addon comms - is 
+Because Blizzard's SendAddonMessage() API - which was really designed 
+and is effectively limited for guild and raid addon comms - is 
 insufficient to get the times spread further across your server. This 
 ultimately affects availability and accuracy of the times.
 

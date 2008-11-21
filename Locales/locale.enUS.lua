@@ -21,6 +21,7 @@ L:RegisterTranslations("enUS", function() return {
 ["Not Available"] = true,
 ["N/A"] = true, -- abbreviation for Not Available
 ["Nauticus Options"] = true,
+["Daily: "] = true,
 
 ["Show GUI when zone change contains a transport"] = true,
 ["Show only transports for your faction"] = true,
@@ -49,9 +50,14 @@ L:RegisterTranslations("enUS", function() return {
 ["Teldrassil"] = true,
 ["Azuremyst Isle"] = true,
 ["Feralas"] = true,
+["Westfall"] = true,
+["Borean Tundra"] = true,
+["Howling Fjord"] = true,
+["Dragonblight"] = true,
 
 ["The Veiled Sea"] = true,
 ["Twisting Nether"] = true,
+["The Frozen Sea"] = true,
 
 -- subzones
 ["Grom'gol"] = true,
@@ -64,6 +70,14 @@ L:RegisterTranslations("enUS", function() return {
 ["Sardor Isle"] = true,
 ["Feathermoon"] = true,
 ["Forgotten Coast"] = true,
+["Warsong Hold"] = true,
+["Vengeance Landing"] = true,
+["Valiance Keep"] = true,
+["Valgarde"] = true,
+["Unu'pe"] = true,
+["Moa'ki Harbor"] = true,
+["Kamagua"] = true,
+["Westguard Keep"] = true,
 
 -- abbreviations
 ["Org"]	= true,	-- Orgrimmar
@@ -71,14 +85,22 @@ L:RegisterTranslations("enUS", function() return {
 ["Exo"]	= true,	-- The Exodar
 ["SC"]	= true,	-- Stormwind City
 
-["GG"]	= true,	-- Grom'gol
-["BB"]	= true,	-- Booty Bay
-["Ra"]	= true,	-- Ratchet
-["MH"]	= true,	-- Menethil Harbor
-["Aub"]	= true,	-- Auberdine
-["Th"]	= true,	-- Theramore
-["RTV"]	= true,	-- Rut'Theran Village
-["FMS"]	= true,	-- Feathermoon
-["Fer"]	= true,	-- Feralas
+["GG"]  = true,	-- Grom'gol
+["BB"]  = true,	-- Booty Bay
+["Rat"] = true,	-- Ratchet
+["MH"]  = true,	-- Menethil Harbor
+["Aub"] = true,	-- Auberdine
+["Th"]  = true,	-- Theramore
+["RTV"] = true,	-- Rut'Theran Village
+["FMS"] = true,	-- Feathermoon
+["Fer"] = true,	-- Feralas
+["War"] = true, -- Warsong Hold
+["Ven"] = true, -- Vengeance Landing
+["VK"]  = true, -- Valiance Keep
+["VG"]  = true, -- Valgarde
+["Unu"] = true, -- Unu'pe
+["Moa"] = true, -- Moa'ki Harbor
+["Kam"] = true, -- Kamagua
+["WGK"] = true, -- Westguard Keep
 
 } end)

@@ -21,6 +21,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["Not Available"] = "無有效計時",
 ["N/A"] = "--", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus 選項",
+["Daily: "] = "Daily: ",
 
 ["Show GUI when zone change contains a transport"] =
 	"當轉換的區域有運輸點時顯示圖形介面",
@@ -59,9 +60,14 @@ L:RegisterTranslations("zhTW", function() return {
 ["Teldrassil"] = "泰達希爾",
 ["Azuremyst Isle"] = "藍謎島",
 ["Feralas"] = "菲拉斯",
+["Westfall"] = "Westfall",
+["Borean Tundra"] = "Borean Tundra",
+["Howling Fjord"] = "Howling Fjord",
+["Dragonblight"] = "Dragonblight",
 
 ["The Veiled Sea"] = "迷霧之海",
 ["Twisting Nether"] = "扭曲虛空",
+["The Frozen Sea"] = "The Frozen Sea",
 
 -- subzones
 ["Grom'gol"] = "格羅姆高營地",
@@ -74,21 +80,37 @@ L:RegisterTranslations("zhTW", function() return {
 ["Sardor Isle"] = "瓦拉船台",
 ["Feathermoon"] = "羽月要塞",
 ["Forgotten Coast"] = "被遺忘的海岸",
+["Warsong Hold"] = "Warsong Hold",
+["Vengeance Landing"] = "Vengeance Landing",
+["Valiance Keep"] = "Valiance Keep",
+["Valgarde"] = "Valgarde",
+["Unu'pe"] = "Unu'pe",
+["Moa'ki Harbor"] = "Moa'ki Harbor",
+["Kamagua"] = "Kamagua",
+["Westguard Keep"] = "Westguard Keep",
 
 -- abbreviations
-["Org"]	= "奧格",		-- Orgrimmar
-["UC"]	= "幽暗",		-- Undercity
-["Exo"]	= "艾克",		-- The Exodar
-["SC"]	= "SC",		-- Stormwind City
+["Org"]	= "奧格",   -- Orgrimmar
+["UC"]  = "幽暗",   -- Undercity
+["Exo"] = "艾克",   -- The Exodar
+["SC"]  = "SC",   -- Stormwind City
 
-["GG"]	= "格羅姆高",	-- Grom'gol
-["BB"]	= "藏寶",		-- Booty Bay
-["Ra"]	= "棘齒",		-- Ratchet
-["MH"]	= "米奈希爾",	-- Menethil Harbor
-["Aub"]	= "奧伯丁",	-- Auberdine
-["Th"]	= "塞拉摩",	-- Theramore
-["RTV"]	= "魯瑟蘭",	-- Rut'Theran Village
-["FMS"]	= "羽月",		-- Feathermoon
-["Fer"]	= "遺忘海岸",	-- Feralas
+["GG"]  = "格羅姆高", -- Grom'gol
+["BB"]  = "藏寶",   -- Booty Bay
+["Rat"] = "棘齒",   -- Ratchet
+["MH"]  = "米奈希爾", -- Menethil Harbor
+["Aub"] = "奧伯丁",  -- Auberdine
+["Th"]  = "塞拉摩",  -- Theramore
+["RTV"] = "魯瑟蘭",  -- Rut'Theran Village
+["FMS"] = "羽月",   -- Feathermoon
+["Fer"] = "遺忘海岸", -- Feralas
+["War"] = "War",  -- Warsong Hold
+["Ven"] = "Ven",  -- Vengeance Landing
+["VK"]  = "VK",   -- Valiance Keep
+["VG"]  = "VG",   -- Valgarde
+["Unu"] = "Unu",  -- Unu'pe
+["Moa"] = "Moa",  -- Moa'ki Harbor
+["Kam"] = "Kam",  -- Kamagua
+["WGK"] = "WGK",  -- Westguard Keep
 
 } end)

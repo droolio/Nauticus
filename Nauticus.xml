@@ -71,6 +71,27 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 		<Button name="Naut_WorldMapIconButton9" inherits="Naut_WorldMapIconButton" id="9" hidden="true" toplevel="true">
 			<NormalTexture name="$parentTexture"/>
 		</Button>
+		<Button name="Naut_WorldMapIconButton10" inherits="Naut_WorldMapIconButton" id="10" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture"/>
+		</Button>
+		<Button name="Naut_WorldMapIconButton11" inherits="Naut_WorldMapIconButton" id="11" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture"/>
+		</Button>
+		<Button name="Naut_WorldMapIconButton12" inherits="Naut_WorldMapIconButton" id="12" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture"/>
+		</Button>
+		<Button name="Naut_WorldMapIconButton13" inherits="Naut_WorldMapIconButton" id="13" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture"/>
+		</Button>
+		<Button name="Naut_WorldMapIconButton14" inherits="Naut_WorldMapIconButton" id="14" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture"/>
+		</Button>
+		<Button name="Naut_WorldMapIconButton15" inherits="Naut_WorldMapIconButton" id="15" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture"/>
+		</Button>
+		<Button name="Naut_WorldMapIconButton16" inherits="Naut_WorldMapIconButton" id="16" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture"/>
+		</Button>
 	</Frames>
 </Frame>
 
@@ -102,6 +123,27 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 		</Button>
 		<Button name="Naut_MiniMapIconButton9" inherits="Naut_MiniMapIconButton" id="9" hidden="true" toplevel="true">
 			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatNE"/>
+		</Button>
+		<Button name="Naut_MiniMapIconButton10" inherits="Naut_MiniMapIconButton" id="10" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Zeppelin"/>
+		</Button>
+		<Button name="Naut_MiniMapIconButton11" inherits="Naut_MiniMapIconButton" id="11" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Zeppelin"/>
+		</Button>
+		<Button name="Naut_MiniMapIconButton12" inherits="Naut_MiniMapIconButton" id="12" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatNE"/>
+		</Button>
+		<Button name="Naut_MiniMapIconButton13" inherits="Naut_MiniMapIconButton" id="13" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatNE"/>
+		</Button>
+		<Button name="Naut_MiniMapIconButton14" inherits="Naut_MiniMapIconButton" id="14" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_BoatNE"/>
+		</Button>
+		<Button name="Naut_MiniMapIconButton15" inherits="Naut_MiniMapIconButton" id="15" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Boat"/>
+		</Button>
+		<Button name="Naut_MiniMapIconButton16" inherits="Naut_MiniMapIconButton" id="16" hidden="true" toplevel="true">
+			<NormalTexture name="$parentTexture" file="Interface\AddOns\Nauticus\Artwork\MapIcon_Zeppelin"/>
 		</Button>
 	</Frames>
 </Frame>

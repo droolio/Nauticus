@@ -16,7 +16,7 @@ local ARTWORK_ZONING = ARTWORK_PATH.."MapIcon_Zoning"
 local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
 local ARTWORK_IN_TRANSIT = ARTWORK_PATH.."Transit"
 local ARTWORK_DOCKED = ARTWORK_PATH.."Docked"
-local MAX_FORMATTED_TIME = 256 -- the longest route minus 60
+local MAX_FORMATTED_TIME = 444 -- the longest route minus 60
 local ICON_DEFAULT_SIZE = 18
 
 Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
@@ -29,8 +29,8 @@ local dewdrop = AceLibrary("Dewdrop-2.0")
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 -- object variables
-Nauticus.versionStr = "2.4.1" -- for display
-Nauticus.versionNum = 241 -- for comparison
+Nauticus.versionStr = "3.0" -- for display
+Nauticus.versionNum = 300 -- for comparison
 
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
@@ -200,6 +200,7 @@ local FILTER_NPC = {
 ["Zapetta"] = true, -- yell + says
 ["Sky-Captain Cloudkicker"] = true,
 ["Chief Officer Coppernut"] = true,
+["Navigator Fairweather"] = true,
 -- uc2gg:
 ["Hin Denburg"] = true, -- yells
 ["Navigator Hatch"] = true,
@@ -214,6 +215,9 @@ local FILTER_NPC = {
 -- uc2ven
 ["Meefi Farthrottle"] = true,
 ["Drenk Spannerspark"] = true,
+-- war2org
+["Greeb Ramrocket"] = true,
+["Nargo Screwbore"] = true,
 }
 
 local function ChatFilter_DataChannel(msg)
@@ -430,6 +434,8 @@ function Nauticus:Clock_OnUpdate()
 
 end
 
+local c, z, x, y
+
 function Nauticus:CheckTriggers_OnUpdate()
 
 	if self.currentZoneTransports == nil or self.currentZoneTransports.virtual then return; end
@@ -438,7 +444,7 @@ function Nauticus:CheckTriggers_OnUpdate()
 	lastcheck_timeout = lastcheck_timeout + 0.8
 	if 30.0 > lastcheck_timeout then return; end
 
-	local c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
+	c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
 	if not x then return; end
 	x, y = NautAstrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0)
 	if not x then return; end

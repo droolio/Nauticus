@@ -21,6 +21,7 @@ L:RegisterTranslations("esES", function() return {
 ["Not Available"] = "No Disponible",
 ["N/A"] = "N/D", -- abbreviation for Not Available
 ["Nauticus Options"] = "Opciones de Nauticus",
+["Daily: "] = "Daily: ",
 
 ["Show GUI when zone change contains a transport"] =
 	"Mostrar GUI cuando cambio de zona contiene un transporte",
@@ -59,9 +60,14 @@ L:RegisterTranslations("esES", function() return {
 ["Teldrassil"] = "Teldrassil",
 ["Azuremyst Isle"] = "Isla Bruma Azur",
 ["Feralas"] = "Feralas",
+["Westfall"] = "Westfall",
+["Borean Tundra"] = "Borean Tundra",
+["Howling Fjord"] = "Howling Fjord",
+["Dragonblight"] = "Dragonblight",
 
 ["The Veiled Sea"] = "Mar de la Bruma",
 ["Twisting Nether"] = "El Vacío Abisal",
+["The Frozen Sea"] = "The Frozen Sea",
 
 -- subzones
 ["Grom'gol"] = "Grom'gol",
@@ -74,21 +80,37 @@ L:RegisterTranslations("esES", function() return {
 ["Sardor Isle"] = "Sardor Isle",
 ["Feathermoon"] = "Feathermoon",
 ["Forgotten Coast"] = "Forgotten Coast",
+["Warsong Hold"] = "Warsong Hold",
+["Vengeance Landing"] = "Vengeance Landing",
+["Valiance Keep"] = "Valiance Keep",
+["Valgarde"] = "Valgarde",
+["Unu'pe"] = "Unu'pe",
+["Moa'ki Harbor"] = "Moa'ki Harbor",
+["Kamagua"] = "Kamagua",
+["Westguard Keep"] = "Westguard Keep",
 
 -- abbreviations
-["Org"]	= "Org",	-- Orgrimmar
-["UC"]	= "UC",		-- Undercity
-["Exo"]	= "Exo",	-- The Exodar
-["SC"]	= "SC",		-- Stormwind City
+["Org"] = "Org", -- Orgrimmar
+["UC"]  = "UC",  -- Undercity
+["Exo"] = "Exo", -- The Exodar
+["SC"]  = "SC",  -- Stormwind City
 
-["GG"]	= "GG",		-- Grom'gol
-["BB"]	= "BB",		-- Booty Bay
-["Ra"]	= "Ra",		-- Ratchet
-["MH"]	= "MH",		-- Menethil Harbor
-["Aub"]	= "Aub",	-- Auberdine
-["Th"]	= "Th",		-- Theramore
-["RTV"]	= "RTV",	-- Rut'Theran Village
-["FMS"]	= "FMS",	-- Feathermoon
-["Fer"]	= "Fer",	-- Feralas
+["GG"]  = "GG",  -- Grom'gol
+["BB"]  = "BB",  -- Booty Bay
+["Rat"] = "Rat", -- Ratchet
+["MH"]  = "MH",  -- Menethil Harbor
+["Aub"] = "Aub", -- Auberdine
+["Th"]  = "Th",  -- Theramore
+["RTV"] = "RTV", -- Rut'Theran Village
+["FMS"] = "FMS", -- Feathermoon
+["Fer"] = "Fer", -- Feralas
+["War"] = "War", -- Warsong Hold
+["Ven"] = "Ven", -- Vengeance Landing
+["VK"]  = "VK",  -- Valiance Keep
+["VG"]  = "VG",  -- Valgarde
+["Unu"] = "Unu", -- Unu'pe
+["Moa"] = "Moa", -- Moa'ki Harbor
+["Kam"] = "Kam", -- Kamagua
+["WGK"] = "WGK", -- Westguard Keep
 
 } end)

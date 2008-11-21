@@ -21,6 +21,7 @@ L:RegisterTranslations("deDE", function() return {
 ["Not Available"] = "Nicht Erreichbar",
 ["N/A"] = "N/A", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus Options",
+["Daily: "] = "Daily: ",
 
 ["Show GUI when zone change contains a transport"] =
 	"\195\150ffne Fenster wenn in einer Zone mit Transportmittel",
@@ -43,25 +44,6 @@ L:RegisterTranslations("deDE", function() return {
 ["Thank you for upgrading."] =
 	"Thank you for upgrading.", -- to do
 
--- yells and comments to filter:
--- note for translators - these are precise in-game chat messages as spoken by the goblin zeppelin masters
---[[
-["The zeppelin to %s has just arrived! All aboard for %s!"] =
-	"The zeppelin to %s has just arrived! All aboard for %s!",
-["Don't be late, the next ship to %s departs in only a minute!"] =
-	"Don't be late, the next ship to %s departs in only a minute!",
-["The zeppelin should have just arrived at %s..."] =
-	"The zeppelin should have just arrived at %s...",
-["The zeppelin should have just left from %s..."] =
-	"The zeppelin should have just left from %s...",
-["The zeppelin to %s should be arriving here any time now."] =
-	"The zeppelin to %s should be arriving here any time now.",
-["There goes the zeppelin to %s. I hope there's no explosions this time."] =
-	"There goes the zeppelin to %s. I hope there's no explosions this time.",
-["I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all."] =
-	"I never get to ride to Grom'gol. Its just so unfair. Warm, steamy beaches... Crocolisks, Raptors... hmmm... maybe I don't really want to go there after all.",
-]]
-
 -- zones
 ["Orgrimmar"] = "Orgrimmar",
 ["Undercity"] = "Unterstadt",
@@ -78,9 +60,14 @@ L:RegisterTranslations("deDE", function() return {
 ["Teldrassil"] = "Teldrassil",
 ["Azuremyst Isle"] = "Azurmythosinsel",
 ["Feralas"] = "Feralas",
+["Westfall"] = "Westfall",
+["Borean Tundra"] = "Borean Tundra",
+["Howling Fjord"] = "Howling Fjord",
+["Dragonblight"] = "Dragonblight",
 
 ["The Veiled Sea"] = "Das verh\195\188llte Meer",
 ["Twisting Nether"] = "Wirbelnder Nether",
+["The Frozen Sea"] = "The Frozen Sea",
 
 -- subzones
 ["Grom'gol"] = "Grom'gol",
@@ -93,21 +80,37 @@ L:RegisterTranslations("deDE", function() return {
 ["Sardor Isle"] = "Insel Sardor",
 ["Feathermoon"] = "Mondfederfeste",
 ["Forgotten Coast"] = "Die vergessene K\195\188ste",
+["Warsong Hold"] = "Warsong Hold",
+["Vengeance Landing"] = "Vengeance Landing",
+["Valiance Keep"] = "Valiance Keep",
+["Valgarde"] = "Valgarde",
+["Unu'pe"] = "Unu'pe",
+["Moa'ki Harbor"] = "Moa'ki Harbor",
+["Kamagua"] = "Kamagua",
+["Westguard Keep"] = "Westguard Keep",
 
 -- abbreviations
-["Org"]	= "Org",	-- Orgrimmar
-["UC"]	= "Us",		-- Undercity
-["Exo"]	= "Exo",	-- The Exodar
-["SC"]	= "Stor",	-- Stormwind City
+["Org"] = "Org",  -- Orgrimmar
+["UC"]  = "Us",   -- Undercity
+["Exo"] = "Exo",  -- The Exodar
+["SC"]  = "Stor", -- Stormwind City
 
-["GG"]	= "GG",		-- Grom'gol
-["BB"]	= "BB",		-- Booty Bay
-["Ra"]	= "Rat",	-- Ratchet
-["MH"]	= "Mene",	-- Menethil Harbor
-["Aub"]	= "Aub",	-- Auberdine
-["Th"]	= "Ther",	-- Theramore
-["RTV"]	= "Rut",	-- Rut'Theran Village
-["FMS"]	= "Mond",	-- Feathermoon
-["Fer"]	= "Fer",	-- Feralas
+["GG"]  = "GG",   -- Grom'gol
+["BB"]  = "BB",   -- Booty Bay
+["Rat"] = "Rat",  -- Ratchet
+["MH"]  = "Mene", -- Menethil Harbor
+["Aub"] = "Aub",  -- Auberdine
+["Th"]  = "Ther", -- Theramore
+["RTV"] = "Rut",  -- Rut'Theran Village
+["FMS"] = "Mond", -- Feathermoon
+["Fer"] = "Fer",  -- Feralas
+["War"] = "War",  -- Warsong Hold
+["Ven"] = "Ven",  -- Vengeance Landing
+["VK"]  = "VK",   -- Valiance Keep
+["VG"]  = "VG",   -- Valgarde
+["Unu"] = "Unu",  -- Unu'pe
+["Moa"] = "Moa",  -- Moa'ki Harbor
+["Kam"] = "Kam",  -- Kamagua
+["WGK"] = "WGK",  -- Westguard Keep
 
 } end)

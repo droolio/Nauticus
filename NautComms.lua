@@ -10,7 +10,7 @@ local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
-local DATA_VERSION = 243 -- route calibration versioning
+local DATA_VERSION = 300 -- route calibration versioning
 
 local Nauticus = Nauticus
 
@@ -86,7 +86,7 @@ function Nauticus:BroadcastTransportData()
 
 	if trans_str ~= "" then
 		trans_str = string.sub(trans_str, 1, -2) -- remove the last comma
-		self:SendMessage("KNW "..DATA_VERSION.." "..trans_str)
+		self:SendMessage("KWN "..DATA_VERSION.." "..trans_str)
 		self:DebugMessage("tell our transports")
 	else
 		self:DebugMessage("nothing to tell")
@@ -155,7 +155,7 @@ function Nauticus:ReceiveMessage(prefix, sender, command, arg1, arg2)
 		self:ReceiveMessage_version(sender, tonumber(arg1))
 
 	-- known, { transports }
-	elseif command == "KNW" then
+	elseif command == "KWN" then
 		self:ReceiveMessage_known(sender, tonumber(arg1), self:StringToKnown(arg2))
 
 	end
@@ -327,29 +327,35 @@ function Nauticus:StringToKnown(transports)
 
 	for t = 1, #(Args), 1 do
 		local Args_tmp = self:GetArgs(Args[t], ":")
-		local transit, since, swaps, boots =
-			self.transports[tonumber(Args_tmp[1])].label, Args_tmp[2], Args_tmp[3], Args_tmp[4]
+		local transit, since, swaps, boots = tonumber(Args_tmp[1]), Args_tmp[2], Args_tmp[3], Args_tmp[4]
 
-		if since ~= nil then
-			if boots == nil then
-				boots = 0
-			else
-				boots = tonumber(boots)
-			end
+		if not self.transports[transit] then
+			self:DebugMessage("unknown transit: "..transit)
 
-			if swaps == nil then
-				swaps = 1
-			else
-				swaps = tonumber(swaps)
-			end
-
-			trans_tab[transit] = {
-				['since'] = tonumber(since),
-				['boots'] = boots,
-				['swaps'] = swaps
-			}
 		else
-			trans_tab[transit] = {}
+			transit = self.transports[transit].label
+
+			if since ~= nil then
+				if boots == nil then
+					boots = 0
+				else
+					boots = tonumber(boots)
+				end
+
+				if swaps == nil then
+					swaps = 1
+				else
+					swaps = tonumber(swaps)
+				end
+
+				trans_tab[transit] = {
+					['since'] = tonumber(since),
+					['boots'] = boots,
+					['swaps'] = swaps
+				}
+			else
+				trans_tab[transit] = {}
+			end
 		end
 	end
 
