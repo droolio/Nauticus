@@ -10,7 +10,7 @@ local WHITE   = "|cffffffff"
 local ORANGE  = "|cffffba00"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
-local DATA_VERSION = 300 -- route calibration versioning
+local DATA_VERSION = 301 -- route calibration versioning
 
 local Nauticus = Nauticus
 
