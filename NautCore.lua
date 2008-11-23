@@ -29,8 +29,8 @@ local dewdrop = AceLibrary("Dewdrop-2.0")
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 -- object variables
-Nauticus.versionStr = "3.0" -- for display
-Nauticus.versionNum = 300 -- for comparison
+Nauticus.versionStr = "3.0.1" -- for display
+Nauticus.versionNum = 301 -- for comparison
 
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
@@ -149,8 +149,8 @@ local options = {
 	},
 	filter = {
 		type = 'toggle',
-		name = "Goblin chat filter",
-		desc = "Toggle on/off chat filter for yelling goblin spam.",
+		name = "Crew chat filter",
+		desc = "Toggle on/off chat filter for yelling crew spam.",
 		order = 5,
 		get = function()
 			return Nauticus.db.profile.filterChat
