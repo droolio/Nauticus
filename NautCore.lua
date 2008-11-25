@@ -29,7 +29,7 @@ local dewdrop = AceLibrary("Dewdrop-2.0")
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 -- object variables
-Nauticus.versionStr = "3.0.1" -- for display
+Nauticus.versionStr = "3.0.2" -- for display
 Nauticus.versionNum = 301 -- for comparison
 
 Nauticus.activeTransit = -1
@@ -76,14 +76,14 @@ Nauticus:RegisterDefaults("char", {
 local options = {
 	icons = {
 		type = 'group',
-		name = "Icons",
-		desc = "Icon options.",
+		name = L["Icons"],
+		desc = L["Icon options."],
 		order = 1,
 		args = {
 			show = {
 				type = 'toggle',
-				name = "Show icons",
-				desc = "Toggle on/off map icons.",
+				name = L["Show icons"],
+				desc = L["Toggle on/off map icons."],
 				order = 1,
 				get = function()
 					return Nauticus.db.char.showIcons
@@ -98,8 +98,8 @@ local options = {
 			},
 			minisize = {
 				type = 'range',
-				name = "Mini-Map icon size",
-				desc = "Change the size of the Mini-Map icons.",
+				name = L["Mini-Map icon size"],
+				desc = L["Change the size of the Mini-Map icons."],
 				order = 3,
 				get = function()
 					return Nauticus.db.profile.miniIconSize
@@ -116,8 +116,8 @@ local options = {
 			},
 			worldsize = {
 				type = 'range',
-				name = "World Map icon size",
-				desc = "Change the size of the World Map icons.",
+				name = L["World Map icon size"],
+				desc = L["Change the size of the World Map icons."],
 				order = 2,
 				get = function()
 					return Nauticus.db.profile.worldIconSize
@@ -136,8 +136,8 @@ local options = {
 	},
 	autoselect = {
 		type = 'toggle',
-		name = "Auto select transport",
-		desc = "Automatically select nearest transport when standing at platform.",
+		name = L["Auto select transport"],
+		desc = L["Automatically select nearest transport when standing at platform."],
 		order = 4,
 		get = function()
 			return Nauticus.db.char.autoSelect
@@ -149,8 +149,8 @@ local options = {
 	},
 	filter = {
 		type = 'toggle',
-		name = "Crew chat filter",
-		desc = "Toggle on/off chat filter for yelling crew spam.",
+		name = L["Crew chat filter"],
+		desc = L["Toggle on/off chat filter for yelling crew spam."],
 		order = 5,
 		get = function()
 			return Nauticus.db.profile.filterChat
@@ -162,8 +162,8 @@ local options = {
 	},
 	alarm = {
 		type = 'range',
-		name = "Alarm delay",
-		desc = "Change the alarm delay (in seconds).",
+		name = L["Alarm delay"],
+		desc = L["Change the alarm delay (in seconds)."],
 		order = 2,
 		get = function()
 			return Nauticus.db.profile.alarmOffset
@@ -179,8 +179,8 @@ Nauticus.options = options
 Nauticus.optionsFu = { type = 'group', args = {
 	options = {
 		type = 'group',
-		name = "Options",
-		desc = "Options",
+		name = L["Options"],
+		desc = L["Options"],
 		args = options,
 	}
 } }
@@ -195,29 +195,29 @@ Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.cmdOptions)
 
 
 local FILTER_NPC = {
--- orc2uc:
-["Frezza"] = true, -- yells
-["Zapetta"] = true, -- yell + says
-["Sky-Captain Cloudkicker"] = true,
-["Chief Officer Coppernut"] = true,
-["Navigator Fairweather"] = true,
+-- org2uc:
+[ L["Frezza"] ] = true,
+[ L["Zapetta"] ] = true,
+[ L["Sky-Captain Cloudkicker"] ] = true,
+[ L["Chief Officer Coppernut"] ] = true,
+[ L["Navigator Fairweather"] ] = true,
 -- uc2gg:
-["Hin Denburg"] = true, -- yells
-["Navigator Hatch"] = true,
-["Chief Officer Hammerflange"] = true,
-["Sky-Captain Cableclamp"] = true,
+[ L["Hin Denburg"] ] = true,
+[ L["Navigator Hatch"] ] = true,
+[ L["Chief Officer Hammerflange"] ] = true,
+[ L["Sky-Captain Cableclamp"] ] = true,
 -- org2gg:
-["Snurk Bucksquick"] = true, -- yells
+[ L["Snurk Bucksquick"] ] = true,
 -- mh2ther:
-["Captain \"Stash\" Torgoley"] = true,
-["First Mate Kowalski"] = true,
-["Navigator Mehran"] = true,
--- uc2ven
-["Meefi Farthrottle"] = true,
-["Drenk Spannerspark"] = true,
--- war2org
-["Greeb Ramrocket"] = true,
-["Nargo Screwbore"] = true,
+[ L["Captain \"Stash\" Torgoley"] ] = true,
+[ L["First Mate Kowalski"] ] = true,
+[ L["Navigator Mehran"] ] = true,
+-- uc2ven:
+[ L["Meefi Farthrottle"] ] = true,
+[ L["Drenk Spannerspark"] ] = true,
+-- war2org:
+[ L["Greeb Ramrocket"] ] = true,
+[ L["Nargo Screwbore"] ] = true,
 }
 
 local function ChatFilter_DataChannel(msg)
@@ -496,8 +496,8 @@ function Nauticus:SetKnownTime(transit, index, x, y)
 	local transitData = transitData[transit]
 	local ix, iy = transitData.x[index-1], transitData.y[index-1]
 	local extrapolate = -transitData.dt[index] + transitData.dt[index] *
-		(self:CalcDistance(x, y, ix, iy) /
-		self:CalcDistance(transitData.x[index], transitData.y[index], ix, iy) )
+		(NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, ix, iy) /
+		NautAstrolabe:ComputeDistance(0, 0, transitData.x[index], transitData.y[index], 0, 0, ix, iy) )
 
 	self:DebugMessage("extrapolate: "..extrapolate)
 
@@ -548,12 +548,6 @@ function Nauticus:CalcTripPosition(transit, cycle, index)
 			transitData.dir[index-1] + transitData.d_dir[index] * fraction,
 			zonings[transit][index] == true
 	end
-end
-
-function Nauticus:CalcDistance(x1, y1, x2, y2)
-	local dx = x1 - x2
-	local dy = y1 - y2
-	return math.sqrt(dx * dx + dy * dy)
 end
 
 -- initialise saved variables and data

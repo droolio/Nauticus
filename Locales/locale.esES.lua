@@ -3,12 +3,23 @@ local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
 L:RegisterTranslations("esES", function() return {
 
--- general
-["Save"] = "Guardar",
-["Close"] = "Cerrar",
-["Minimise"] = "Minimizar",
-["Maximise"] = "Maximizar",
+-- options
 ["Options"] = "Opciones",
+-- TO DO:
+["Icons"] = "Icons",
+["Icon options."] = "Icon options.",
+["Show icons"] = "Show icons",
+["Toggle on/off map icons."] = "Toggle on/off map icons.",
+["Mini-Map icon size"] = "Mini-Map icon size",
+["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons.",
+["World Map icon size"] = "World Map icon size",
+["Change the size of the World Map icons."] = "Change the size of the World Map icons.",
+["Auto select transport"] = "Auto select transport",
+["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform.",
+["Crew chat filter"] = "Crew chat filter",
+["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam.",
+["Alarm delay"] = "Alarm delay",
+["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds).",
 
 -- miscellaneous
 ["Arrival"] = "Llegada",
@@ -16,39 +27,70 @@ L:RegisterTranslations("esES", function() return {
 ["Arr"] = "Lle", -- abbreviation for Arrival
 ["Dep"] = "Sal", -- abbreviation for Departure
 ["Select Transport"] = "Seleccionar Transporte",
-["Select None"] = "Seleccionar Ninguno", -- to do
+["Select None"] = "Seleccionar Ninguno",
 ["No Transport Selected"] = "Ningun Transporte Seleccionado",
 ["Not Available"] = "No Disponible",
 ["N/A"] = "N/D", -- abbreviation for Not Available
 ["Nauticus Options"] = "Opciones de Nauticus",
 ["Daily: "] = "Daily: ",
 
-["Show GUI when zone change contains a transport"] =
-	"Mostrar GUI cuando cambio de zona contiene un transporte",
-["Show only transports for your faction"] =
-	"Mostrar sólo transportes para su facción",
-["Shows only neutral and transports specific to your faction."] =
-	"Muestra sólo neutrales y transportes específicos para su facción.",
-["Show only transports in your current zone"] =
-	"Mostrar sólo transportes en su zona actual ",
-["Shows only transports in your current zone."] =
-	"Muestra sólo transportes en su zona actual.",
-["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
-	"Consejo: Click para rotar transporte. Alt-Click para crear alarma",
-["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
-	"¡Hay una nueva versión de Nauticus disponible! Por favor, visite http://drool.me.uk/naut.",
-["Type /nauticus or /naut gui show to show again."] =
-	"Teclea /nauticus o /naut para mostrar GUI.",
-["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] =
-	"Usted ha estado utilizando una versión antigua de Nauticus por más de 10 días, las comunicaciones salientes serán ahora deshabilitadas.",
-["Thank you for upgrading."] =
-	"Gracias por actualizar.",
+["Show only transports for your faction"] = "Mostrar sólo transportes para su facción",
+["Shows only neutral and transports specific to your faction."] = "Muestra sólo neutrales y transportes específicos para su facción.",
+["Show only transports in your current zone"] = "Mostrar sólo transportes en su zona actual ",
+["Shows only transports in your current zone."] = "Muestra sólo transportes en su zona actual.",
+["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Consejo: Click para rotar transporte. Alt-Click para crear alarma",
+["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "¡Hay una nueva versión de Nauticus disponible! Por favor, visite http://drool.me.uk/naut.",
+["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Usted ha estado utilizando una versión antigua de Nauticus por más de 10 días, las comunicaciones salientes serán ahora deshabilitadas.",
+["Thank you for upgrading."] = "Gracias por actualizar.",
 
--- zones
+-- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
+-- org2uc:
+["Frezza"] = "Frezza",
+["Zapetta"] = "Zapetta",
+["Sky-Captain Cloudkicker"] = "Capitán del cielo Pateanubes",
+["Chief Officer Coppernut"] = "Oficial jefe Tornillos de Cobre",
+["Navigator Fairweather"] = "Navegante Buentiempo",
+-- uc2gg:
+["Hin Denburg"] = "Hin Denburg",
+["Navigator Hatch"] = "Navegante Escotilla",
+["Chief Officer Hammerflange"] = "Oficial jefe Ala Martillo",
+["Sky-Captain Cableclamp"] = "Capitana del cielo Pinza Cable",
+-- org2gg:
+["Snurk Bucksquick"] = "Esnur Ciervoveloz",
+-- mh2ther:
+["Captain \"Stash\" Torgoley"] = "Capitán \"Alijo\" Torgoley",
+["First Mate Kowalski"] = "Contramaestre Kowalski",
+["Navigator Mehran"] = "Navegante Mehran",
+-- uc2ven
+["Meefi Farthrottle"] = "Meefi Acelerador",
+["Drenk Spannerspark"] = "Drenk Llavechispa",
+-- war2org
+["Greeb Ramrocket"] = "Greeb Carnerocohete",
+["Nargo Screwbore"] = "Nargo Pinchazo",
+
+-- ship names
+["The Thundercaller"] = "El Invocador del Trueno",
+["The Iron Eagle"] = "El Águila de Hierro",
+["The Purple Princess"] = "La Princesa Púrpura",
+["The Maiden's Fancy"] = "La fantasía de la doncella",
+["The Bravery"] = "El Valentía",
+["The Lady Mehley"] = "El Lady Mehley",
+["The Moonspray"] = "Espuma de la Luna",
+["Feathermoon Ferry"] = "Ferry Plumaluna",
+["Elune's Blessing"] = "La bendición de Elune",
+["The Mighty Wind"] = "El viento poderoso",
+["Cloudkisser"] = "El Besanubes",
+["Walker of Waves"] = "Errante de olas",
+["Green Island"] = "Isla verde",
+["The Kraken"] = "Los kraken",
+["Northspear"] = "Picanorte",
+["Captured Zeppelin"] = "Captured Zeppelin",
+
+-- zones (*must* strictly match the in-game name)
 ["Orgrimmar"] = "Orgrimmar",
 ["Undercity"] = "Entrañas",
 ["The Exodar"] = "El Exodar",
-["Stormwind City"] = "Stormwind City",
+["Stormwind City"] = "Ciudad de Ventormenta",
 
 ["Durotar"] = "Durotar",
 ["Tirisfal Glades"] = "Claros de Tirisfal",
@@ -60,14 +102,14 @@ L:RegisterTranslations("esES", function() return {
 ["Teldrassil"] = "Teldrassil",
 ["Azuremyst Isle"] = "Isla Bruma Azur",
 ["Feralas"] = "Feralas",
-["Westfall"] = "Westfall",
-["Borean Tundra"] = "Borean Tundra",
-["Howling Fjord"] = "Howling Fjord",
-["Dragonblight"] = "Dragonblight",
+["Westfall"] = "Páramos de Poniente",
+["Borean Tundra"] = "Tundra Boreal",
+["Howling Fjord"] = "Fiordo Aquilonal",
+["Dragonblight"] = "Cementerio de Dragones",
 
 ["The Veiled Sea"] = "Mar de la Bruma",
 ["Twisting Nether"] = "El Vacío Abisal",
-["The Frozen Sea"] = "The Frozen Sea",
+["The Frozen Sea"] = "The Frozen Sea", -- to do ?
 
 -- subzones
 ["Grom'gol"] = "Grom'gol",

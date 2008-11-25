@@ -3,12 +3,22 @@ local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
 L:RegisterTranslations("koKR", function() return {
 
--- general
-["SAVE"] = "저장",
-["CLOSE"] = "닫기",
-["Minimise"] = "Minimise",
-["Maximise"] = "Maximise",
+-- options; TO DO:
 ["Options"] = "Options",
+["Icons"] = "Icons",
+["Icon options."] = "Icon options.",
+["Show icons"] = "Show icons",
+["Toggle on/off map icons."] = "Toggle on/off map icons.",
+["Mini-Map icon size"] = "Mini-Map icon size",
+["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons.",
+["World Map icon size"] = "World Map icon size",
+["Change the size of the World Map icons."] = "Change the size of the World Map icons.",
+["Auto select transport"] = "Auto select transport",
+["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform.",
+["Crew chat filter"] = "Crew chat filter",
+["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam.",
+["Alarm delay"] = "Alarm delay",
+["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds).",
 
 -- miscellaneous
 ["Arrival"] = "도착",
@@ -16,6 +26,7 @@ L:RegisterTranslations("koKR", function() return {
 ["Arr"] = "Arr", -- abbreviation for Arrival
 ["Dep"] = "Dep", -- abbreviation for Departure
 ["Select Transport"] = "이동수단을 선택하세요",
+-- TO DO:
 ["Select None"] = "Select None", -- to do
 ["No Transport Selected"] = "No Transport Selected",
 ["Not Available"] = "Not Available",
@@ -23,8 +34,7 @@ L:RegisterTranslations("koKR", function() return {
 ["Nauticus Options"] = "Nauticus Options",
 ["Daily: "] = "Daily: ",
 
-["Show GUI when zone change contains a transport"] =
-	"이동수단을 포함하는 지역 변경의 경우 GUI창 표시",
+-- TO DO:
 ["Show only transports for your faction"] =
 	"해당 진영의 이동수단만 표시",
 ["Shows only neutral and transports specific to your faction."] =
@@ -37,14 +47,55 @@ L:RegisterTranslations("koKR", function() return {
 	"힌트: Click to cycle transport. Alt-Click to set up alarm",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
 	"There is a new version of Nauticus available! Please visit http://drool.me.uk/naut.",
-["Type /nauticus or /naut gui show to show again."] =
-	"Type /nauticus or /naut gui show to show again.",
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] =
 	"You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled.",
 ["Thank you for upgrading."] =
 	"Thank you for upgrading.",
 
--- zones
+-- list of ship crew npc's to filter from chat (*must* strictly match the in-game name); TO DO:
+-- org2uc:
+["Frezza"] = "Frezza",
+["Zapetta"] = "Zapetta",
+["Sky-Captain Cloudkicker"] = "Sky-Captain Cloudkicker",
+["Chief Officer Coppernut"] = "Chief Officer Coppernut",
+["Navigator Fairweather"] = "Navigator Fairweather",
+-- uc2gg:
+["Hin Denburg"] = "Hin Denburg",
+["Navigator Hatch"] = "Navigator Hatch",
+["Chief Officer Hammerflange"] = "Chief Officer Hammerflange",
+["Sky-Captain Cableclamp"] = "Sky-Captain Cableclamp",
+-- org2gg:
+["Snurk Bucksquick"] = "Snurk Bucksquick",
+-- mh2ther:
+["Captain \"Stash\" Torgoley"] = "Captain \"Stash\" Torgoley",
+["First Mate Kowalski"] = "First Mate Kowalski",
+["Navigator Mehran"] = "Navigator Mehran",
+-- uc2ven
+["Meefi Farthrottle"] = "Meefi Farthrottle",
+["Drenk Spannerspark"] = "Drenk Spannerspark",
+-- war2org
+["Greeb Ramrocket"] = "Greeb Ramrocket",
+["Nargo Screwbore"] = "Nargo Screwbore",
+
+-- ship names; TO DO:
+["The Thundercaller"] = "The Thundercaller",
+["The Iron Eagle"] = "The Iron Eagle",
+["The Purple Princess"] = "The Purple Princess",
+["The Maiden's Fancy"] = "The Maiden's Fancy",
+["The Bravery"] = "The Bravery",
+["The Lady Mehley"] = "The Lady Mehley",
+["The Moonspray"] = "The Moonspray",
+["Feathermoon Ferry"] = "Feathermoon Ferry",
+["Elune's Blessing"] = "Elune's Blessing",
+["The Mighty Wind"] = "The Mighty Wind",
+["Cloudkisser"] = "Cloudkisser",
+["Walker of Waves"] = "Walker of Waves",
+["Green Island"] = "Green Island",
+["The Kraken"] = "The Kraken",
+["Northspear"] = "Northspear",
+["Captured Zeppelin"] = "Captured Zeppelin",
+
+-- zones (*must* strictly match the in-game name)
 ["Orgrimmar"] = "오그리마",
 ["Undercity"] = "언더시티",
 ["The Exodar"] = "엑소다르",
@@ -60,14 +111,14 @@ L:RegisterTranslations("koKR", function() return {
 ["Teldrassil"] = "텔드랏실",
 ["Azuremyst Isle"] = "하늘안개 섬",
 ["Feralas"] = "페랄라스",
-["Westfall"] = "Westfall",
-["Borean Tundra"] = "Borean Tundra",
-["Howling Fjord"] = "Howling Fjord",
-["Dragonblight"] = "Dragonblight",
+["Westfall"] = "서부 몰락지대",
+["Borean Tundra"] = "북풍의 땅",
+["Howling Fjord"] = "울부짖는 협만",
+["Dragonblight"] = "용의 안식처",
 
 ["The Veiled Sea"] = "장막의 바다",
 ["Twisting Nether"] = "뒤틀린 황천",
-["The Frozen Sea"] = "The Frozen Sea",
+["The Frozen Sea"] = "The Frozen Sea", -- to do
 
 -- subzones
 ["Grom'gol"] = "그롬골 주둔지",
@@ -77,6 +128,7 @@ L:RegisterTranslations("koKR", function() return {
 ["Auberdine"] = "아우버다인",
 ["Theramore"] = "테라모어 섬",
 ["Rut'Theran Village"] = "루테란 마을",
+-- TO DO:
 ["Sardor Isle"] = "Sardor Isle",
 ["Feathermoon"] = "Feathermoon",
 ["Forgotten Coast"] = "Forgotten Coast",
@@ -102,6 +154,7 @@ L:RegisterTranslations("koKR", function() return {
 ["Aub"] = "아우버", -- Auberdine
 ["Th"]  = "테라",  -- Theramore
 ["RTV"] = "루테란", -- Rut'Theran Village
+-- TO DO:
 ["FMS"] = "FMS", -- Feathermoon
 ["Fer"] = "Fer", -- Feralas
 ["War"] = "War", -- Warsong Hold

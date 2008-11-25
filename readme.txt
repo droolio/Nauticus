@@ -3,46 +3,31 @@ Nauticus addon for World of Warcraft
 Official Homepage: http://drool.me.uk/naut
 
 ---
-Nauticus tracks the precise location of boats and Zeppelins around 
-Azeroth and displays them on the Mini-Map & World Map in real-time.
+Nauticus tracks the precise schedule of boats and Zeppelins around 
+Azeroth and displays them on the World Map & Mini-Map in real-time.
 
 Look up arrival & departure schedules for any transport and know exactly 
 when you need to be there. Less time waiting on platforms, more time at 
 the AH or mailbox, less time duelling rogues or shammys who want you to 
 take a seat while they crit you... 'for fun'...
 
-To track a transport requires that you (or someone else running this 
-addon) have taken the route sometime earlier.
+In addition to map icons, you can select and view a single transport's 
+schedule via any LibDataBroker (LDB) display addon, such as Fortress and 
+ButtonBin. Or you can use a lightweight bridge addon called Broker2FuBar 
+to get this function in FuBar. Titan has LDB built-in.
 
-Nauticus uses hidden addon-addon communications to synchronise and share 
-up-to-date schedule information between players automatically.
+To track a transport requires that you, or someone else running this 
+addon, has taken the route sometime earlier. Nauticus uses hidden 
+addon-addon communications to synchronise and share up-to-date schedule 
+information between players automatically.
 
-For usage options, type /nauticus or /naut in the command line.
-
-If you don't use FuBar (e.g. you use Titan instead), you can right-click 
-the Mini-Map button and 'Hide plugin' to get rid of it.
-
-Uses the Ace2 framework (soon Ace3 when it becomes stable).
-
----
-UPGRADING
-
-If you're upgrading from previous Nauticus versions, please make sure to 
-DELETE the old folders before extracting; Nauticus, FuBar_NauticusFu, 
-TitanNauticus and MapLibrary. MapLibrary is no longer used and FuBar & 
-Titan plugins are now integrated. You only need the one folder.
-
-If you're upgrading from ZeppelinMaster, please DELETE the old folders; 
-ZepShipMaster, FuBar_ZepMasterFu and TitanZeppelinMaster, before 
-extracting this package.
+For options, type /nauticus or /naut in the command line.
 
 ---
 TO DO
 
 - auto pop-up tooltip and/or sound arrival/departure alarm (i.e. Zep 
 horn or boat bell) when at platform
-- new compact UI window, listing schedules for all transports in the
-zone, highlighting closest platform when standing still and nearby
 
 Note: Nauticus is in continual development. You should always try to 
 keep your version up-to-date - not least because the addon interacts 
