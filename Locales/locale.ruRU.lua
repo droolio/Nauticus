@@ -6,21 +6,20 @@ L:RegisterTranslations("ruRU", function() return {
 
 -- options
 ["Options"] = "Настройки",
--- TO DO:
-["Icons"] = "Icons",
-["Icon options."] = "Icon options.",
-["Show icons"] = "Show icons",
-["Toggle on/off map icons."] = "Toggle on/off map icons.",
-["Mini-Map icon size"] = "Mini-Map icon size",
-["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons.",
-["World Map icon size"] = "World Map icon size",
-["Change the size of the World Map icons."] = "Change the size of the World Map icons.",
-["Auto select transport"] = "Auto select transport",
-["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform.",
-["Crew chat filter"] = "Crew chat filter",
-["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam.",
-["Alarm delay"] = "Alarm delay",
-["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds).",
+["Icons"] = "Иконки",
+["Icon options."] = "Настройки иконок.",
+["Show icons"] = "Показывать иконки",
+["Toggle on/off map icons."] = "Включить/выключить иконки на карте.",
+["Mini-Map icon size"] = "Размер иконок на миникарте",
+["Change the size of the Mini-Map icons."] = "Изменение размера иконок на миникарте.",
+["World Map icon size"] = "Размер иконок на карте мира",
+["Change the size of the World Map icons."] = "Изменение размера иконок на карте мира.",
+["Auto select transport"] = "Автоматически выбирать транспорт",
+["Automatically select nearest transport when standing at platform."] = "Автоматически выбирать ближайший к платформе транспорт.",
+["Crew chat filter"] = "Чат фильтр речи экипажа",
+["Toggle on/off chat filter for yelling crew spam."] = "Включить/выключить отображение речи экипажа на транспорте.",
+["Alarm delay"] = "Задержка напоминалки",
+["Change the alarm delay (in seconds)."] = "Изменение задержки напоминалки (в секундах).",
 
 -- miscellaneous
 ["Arrival"] = "Прибытие",
@@ -38,7 +37,7 @@ L:RegisterTranslations("ruRU", function() return {
 ["Show only transports for your faction"] = "Показывать транспорт только для своей фракции",
 ["Shows only neutral and transports specific to your faction."] = "Будет отображаться нейтральный транспорт и своей фракции.",
 ["Show only transports in your current zone"] = "Показывать транспорт только для текущей зоны",
-["Shows only transports in your current zone."] = "Будет отображаеться транспорт только для текущей зоны.",
+["Shows only transports in your current zone."] = "Будет отображаться транспорт только для текущей зоны.",
 ["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Хинт: Левый клик для циклического переключения. Alt-клик для включения напоминалки",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Доступна новая версия Nauticus! Обновление здесь http://www.wowace.com/projects/nauticus (http://drool.me.uk/naut.)",
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Вы использовали старую версию Nauticus более 10 дней, ваши данные больше не будут передаваться другим пользователям Nauticus",
@@ -85,7 +84,7 @@ L:RegisterTranslations("ruRU", function() return {
 ["Green Island"] = "Зеленый остров",
 ["The Kraken"] = "Кракен",
 ["Northspear"] = "Северное копье",
-["Captured Zeppelin"] = true, -- to do
+["Captured Zeppelin"] = "Захваченный дирижабль", -- I must, check it.
 
 -- zones (*must* strictly match the in-game name)
 ["Orgrimmar"] = "Оргриммар",
