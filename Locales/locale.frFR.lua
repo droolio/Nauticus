@@ -6,51 +6,43 @@ L:RegisterTranslations("frFR", function() return {
 
 -- options; TO DO:
 ["Options"] = "Options",
-["Icons"] = "Icons",
-["Icon options."] = "Icon options.",
-["Show icons"] = "Show icons",
-["Toggle on/off map icons."] = "Toggle on/off map icons.",
-["Mini-Map icon size"] = "Mini-Map icon size",
-["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons.",
-["World Map icon size"] = "World Map icon size",
-["Change the size of the World Map icons."] = "Change the size of the World Map icons.",
-["Auto select transport"] = "Auto select transport",
-["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform.",
-["Crew chat filter"] = "Crew chat filter",
-["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam.",
-["Alarm delay"] = "Alarm delay",
-["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds).",
+["Icons"] = "Icones",
+["Icon options."] = "Options d'icones.",
+["Show icons"] = "Montrer les icones",
+["Toggle on/off map icons."] = "Icones de carte on/off.",
+["Mini-Map icon size"] = "Taille des icones de Mini-carte",
+["Change the size of the Mini-Map icons."] = "Changer la taille des icones de Mini-carte.",
+["World Map icon size"] = "Taille des icones de Carte du monde",
+["Change the size of the World Map icons."] = "Changer la taille des icones de Carte du monde.",
+["Auto select transport"] = "Sélection auto du transport",
+["Automatically select nearest transport when standing at platform."] = "Sélection auto du transport le plus proche quand on est sur un quai.",
+["Crew chat filter"] = "Filtrer les discussions de l'équipage",
+["Toggle on/off chat filter for yelling crew spam."] = "Filtrer les cris de l'équipage.",
+["Alarm delay"] = "Délai d'alarme",
+["Change the alarm delay (in seconds)."] = "Changer le délai d'alarme (en secondes).",
 
 -- miscellaneous
-["Arrival"] = "Arriv\195\169e",
-["Departure"] = "D\195\169part",
+["Arrival"] = "Arrivée",
+["Departure"] = "Départ",
 ["Arr"] = "Arr", -- abbreviation for Arrival
-["Dep"] = "D\195\169p", -- abbreviation for Departure
+["Dep"] = "Dép", -- abbreviation for Departure
 ["Select Transport"] = "Transport",
 ["Select None"] = "Aucun",
 ["No Transport Selected"] = "Aucun Transport",
 ["Not Available"] = "Non Disponible",
 ["N/A"] = "ND", -- abbreviation for Not Available
-["Nauticus Options"] = "Nauticus Options", -- to do?
-["Daily: "] = "Daily: ", -- to do
+["Nauticus Options"] = "Options de Nauticus",
+["Daily: "] = "Journ.: ",
 
 -- TO DO:
-["Show only transports for your faction"] =
-	"Show only transports for your faction",
-["Shows only neutral and transports specific to your faction."] =
-	"Shows only neutral and transports specific to your faction.",
-["Show only transports in your current zone"] =
-	"Show only transports in your current zone",
-["Shows only transports in your current zone."] =
-	"Shows only transports in your current zone.",
-["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
-	"Astuce: Click to cycle transport. Alt-Click to set up alarm",
-["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
-	"There is a new version of Nauticus available! Please visit http://drool.me.uk/naut.",
-["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] =
-	"You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled.",
-["Thank you for upgrading."] =
-	"Thank you for upgrading.",
+["Show only transports for your faction"] = "Ne montrer que les transports de votre faction",
+["Shows only neutral and transports specific to your faction."] = "Ne montrer que les transports neutres et ceux de votre faction.",
+["Show only transports in your current zone"] = "Ne montrer que les transports de la zone courrante",
+["Shows only transports in your current zone."] = "Ne montrer que les transports de la zone courrante.",
+["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Astuce: Cliquez pour changer de transport. Alt-Clic pour créer une alarme",
+["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Nouvelle version de Nauticus disponible ! Visitez http://drool.me.uk/naut.",
+["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Vous utilisez une version ancienne de Nauticus depuis plus de 10 jours, les communications externes sont désactivées.",
+["Thank you for upgrading."] = "Merci de mettre à jour.",
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:
@@ -93,7 +85,7 @@ L:RegisterTranslations("frFR", function() return {
 ["Green Island"] = "L'Île verte",
 ["The Kraken"] = "Le Kraken",
 ["Northspear"] = "La Lance du Nord",
-["Captured Zeppelin"] = "Captured Zeppelin",
+["Captured Zeppelin"] = "Zeppelin capturé",
 
 -- zones (*must* strictly match the in-game name)
 ["Orgrimmar"] = "Orgrimmar",
@@ -130,16 +122,15 @@ L:RegisterTranslations("frFR", function() return {
 ["Rut'Theran Village"] = "Rut'Theran",
 ["Sardor Isle"] = "Ile de Sardor",
 ["Feathermoon"] = "Pennelune",
-["Forgotten Coast"] = "Cote oubli\195\169e",
--- TO DO:
-["Warsong Hold"] = "Warsong Hold",
-["Vengeance Landing"] = "Vengeance Landing",
-["Valiance Keep"] = "Valiance Keep",
+["Forgotten Coast"] = "Côte oubliée",
+["Warsong Hold"] = "Bastion Chanteguerre",
+["Vengeance Landing"] = "Accostage de la Vengeance",
+["Valiance Keep"] = "Donjon de la Bravoure",
 ["Valgarde"] = "Valgarde",
 ["Unu'pe"] = "Unu'pe",
-["Moa'ki Harbor"] = "Moa'ki Harbor",
+["Moa'ki Harbor"] = "Port-Moa'ki",
 ["Kamagua"] = "Kamagua",
-["Westguard Keep"] = "Westguard Keep",
+["Westguard Keep"] = "Donjon de la Garde de l'Ouest",
 
 -- abbreviations
 ["Org"] = "Org", -- Orgrimmar
@@ -157,13 +148,13 @@ L:RegisterTranslations("frFR", function() return {
 ["FMS"] = "Pen", -- Feathermoon
 ["Fer"] = "Fer", -- Feralas
 -- TO DO:
-["War"] = "War", -- Warsong Hold
+["War"] = "BaC", -- Warsong Hold
 ["Ven"] = "Ven", -- Vengeance Landing
-["VK"]  = "VK",  -- Valiance Keep
-["VG"]  = "VG",  -- Valgarde
+["VK"]  = "DjB", -- Valiance Keep
+["VG"]  = "Val", -- Valgarde
 ["Unu"] = "Unu", -- Unu'pe
 ["Moa"] = "Moa", -- Moa'ki Harbor
 ["Kam"] = "Kam", -- Kamagua
-["WGK"] = "WGK", -- Westguard Keep
+["WGK"] = "DjG", -- Westguard Keep
 
 } end)

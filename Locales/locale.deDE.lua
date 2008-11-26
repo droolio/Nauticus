@@ -105,7 +105,7 @@ L:RegisterTranslations("deDE", function() return {
 ["Feralas"] = "Feralas",
 ["Westfall"] = "Westfall",
 ["Borean Tundra"] = "Boreanische Tundra",
-["Howling Fjord"] = "Heulender Fjord",
+["Howling Fjord"] = "Der heulende Fjord",
 ["Dragonblight"] = "Drachenöde",
 
 ["The Veiled Sea"] = "Das verhüllte Meer",

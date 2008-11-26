@@ -1,6 +1,7 @@
 ﻿
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
+-- Spanish localisation by StiviS
 L:RegisterTranslations("esES", function() return {
 
 -- options
@@ -84,7 +85,7 @@ L:RegisterTranslations("esES", function() return {
 ["Green Island"] = "Isla verde",
 ["The Kraken"] = "Los kraken",
 ["Northspear"] = "Picanorte",
-["Captured Zeppelin"] = "Captured Zeppelin",
+["Captured Zeppelin"] = "Captured Zeppelin", -- to do
 
 -- zones (*must* strictly match the in-game name)
 ["Orgrimmar"] = "Orgrimmar",
@@ -109,7 +110,7 @@ L:RegisterTranslations("esES", function() return {
 
 ["The Veiled Sea"] = "Mar de la Bruma",
 ["Twisting Nether"] = "El Vacío Abisal",
-["The Frozen Sea"] = "The Frozen Sea", -- to do ?
+["The Frozen Sea"] = "El Mar Gélido",
 
 -- subzones
 ["Grom'gol"] = "Grom'gol",
