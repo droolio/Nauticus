@@ -33,6 +33,9 @@ L:RegisterTranslations("zhCN", function() return {
 ["Not Available"] = "无有效计时",
 ["N/A"] = "--", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus 选项",
+["Alarm is now: "] = "Alarm is now: ", -- to do
+["ON"] = "ON", -- to do
+["OFF"] = "OFF", -- to do
 ["Daily: "] = "日常: ",
 
 ["Show only transports for your faction"] = "只显示玩家所在阵营可用的运输站",
@@ -46,36 +49,38 @@ L:RegisterTranslations("zhCN", function() return {
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name); TO DO:
 -- org2uc:
-["Frezza"] = "Frezza",
-["Zapetta"] = "Zapetta",
-["Sky-Captain Cloudkicker"] = "Sky-Captain Cloudkicker",
-["Chief Officer Coppernut"] = "Chief Officer Coppernut",
-["Navigator Fairweather"] = "Navigator Fairweather",
+["Frezza"] = "弗雷萨",
+["Zapetta"] = "飞艇管理员萨匹塔",
+["Sky-Captain Cloudkicker"] = "天空船长克劳基克",
+["Chief Officer Coppernut"] = "运营主管考伯纳特",
+["Navigator Fairweather"] = "领航员菲尔维兹",
 -- uc2gg:
-["Hin Denburg"] = "Hin Denburg",
-["Navigator Hatch"] = "Navigator Hatch",
-["Chief Officer Hammerflange"] = "Chief Officer Hammerflange",
-["Sky-Captain Cableclamp"] = "Sky-Captain Cableclamp",
+["Hin Denburg"] = "兴登堡",
+["Navigator Hatch"] = "领航员哈奇",
+["Chief Officer Hammerflange"] = "运营主管哈莫弗朗",
+["Sky-Captain Cableclamp"] = "天空船长卡贝克拉",
 -- org2gg:
-["Snurk Bucksquick"] = "Snurk Bucksquick",
+["Snurk Bucksquick"] = "斯纳尔克",
 -- mh2ther:
-["Captain \"Stash\" Torgoley"] = "Captain \"Stash\" Torgoley",
-["First Mate Kowalski"] = "First Mate Kowalski",
-["Navigator Mehran"] = "Navigator Mehran",
+["Captain \"Stash\" Torgoley"] = "\“鼠胆船长\”托格雷",
+["First Mate Kowalski"] = "大副科瓦斯基",
+["Navigator Mehran"] = "领航员梅拉",
 -- uc2ven
-["Meefi Farthrottle"] = "Meefi Farthrottle",
-["Drenk Spannerspark"] = "Drenk Spannerspark",
+["Meefi Farthrottle"] = "Meefi Farthrottle", -- to do
+["Drenk Spannerspark"] = "Drenk Spannerspark", -- to do
 -- war2org
-["Greeb Ramrocket"] = "Greeb Ramrocket",
-["Nargo Screwbore"] = "Nargo Screwbore",
+["Greeb Ramrocket"] = "Greeb Ramrocket", -- to do
+["Nargo Screwbore"] = "Nargo Screwbore", -- to do
+-- wg2wg:
+["Harrowmeiser"] = "Harrowmeiser", -- to do
 
 -- ship names; TO DO:
-["The Thundercaller"] = "The Thundercaller",
-["The Iron Eagle"] = "The Iron Eagle",
-["The Purple Princess"] = "The Purple Princess",
+["The Thundercaller"] = "唤雷号",
+["The Iron Eagle"] = "铁鹰号",
+["The Purple Princess"] = "紫色公主",
 ["The Maiden's Fancy"] = "The Maiden's Fancy",
-["The Bravery"] = "The Bravery",
-["The Lady Mehley"] = "The Lady Mehley",
+["The Bravery"] = "勇者号",
+["The Lady Mehley"] = "梅蕾女士",
 ["The Moonspray"] = "The Moonspray",
 ["Feathermoon Ferry"] = "Feathermoon Ferry",
 ["Elune's Blessing"] = "Elune's Blessing",

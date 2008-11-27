@@ -32,6 +32,9 @@ L:RegisterTranslations("ruRU", function() return {
 ["Not Available"] = "Не доступно",
 ["N/A"] = "Н/Д", -- abbreviation for Not Available
 ["Nauticus Options"] = "Настройки Nauticus",
+["Alarm is now: "] = "Alarm is now: ", -- to do
+["ON"] = "ON", -- to do
+["OFF"] = "OFF", -- to do
 ["Daily: "] = "Ежедневно: ",
 
 ["Show only transports for your faction"] = "Показывать транспорт только для своей фракции",
@@ -39,7 +42,7 @@ L:RegisterTranslations("ruRU", function() return {
 ["Show only transports in your current zone"] = "Показывать транспорт только для текущей зоны",
 ["Shows only transports in your current zone."] = "Будет отображаться транспорт только для текущей зоны.",
 ["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Хинт: Левый клик для циклического переключения. Alt-клик для включения напоминалки",
-["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Доступна новая версия Nauticus! Обновление здесь http://www.wowace.com/projects/nauticus (http://drool.me.uk/naut.)",
+["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Доступна новая версия Nauticus! Обновление здесь http://drool.me.uk/naut.",
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Вы использовали старую версию Nauticus более 10 дней, ваши данные больше не будут передаваться другим пользователям Nauticus",
 ["Thank you for upgrading."] = "Спасибо, за обновление.",
 
@@ -67,6 +70,8 @@ L:RegisterTranslations("ruRU", function() return {
 -- war2org
 ["Greeb Ramrocket"] = "Гриб Ракетокрыл",
 ["Nargo Screwbore"] = "Нарго Вертокрут",
+-- wg2wg:
+["Harrowmeiser"] = "Боронайзер",
 
 -- ship names
 ["The Thundercaller"] = "Призыватель грома",
@@ -84,7 +89,7 @@ L:RegisterTranslations("ruRU", function() return {
 ["Green Island"] = "Зеленый остров",
 ["The Kraken"] = "Кракен",
 ["Northspear"] = "Северное копье",
-["Captured Zeppelin"] = "Захваченный дирижабль", -- I must, check it.
+["Captured Zeppelin"] = "Захваченный дирижабль", -- check
 
 -- zones (*must* strictly match the in-game name)
 ["Orgrimmar"] = "Оргриммар",

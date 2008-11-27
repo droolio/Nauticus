@@ -32,6 +32,9 @@ L:RegisterTranslations("zhTW", function() return {
 ["Not Available"] = "無有效計時",
 ["N/A"] = "--", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus 選項",
+["Alarm is now: "] = "警示現在",
+["ON"] = "ON", -- to do
+["OFF"] = "OFF", -- to do
 ["Daily: "] = "每日: ",
 
 ["Show only transports for your faction"] = "只顯示玩家陣營可用的運輸點",
@@ -67,6 +70,8 @@ L:RegisterTranslations("zhTW", function() return {
 -- war2org
 ["Greeb Ramrocket"] = "格利伯·瑞姆洛基",
 ["Nargo Screwbore"] = "納爾高·螺孔",
+-- wg2wg:
+["Harrowmeiser"] = "哈洛梅瑟",
 
 -- ship names
 ["The Thundercaller"] = "喚雷者號",
@@ -84,7 +89,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["Green Island"] = "綠島",
 ["The Kraken"] = "海怪號",
 ["Northspear"] = "北矛號",
-["Captured Zeppelin"] = "Captured Zeppelin", -- TO DO
+["Captured Zeppelin"] = "Captured Zeppelin", -- to do
 
 -- zones (*must* strictly match the in-game name)
 ["Orgrimmar"] = "奧格瑪",

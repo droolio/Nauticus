@@ -31,6 +31,9 @@ L:RegisterTranslations("enUS", function() return {
 ["Not Available"] = true,
 ["N/A"] = true, -- abbreviation for Not Available
 ["Nauticus Options"] = true,
+["Alarm is now: "] = true,
+["ON"] = true,
+["OFF"] = true,
 ["Daily: "] = true,
 
 ["Show only transports for your faction"] = true,
@@ -66,6 +69,8 @@ L:RegisterTranslations("enUS", function() return {
 -- war2org
 ["Greeb Ramrocket"] = true,
 ["Nargo Screwbore"] = true,
+-- wg2wg:
+["Harrowmeiser"] = true,
 
 -- ship names
 ["The Thundercaller"] = true,

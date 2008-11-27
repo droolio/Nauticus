@@ -6,43 +6,45 @@ L:RegisterTranslations("deDE", function() return {
 
 -- options
 ["Options"] = "Optionen",
--- TO DO:
 ["Icons"] = "Icons",
-["Icon options."] = "Icon options.",
-["Show icons"] = "Show icons",
-["Toggle on/off map icons."] = "Toggle on/off map icons.",
-["Mini-Map icon size"] = "Mini-Map icon size",
-["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons.",
-["World Map icon size"] = "World Map icon size",
-["Change the size of the World Map icons."] = "Change the size of the World Map icons.",
-["Auto select transport"] = "Auto select transport",
-["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform.",
-["Crew chat filter"] = "Crew chat filter",
-["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam.",
-["Alarm delay"] = "Alarm delay",
-["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds).",
+["Icon options."] = "Icon Optionen.",
+["Show icons"] = "Zeige Icons",
+["Toggle on/off map icons."] = "Kartenicons ein-/ausschalten.",
+["Mini-Map icon size"] = "Minikarte Icongröße",
+["Change the size of the Mini-Map icons."] = "Ändert die Größe der Minikarte Icons.",
+["World Map icon size"] = "Weltkarte Icongröße",
+["Change the size of the World Map icons."] = "Ändert die Größe der Weltkarte Icons.",
+["Auto select transport"] = "Automatische Transportauswahl",
+["Automatically select nearest transport when standing at platform."] = "Automatisch den nächstgelegenen Transport auswählen, wenn man auf einer Plattform steht.",
+["Crew chat filter"] = "Crewgesprächfilter",
+["Toggle on/off chat filter for yelling crew spam."] = "Ein-/Ausschalten des Filters für die Gespräche der Crew.",
+["Alarm delay"] = "Alarm Zeit",
+["Change the alarm delay (in seconds)."] = "Ändert die Zeit ab, wann der Alarm vor dem Abflug ertönen soll (in Sekunden).",
 
 -- miscellaneous
 ["Arrival"] = "Ankunft",
 ["Departure"] = "Abfahrt",
 ["Arr"] = "Arr", -- abbreviation for Arrival
 ["Dep"] = "Dep", -- abbreviation for Departure
-["Select Transport"] = "Route ausw\195\164hlen",
-["Select None"] = "Nichts ausw\195\164hlen",
-["No Transport Selected"] = "Keine Route ausgew\195\164hlt",
+["Select Transport"] = "Route auswählen",
+["Select None"] = "Nichts auswählen",
+["No Transport Selected"] = "Keine Route ausgewählt",
 ["Not Available"] = "Nicht Erreichbar",
 ["N/A"] = "N/A", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus Optionen",
-["Daily: "] = "T\195\164glich: ",
+["Alarm is now: "] = "Alarm is now: ", -- to do
+["ON"] = "ON", -- to do
+["OFF"] = "OFF", -- to do
+["Daily: "] = "Täglich: ",
 
 ["Show only transports for your faction"] = "Zeige nur Transportmittel deiner Fraktion",
 ["Shows only neutral and transports specific to your faction."] = "Zeigt nur neutrale und Transportmittel deiner Fraktion.",
 ["Show only transports in your current zone"] = "Zeige nur Transportmittel der momentanen Zone",
 ["Shows only transports in your current zone."] = "Zeigt nur Transportmittel der momentanen Zone.",
-["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Hinweis: Klick - Reiseroute ausw\195\164hlen. Alt-Klick - Alarm aktivieren.",
+["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Hinweis: Klick - Reiseroute auswählen. Alt-Klick - Alarm aktivieren.",
 ["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Neue Versionen findest Du bei http://drool.me.uk/naut.",
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Sie haben eine veraltete Version von Nauticus mehr als 10 Tage verwendet, ausgehende Kommunikation wird deaktiviert.",
-["Thank you for upgrading."] = "Danke f\195\188r das Upgraden.",
+["Thank you for upgrading."] = "Danke für das Upgraden.",
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:
@@ -68,6 +70,8 @@ L:RegisterTranslations("deDE", function() return {
 -- war2org
 ["Greeb Ramrocket"] = "Grieb Rammrakete",
 ["Nargo Screwbore"] = "Nargo Bohrschraub",
+-- wg2wg:
+["Harrowmeiser"] = "Eggenmeiser",
 
 -- ship names
 ["The Thundercaller"] = "Die Donnersturm",
@@ -122,7 +126,7 @@ L:RegisterTranslations("deDE", function() return {
 ["Rut'Theran Village"] = "Rut'Theran",
 ["Sardor Isle"] = "Insel Sardor",
 ["Feathermoon"] = "Mondfederfeste",
-["Forgotten Coast"] = "Die vergessene K\195\188ste",
+["Forgotten Coast"] = "Die vergessene Küste",
 ["Warsong Hold"] = "Kriegshymnenfeste",
 ["Vengeance Landing"] = "Hafen der Vergeltung",
 ["Valiance Keep"] = "Valianzfeste",

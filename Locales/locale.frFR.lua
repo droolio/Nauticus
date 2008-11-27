@@ -32,6 +32,9 @@ L:RegisterTranslations("frFR", function() return {
 ["Not Available"] = "Non Disponible",
 ["N/A"] = "ND", -- abbreviation for Not Available
 ["Nauticus Options"] = "Options de Nauticus",
+["Alarm is now: "] = "Alarm is now: ", -- to do
+["ON"] = "ON", -- to do
+["OFF"] = "OFF", -- to do
 ["Daily: "] = "Journ.: ",
 
 -- TO DO:
@@ -68,6 +71,8 @@ L:RegisterTranslations("frFR", function() return {
 -- war2org
 ["Greeb Ramrocket"] = "Greeb Fusebélier",
 ["Nargo Screwbore"] = "Nargo Creusevisse",
+-- wg2wg:
+["Harrowmeiser"] = "Harrowmeiser",
 
 -- ship names
 ["The Thundercaller"] = "Le Mande-tonnerre",

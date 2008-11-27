@@ -218,6 +218,8 @@ local FILTER_NPC = {
 -- war2org:
 [ L["Greeb Ramrocket"] ] = true,
 [ L["Nargo Screwbore"] ] = true,
+-- wg2wg:
+[ L["Harrowmeiser"] ] = true,
 }
 
 local function ChatFilter_DataChannel(msg)
@@ -317,18 +319,11 @@ function Nauticus:DrawMapIcons()
 					if currentX and currentY then
 						if isWorldMapVisible then
 							if isZoning ~= transport.status then
-								if isZoning then
-									transport.worldmap_texture:SetTexture(ARTWORK_ZONING)
-								else
-									transport.worldmap_texture:SetTexture(transport.texture_name)
-								end
-
+								transport.worldmap_texture:SetTexture(isZoning and ARTWORK_ZONING or transport.texture_name)
 								transport.status = isZoning
 							end
 
-							NautAstrolabe:PlaceIconOnWorldMap(WorldMapDetailFrame, buttonWorld,
-								0, 0, currentX, currentY)
-
+							NautAstrolabe:PlaceIconOnWorldMap(WorldMapDetailFrame, buttonWorld, 0, 0, currentX, currentY)
 							transport.worldmap_texture:SetTexCoord(GetTexCoord(angle))
 
 						elseif buttonWorld:IsVisible() then
@@ -338,15 +333,7 @@ function Nauticus:DrawMapIcons()
 						if isZoneInteresting then
 							NautAstrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, currentX, currentY)
 							transport.minimap_texture:SetTexCoord(GetTexCoord(angle-math.deg(MiniMapCompassRing:GetFacing())))
-
-							if NautAstrolabe:IsIconOnEdge(buttonMini) then
-								buttonMini:SetAlpha(.6)
-							else
-								buttonMini:SetAlpha(.9)
-							end
-
-							NautAstrolabe.UpdateTimer = NautAstrolabe.MinimapUpdateTime
-							NautAstrolabe:UpdateMinimapIconPositions()
+							buttonMini:SetAlpha(NautAstrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
 						elseif buttonMini:IsVisible() then
 							NautAstrolabe:RemoveIconFromMinimap(buttonMini)
 						end
@@ -742,8 +729,8 @@ end
 function Nauticus:ToggleAlarm()
 	alarmSet = not alarmSet
 	if not alarmSet then alarmDinged = false end
-	local is; if alarmSet then is = RED.."ON|r" else is = GREEN.."OFF|r" end
-	DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE.."Alarm is now: "..is)
+	local is; if alarmSet then is = RED..L["ON"] else is = GREEN..L["OFF"] end
+	DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..L["Alarm is now: "]..is.."|r")
 	PlaySound("AuctionWindowOpen")
 end
 

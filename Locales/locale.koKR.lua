@@ -32,6 +32,9 @@ L:RegisterTranslations("koKR", function() return {
 ["Not Available"] = "Not Available",
 ["N/A"] = "N/A", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus Options",
+["Alarm is now: "] = "Alarm is now: ",
+["ON"] = "ON",
+["OFF"] = "OFF",
 ["Daily: "] = "Daily: ",
 
 -- TO DO:
@@ -76,6 +79,8 @@ L:RegisterTranslations("koKR", function() return {
 -- war2org
 ["Greeb Ramrocket"] = "Greeb Ramrocket",
 ["Nargo Screwbore"] = "Nargo Screwbore",
+-- wg2wg:
+["Harrowmeiser"] = "Harrowmeiser",
 
 -- ship names; TO DO:
 ["The Thundercaller"] = "The Thundercaller",

@@ -33,6 +33,9 @@ L:RegisterTranslations("esES", function() return {
 ["Not Available"] = "No Disponible",
 ["N/A"] = "N/D", -- abbreviation for Not Available
 ["Nauticus Options"] = "Opciones de Nauticus",
+["Alarm is now: "] = "Alarm is now: ",
+["ON"] = "ON",
+["OFF"] = "OFF",
 ["Daily: "] = "Daily: ",
 
 ["Show only transports for your faction"] = "Mostrar sólo transportes para su facción",
@@ -68,6 +71,8 @@ L:RegisterTranslations("esES", function() return {
 -- war2org
 ["Greeb Ramrocket"] = "Greeb Carnerocohete",
 ["Nargo Screwbore"] = "Nargo Pinchazo",
+-- wg2wg:
+["Harrowmeiser"] = "Harrowmeiser",
 
 -- ship names
 ["The Thundercaller"] = "El Invocador del Trueno",
