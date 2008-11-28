@@ -3,10 +3,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-<!--
-<Script file="NautDebug.lua"/>
--->
-
 <Button name="Naut_MiniMapIconButton" hidden="true" virtual="true">
 	<Anchors>
 		<Anchor point="CENTER" relativeTo="MinimapBackdrop" relativePoint="TOPLEFT"/>

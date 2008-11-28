@@ -6,21 +6,20 @@ L:RegisterTranslations("zhCN", function() return {
 
 -- options
 ["Options"] = "选项",
--- TO DO:
-["Icons"] = "Icons",
-["Icon options."] = "Icon options.",
-["Show icons"] = "Show icons",
-["Toggle on/off map icons."] = "Toggle on/off map icons.",
-["Mini-Map icon size"] = "Mini-Map icon size",
-["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons.",
-["World Map icon size"] = "World Map icon size",
-["Change the size of the World Map icons."] = "Change the size of the World Map icons.",
-["Auto select transport"] = "Auto select transport",
-["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform.",
-["Crew chat filter"] = "Crew chat filter",
-["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam.",
-["Alarm delay"] = "Alarm delay",
-["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds).",
+["Icons"] = "图标",
+["Icon options."] = "图标选项。",
+["Show icons"] = "显示图标",
+["Toggle on/off map icons."] = "开启/关闭 地图图标。",
+["Mini-Map icon size"] = "小地图图标大小",
+["Change the size of the Mini-Map icons."] = "变更小地图图标的大小。",
+["World Map icon size"] = "世界地图图标大小",
+["Change the size of the World Map icons."] = "变更世界地图图标大小。",
+["Auto select transport"] = "自动选择传输点",
+["Automatically select nearest transport when standing at platform."] = "当你站在月台时自动选择距你最近的传输点",
+["Crew chat filter"] = "过滤工作人员喊话",
+["Toggle on/off chat filter for yelling crew spam."] = "开启/关闭 过滤工作人员喊话讯息。",
+["Alarm delay"] = "警示延迟",
+["Change the alarm delay (in seconds)."] = "变更警示延迟（秒）",
 
 -- miscellaneous
 ["Arrival"] = "到达",
@@ -33,9 +32,9 @@ L:RegisterTranslations("zhCN", function() return {
 ["Not Available"] = "无有效计时",
 ["N/A"] = "--", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus 选项",
-["Alarm is now: "] = "Alarm is now: ", -- to do
-["ON"] = "ON", -- to do
-["OFF"] = "OFF", -- to do
+["Alarm is now: "] = "警示现在",
+["ON"] = "启用", 
+["OFF"] = "关闭",
 ["Daily: "] = "日常: ",
 
 ["Show only transports for your faction"] = "只显示玩家所在阵营可用的运输站",
@@ -47,7 +46,7 @@ L:RegisterTranslations("zhCN", function() return {
 ["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "你已使用旧版的 Nauticus 超过 10 天了，同步信息输出现在将会关闭。",
 ["Thank you for upgrading."] = "感谢你更新版本。",
 
--- list of ship crew npc's to filter from chat (*must* strictly match the in-game name); TO DO:
+-- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:
 ["Frezza"] = "弗雷萨",
 ["Zapetta"] = "飞艇管理员萨匹塔",
@@ -65,25 +64,27 @@ L:RegisterTranslations("zhCN", function() return {
 ["Captain \"Stash\" Torgoley"] = "\“鼠胆船长\”托格雷",
 ["First Mate Kowalski"] = "大副科瓦斯基",
 ["Navigator Mehran"] = "领航员梅拉",
+-- TO DO:
 -- uc2ven
-["Meefi Farthrottle"] = "Meefi Farthrottle", -- to do
-["Drenk Spannerspark"] = "Drenk Spannerspark", -- to do
+["Meefi Farthrottle"] = "Meefi Farthrottle",
+["Drenk Spannerspark"] = "Drenk Spannerspark",
 -- war2org
-["Greeb Ramrocket"] = "Greeb Ramrocket", -- to do
-["Nargo Screwbore"] = "Nargo Screwbore", -- to do
+["Greeb Ramrocket"] = "Greeb Ramrocket",
+["Nargo Screwbore"] = "Nargo Screwbore",
 -- wg2wg:
-["Harrowmeiser"] = "Harrowmeiser", -- to do
+["Harrowmeiser"] = "Harrowmeiser",
 
--- ship names; TO DO:
+-- ship names
 ["The Thundercaller"] = "唤雷号",
 ["The Iron Eagle"] = "铁鹰号",
-["The Purple Princess"] = "紫色公主",
-["The Maiden's Fancy"] = "The Maiden's Fancy",
+["The Purple Princess"] = "紫色公主号",
+["The Maiden's Fancy"] = "少女之爱号",
 ["The Bravery"] = "勇者号",
-["The Lady Mehley"] = "梅蕾女士",
-["The Moonspray"] = "The Moonspray",
-["Feathermoon Ferry"] = "Feathermoon Ferry",
-["Elune's Blessing"] = "Elune's Blessing",
+["The Lady Mehley"] = "梅蕾女士号",
+["The Moonspray"] = "月海之浪号",
+["Feathermoon Ferry"] = "羽月渡船",
+["Elune's Blessing"] = "艾露恩的祝福",
+-- TO DO:
 ["The Mighty Wind"] = "The Mighty Wind",
 ["Cloudkisser"] = "Cloudkisser",
 ["Walker of Waves"] = "Walker of Waves",

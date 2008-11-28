@@ -32,9 +32,9 @@ L:RegisterTranslations("deDE", function() return {
 ["Not Available"] = "Nicht Erreichbar",
 ["N/A"] = "N/A", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus Optionen",
-["Alarm is now: "] = "Alarm is now: ", -- to do
-["ON"] = "ON", -- to do
-["OFF"] = "OFF", -- to do
+["Alarm is now: "] = "Der Alarm ist jetzt: ",
+["ON"] = "An",
+["OFF"] = "Aus",
 ["Daily: "] = "Täglich: ",
 
 ["Show only transports for your faction"] = "Zeige nur Transportmittel deiner Fraktion",

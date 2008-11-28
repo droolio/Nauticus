@@ -285,8 +285,8 @@ function Nauticus:ShowTooltip(transit)
 
 		end
 
-		if (self.debug and not IsShiftKeyDown()) or (not self.debug and IsShiftKeyDown()) then
-			tablet:AddLine("Debug")
+		if IsShiftKeyDown() then
+			tablet:AddLine("Metadata")
 				:Color(0.75, 0.75, 0.75, 1)
 
 			local since, boots, swaps = self:GetKnownCycle(transit)
@@ -296,7 +296,6 @@ function Nauticus:ShowTooltip(transit)
 
 			tablet:AddLine("Boots, Swaps:", boots..", "..swaps, false, 10)
 				:Font(nil, nil, nil, Naut_NumberFont:GetFont())
-
 		end
 
 	elseif has == false then
@@ -478,7 +477,7 @@ end
 
 -- Titan stuff...
 -- don't go any further if Titan isn't loaded
-if not IsAddOnLoaded("Titan") then Nauticus:DebugMessage("no titan"); return; end
+if not IsAddOnLoaded("Titan") then return; end
 
 -- hook menu close
 local orig_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu

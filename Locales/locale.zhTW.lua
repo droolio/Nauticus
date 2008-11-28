@@ -33,8 +33,8 @@ L:RegisterTranslations("zhTW", function() return {
 ["N/A"] = "--", -- abbreviation for Not Available
 ["Nauticus Options"] = "Nauticus 選項",
 ["Alarm is now: "] = "警示現在",
-["ON"] = "ON", -- to do
-["OFF"] = "OFF", -- to do
+["ON"] = "啟用", 
+["OFF"] = "關閉",
 ["Daily: "] = "每日: ",
 
 ["Show only transports for your faction"] = "只顯示玩家陣營可用的運輸點",
@@ -89,7 +89,7 @@ L:RegisterTranslations("zhTW", function() return {
 ["Green Island"] = "綠島",
 ["The Kraken"] = "海怪號",
 ["Northspear"] = "北矛號",
-["Captured Zeppelin"] = "Captured Zeppelin", -- to do
+["Captured Zeppelin"] = "被俘虜的飛艇",
 
 -- zones (*must* strictly match the in-game name)
 ["Orgrimmar"] = "奧格瑪",

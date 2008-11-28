@@ -29,8 +29,8 @@ local dewdrop = AceLibrary("Dewdrop-2.0")
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 -- object variables
-Nauticus.versionStr = "3.0.2" -- for display
-Nauticus.versionNum = 301 -- for comparison
+Nauticus.versionStr = "3.0.3" -- for display
+Nauticus.versionNum = 303 -- for comparison
 
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
@@ -38,8 +38,6 @@ Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
 
 Nauticus.requestList = {}
-
-Nauticus.debug = false
 
 -- local variables
 local oldx, oldy = 0, 0 -- old player coords
@@ -65,7 +63,6 @@ Nauticus:RegisterDefaults("profile", {
 } )
 Nauticus:RegisterDefaults("account", {
 	knownCycles = {},
-	debug = false,
 } )
 Nauticus:RegisterDefaults("char", {
 	activeTransit = -1,
@@ -223,7 +220,7 @@ local FILTER_NPC = {
 }
 
 local function ChatFilter_DataChannel(msg)
-	if strlower(arg9) == strlower(DEFAULT_CHANNEL) and not Nauticus.debug then
+	if strlower(arg9) == strlower(DEFAULT_CHANNEL) then
 		return true -- silence
 	end
 end
@@ -234,8 +231,7 @@ local function ChatFilter_CrewChat(msg)
 	if not filterChat then
 		return false
 	elseif FILTER_NPC[arg2] then
-		Nauticus:DebugMessage(arg2.." yells: "..arg1)
-		return true
+		return true -- silence
 	end
 end
 
@@ -258,19 +254,18 @@ function Nauticus:OnEnable()
 	self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
+	local c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
+	if x then oldx, oldy = NautAstrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0); end
+
 	self:ScheduleRepeatingEvent(self.DrawMapIcons, 0.2, self) -- every 1/5th of a second
 	self:ScheduleRepeatingEvent(self.Clock_OnUpdate, 1, self) -- every second (clock tick)
 	self:ScheduleRepeatingEvent(self.CheckTriggers_OnUpdate, 0.8, self) -- every 4/5th of a second
 
 	self:RegisterEvent("WORLD_MAP_UPDATE")
 
-	-- wait 10 seconds before sending to any comms channels
-	self:UpdateChannel(10)
-
+	self:UpdateChannel(10) -- wait 10 seconds before sending to any comms channels
 	self.currentZone = GetRealZoneText()
 	self.currentZoneTransports = self.transitZones[self.currentZone]
-	self:DebugMessage("enabled: "..self.currentZone)
-
 	self:TransportSelectSetNone()
 end
 
@@ -421,39 +416,56 @@ function Nauticus:Clock_OnUpdate()
 
 end
 
-local c, z, x, y
+local c, z, x, y, dist, post, last_trig, keep_time
 
 function Nauticus:CheckTriggers_OnUpdate()
+	-- remember if we've already triggered a set of coords within the last 30 secs
+	if last_trig and GetTime() > 30.0 + last_trig then last_trig = nil; end
 
-	if self.currentZoneTransports == nil or self.currentZoneTransports.virtual then return; end
-
-	-- if we've already triggered a set of coords, don't check again for another 30 secs
-	lastcheck_timeout = lastcheck_timeout + 0.8
-	if 30.0 > lastcheck_timeout then return; end
+	if not self.currentZoneTransports or self.currentZoneTransports.virtual then return; end
 
 	c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
 	if not x then return; end
 	x, y = NautAstrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0)
 	if not x then return; end
 
-	-- have we moved by at least 17 game yards since the last check? this equates to >~300% movement speed
-	if 17.0 < NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy) and
-		not UnitOnTaxi("player") then
+	dist = NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy)
+	oldx, oldy = x, y
+
+	-- have we moved by at least 6.16 game yards since the last check? this equates to >~110% movement speed
+	if 6.16 < dist then
+		if IsFlying() or IsSwimming() or UnitOnTaxi("player") then return; end
 
 		--check X/Y coords against all triggers for all transports in current zone
 		for transit in pairs(self.currentZoneTransports) do
 			for i, index in pairs(triggers[transit]) do
+				post = 0 > index; if post then index = -index; end
+
 				-- within 20 game yards of trigger coords?
 				if 20.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
 					0, 0, transitData[transit].x[index], transitData[transit].y[index]) then
 
-					self:SetKnownTime(transit, index, x, y)
+					if post then
+						if last_trig and keep_time then
+							self:SetKnownCycle(transit, GetTime() - last_trig + keep_time, 0, 0)
+							self.requestList[transit] = true
+							self:DoRequest(10 + math.random() * 10)
+							keep_time = nil
+							last_trig = GetTime()
+						end
+					else
+						if not last_trig then
+							self:SetKnownTime(transit, index, x, y, 17.0 < dist)
+							last_trig = GetTime()
+						end
+					end
+
 					return
 				end
 			end
 		end
 
-	elseif autoSelect and x == oldx and y == oldy and not IsSwimming() then
+	elseif autoSelect and 0 == dist and not IsSwimming() then
 		--check X/Y coords against all platforms in current zone
 		for transit in pairs(self.currentZoneTransports) do
 			if transit ~= self.activeTransit then
@@ -462,59 +474,31 @@ function Nauticus:CheckTriggers_OnUpdate()
 					if 25.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
 						0, 0, transitData[transit].x[data.index], transitData[transit].y[data.index]) then
 
-						self:DebugMessage("near: "..transit)
 						self:SetTransport(self.lookupIndex[transit])
 						return
 					end
 				end
 			end
 		end
-
 	end
-
-	oldx, oldy = x, y
-
 end
 
-function Nauticus:SetKnownTime(transit, index, x, y)
-
-	lastcheck_timeout = 0
-
+function Nauticus:SetKnownTime(transit, index, x, y, set)
 	local transitData = transitData[transit]
 	local ix, iy = transitData.x[index-1], transitData.y[index-1]
 	local extrapolate = -transitData.dt[index] + transitData.dt[index] *
 		(NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, ix, iy) /
 		NautAstrolabe:ComputeDistance(0, 0, transitData.x[index], transitData.y[index], 0, 0, ix, iy) )
 
-	self:DebugMessage("extrapolate: "..extrapolate)
-
 	local sum_time = self:CalcTripCycleTimeByIndex(transit, index) + extrapolate
 
-	if self.debug then
-		if self:HasKnownCycle(transit) then
-			local old_time = self:GetKnownCycle(transit)
-			local oldCycle = math.fmod(old_time, rtts[transit])
-			local diff = oldCycle-sum_time
-			local drift = format("%0.6f", diff / ((old_time-sum_time) / rtts[transit]))
-			self.db.account.knownCycles[transit].drift = drift
-			self:DebugMessage(transit..", cycle time: "..sum_time
-				.." ; old: "..format("%0.3f", oldCycle)
-				.." ; diff: "..format("%0.3f", diff)
-				.." ; drift: "..drift)
-		else
-			self:DebugMessage(transit..", cycle time: "..sum_time)
-		end
+	if set then
+		self:SetKnownCycle(transit, sum_time, 0, 0)
+		self.requestList[transit] = true
+		self:DoRequest(10 + math.random() * 10)
+	else
+		keep_time = sum_time
 	end
-
-	if self.db.account.freeze then return; end
-
-	self:SetKnownCycle(transit, sum_time, 0, 0)
-	self.db.account.uptime = GetTime()
-	self.db.account.timestamp = time()
-
-	self.requestList[transit] = true
-	self:DoRequest(10 + math.random() * 10)
-
 end
 
 function Nauticus:CalcTripCycleTimeByIndex(transit, index)
@@ -540,13 +524,7 @@ end
 -- initialise saved variables and data
 function Nauticus:InitialiseConfig()
 
-	self:DebugMessage("init config...")
-
-	self.debug = self.db.account.debug
-
 	if self.db.account.newerVersion then
-		self:DebugMessage("new version: "..self.db.account.newerVersion.." vs our "..self.versionNum)
-
 		if self.db.account.newerVersion > self.versionNum then
 			DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..
 				L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."])
@@ -579,9 +557,7 @@ function Nauticus:InitialiseConfig()
 
 	if self.db.account.uptime ~= nil then
 		-- calculate potential drift time in ms between sessions
-		local drift = (the_time-now)-(self.db.account.timestamp-self.db.account.uptime)
-
-		self:DebugMessage(format("boot drift: %0.3f", drift))
+		local drift = (the_time - now) - (self.db.account.timestamp - self.db.account.uptime)
 
 		-- if more than 3 mins drift, that means reboot occured. we need to adjust ms timers
 		if math.abs(drift) > 180 then
@@ -594,14 +570,12 @@ function Nauticus:InitialiseConfig()
 
 				if since ~= nil then
 					since = since - drift
-					if now-since < 0 then since = nil; end
+					if now - since < 0 then since = nil; end
 				end
 
 				knownCycles[transport].since = since
 				knownCycles[transport].boots = knownCycles[transport].boots + 1
 			end
-
-			self:DebugMessage("reboot must have occured")
 		end
 	end
 
@@ -659,8 +633,8 @@ function Nauticus:InitialiseConfig()
 					local index = tonumber(strsub(args[6], 5))
 					platforms[transit][index].index = i
 				elseif comment == "trig" then
-					local index = tonumber(strsub(args[6], 5))
-					triggers[transit][index] = i
+					local index = tonumber(strsub(args[6], 5)) == 0 and -i or i
+					tinsert(triggers[transit], index)
 				elseif comment == "zone" then
 					zonings[transit][i] = true
 				end
@@ -703,7 +677,6 @@ function Nauticus:PLAYER_ENTERING_WORLD()
 	if GetRealZoneText() ~= "" then
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 		self.currentZoneTransports = self.transitZones[GetRealZoneText()]
-		self:DebugMessage("enter: "..GetRealZoneText())
 	end
 end
 
@@ -715,7 +688,6 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 	else
 		self.currentZone = GetRealZoneText()
 		self.currentZoneTransports = self.transitZones[self.currentZone]
-		self:DebugMessage("zoned: "..self.currentZone)
 	end
 end
 
@@ -755,6 +727,9 @@ function Nauticus:SetKnownCycle(transport, since, boots, swaps)
 
 	knownCycle.since, knownCycle.boots, knownCycle.swaps =
 		GetTime()-since, boots, swaps
+
+	self.db.account.uptime = GetTime()
+	self.db.account.timestamp = time()
 end
 
 function Nauticus:HasKnownCycle(transport)
@@ -774,16 +749,6 @@ function Nauticus:GetArgs(message, separator)
 	end
 
 	return args
-end
-
-local lastDebug = GetTime()
-
-function Nauticus:DebugMessage(msg)
-	if self.debug then
-		local now = GetTime()
-		ChatFrame4:AddMessage(format("[Naut] ["..YELLOW.."%0.3f|r]: %s", now-lastDebug, msg))
-		lastDebug = now
-	end
 end
 
 local texCoordCache = { LLx = {}, LLy = {}, URx = {}, URy = {}, }
