@@ -32,9 +32,9 @@ L:RegisterTranslations("ruRU", function() return {
 ["Not Available"] = "Не доступно",
 ["N/A"] = "Н/Д", -- abbreviation for Not Available
 ["Nauticus Options"] = "Настройки Nauticus",
-["Alarm is now: "] = "Alarm is now: ", -- to do
-["ON"] = "ON", -- to do
-["OFF"] = "OFF", -- to do
+["Alarm is now: "] = "Напоминалка: ",
+["ON"] = "Вкл.",
+["OFF"] = "Выкл.",
 ["Daily: "] = "Ежедневно: ",
 
 ["Show only transports for your faction"] = "Показывать транспорт только для своей фракции",
