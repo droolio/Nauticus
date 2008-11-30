@@ -24,8 +24,6 @@ local Nauticus = Nauticus
 
 local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
 
-local dewdrop = AceLibrary("Dewdrop-2.0")
-
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 -- object variables
@@ -681,13 +679,12 @@ function Nauticus:PLAYER_ENTERING_WORLD()
 end
 
 function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
-	if dewdrop:GetOpenedParent() then dewdrop:Refresh() end
-
 	if not loopback and self.currentZone == GetRealZoneText() then
 		self:ScheduleEvent(self.ZONE_CHANGED_NEW_AREA, 1, self, true)
 	else
 		self.currentZone = GetRealZoneText()
 		self.currentZoneTransports = self.transitZones[self.currentZone]
+		if self:IsZoneSpecific() then self:RefreshMenu(); end
 	end
 end
 

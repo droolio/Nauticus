@@ -36,8 +36,6 @@ local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
 } )
 tablet:SetFrameLevel(10)
 
-local dewdrop = AceLibrary("Dewdrop-2.0")
-
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
 local rtts, platforms, transports = Nauticus.rtts, Nauticus.platforms, Nauticus.transports
@@ -138,34 +136,65 @@ function Nauticus:Button_OnClick()
 
 end
 
-function Nauticus:ShowMenu(level)
+local function AddLine(text, func, checked, value, tooltipTitle, tooltipText)
+	local info = UIDropDownMenu_CreateInfo()
+	info.text = text; info.func = func
+	if value then info.value = value; end
+	if checked then info.checked = true; end
+	if tooltipTitle then info.tooltipTitle = tooltipTitle; end
+	if tooltipText then info.tooltipText = tooltipText; end
+	UIDropDownMenu_AddButton(info)
+end
+
+local function AddSeparator()
+	local info = UIDropDownMenu_CreateInfo()
+	info.notClickable = 1
+	UIDropDownMenu_AddButton(info)
+end
+
+function Nauticus:TransportSelectInitialise(frame, level)
 
 	if level == 1 then
 
-		dewdrop:AddLine(
-			'text', L["Show only transports for your faction"],
-			'arg1', self,
-			'func', "ToggleFaction",
-			'checked', self:IsFactionSpecific(),
-			'tooltipTitle', L["Show only transports for your faction"],
-			'tooltipText', L["Shows only neutral and transports specific to your faction."]
+		local info = UIDropDownMenu_CreateInfo()
+		info.text = "Nauticus"; info.isTitle = 1
+		UIDropDownMenu_AddButton(info)
+
+		AddLine(
+			L["Show only transports for your faction"], -- text
+			function() -- func
+				Nauticus:ToggleFaction()
+				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
+			end,
+			self:IsFactionSpecific(), -- checked?
+			nil, -- value
+			L["Show only transports for your faction"], -- tooltipTitle
+			L["Shows only neutral and transports specific to your faction."] -- tooltipText
 		)
 
-		dewdrop:AddLine(
-			'text', L["Show only transports in your current zone"],
-			'arg1', self,
-			'func', "ToggleZone",
-			'checked', self:IsZoneSpecific(),
-			'tooltipTitle', L["Show only transports in your current zone"],
-			'tooltipText', L["Shows only transports in your current zone."]
+		AddLine(
+			L["Show only transports in your current zone"], -- text
+			function() -- func
+				Nauticus:ToggleZone()
+				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
+			end,
+			self:IsZoneSpecific(), -- checked?
+			nil, -- value
+			L["Show only transports in your current zone"], -- tooltipTitle
+			L["Shows only transports in your current zone."] -- tooltipText
 		)
 
-		dewdrop:AddSeparator()
+		AddSeparator()
 
-		dewdrop:AddLine(
-			'text', YELLOW..L["Select None"],
-			'checked', (self.activeTransit == -1),
-			'func', function() self:SetTransport(0) end
+		AddLine(
+			GREY..L["Select None"], -- text
+			function() -- func
+				Nauticus:SetTransport(this.value)
+				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
+			end,
+			self.activeTransit == -1, -- checked?
+			0, -- value
+			GREY..L["Select None"]
 		)
 
 		local textdesc
@@ -186,23 +215,18 @@ function Nauticus:ShowMenu(level)
 					textdesc = GREY..textdesc
 				end
 
-				dewdrop:AddLine(
-					'text', textdesc,
-					'checked', (transports[i].label == self.activeTransit),
-					'func', function(i) self:SetTransport(i) end,
-					'arg1', i
+				AddLine(
+					textdesc, -- text
+					function() -- func
+						Nauticus:SetTransport(this.value)
+						ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
+					end,
+					transports[i].label == self.activeTransit, -- checked?
+					i, -- value
+					textdesc
 				)
 			end
 		end
-
-		dewdrop:AddSeparator()
-
-		dewdrop:FeedAceOptionsTable(self.optionsFu, level)
-
-		dewdrop:AddSeparator()
-
-	else
-		dewdrop:FeedAceOptionsTable(self.optionsFu, level)
 
 	end
 
@@ -412,9 +436,21 @@ function Nauticus:RemoveAllIcons()
 	end
 end
 
+local function IsMenuOpen()
+	return DropDownList1:IsShown() and
+		UIDROPDOWNMENU_OPEN_MENU == Naut_TransportSelectFrame:GetName()
+end
+
+function Nauticus:RefreshMenu()
+	if IsMenuOpen() then
+		CloseDropDownMenus()
+		ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
+	end
+end
+
 -- LDB stuff...
 function dataobj:OnEnter()
-	if dewdrop:IsOpen(self) then return; end
+	if IsMenuOpen() then return; end
 
 	iconTooltip = self
 	barTooltipFrame = self
@@ -445,33 +481,14 @@ end
 
 function dataobj:OnClick(button)
 	if button == "LeftButton" then
-		if dewdrop:IsOpen(self) then dewdrop:Close(); end
+		if IsMenuOpen() then CloseDropDownMenus(); end
 		Nauticus:Button_OnClick()
 	elseif button == "RightButton" then
 		iconTooltip = nil
 		tablet:Hide()
-
-		if not dewdrop:IsRegistered(self) then
-			dewdrop:Register(self,
-				'children', function(level)
-					if level == 1 then
-						dewdrop:AddLine(
-							'text', "Nauticus",
-							'isTitle', true
-						)
-					end
-					Nauticus:ShowMenu(level)
-				end,
-				'point', GetBarAnchor,
-				'dontHook', true
-			)
-		end
-
-		if dewdrop:IsOpen(self) then
-			dewdrop:Close()
-		elseif self:IsShown() then
-			dewdrop:Open(self)
-		end
+		local point, rel = GetBarAnchor(self)
+		UIDropDownMenu_SetAnchor(Naut_TransportSelectFrame, 0, 0, point, self, rel)
+		ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 	end
 end
 
@@ -482,6 +499,6 @@ if not IsAddOnLoaded("Titan") then return; end
 -- hook menu close
 local orig_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu
 function TitanUtils_CloseRightClickMenu(...)
-	if dewdrop:GetOpenedParent() then dewdrop:Close(); end
+	if IsMenuOpen() then CloseDropDownMenus(); end
 	return orig_TitanUtils_CloseRightClickMenu(...)
 end

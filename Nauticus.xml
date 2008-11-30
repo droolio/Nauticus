@@ -38,6 +38,15 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 	<Color r="1.0" g="0.82" b="0"/>
 </Font>
 
+<Frame name="Naut_TransportSelectFrame" inherits="UIDropDownMenuTemplate">
+	<Scripts>
+		<OnLoad>
+			UIDropDownMenu_Initialize(self,
+				function(self, level) Nauticus:TransportSelectInitialise(self, level); end, "MENU")
+		</OnLoad>
+	</Scripts>
+</Frame>
+
 <Frame name="Naut_WorldMapFrame" hidden="false" parent="WorldMapDetailFrame" enableMouse="true">
 	<Frames>
 		<Button name="Naut_WorldMapIconButton1" inherits="Naut_WorldMapIconButton" id="1" hidden="true" toplevel="true">
