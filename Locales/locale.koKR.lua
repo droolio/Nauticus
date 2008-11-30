@@ -1,174 +1,171 @@
 ﻿
-local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
-
-L:RegisterTranslations("koKR", function() return {
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "koKR", true)
+if not L then return; end
 
 -- options; TO DO:
-["Options"] = "Options",
-["Icons"] = "Icons",
-["Icon options."] = "Icon options.",
-["Show icons"] = "Show icons",
-["Toggle on/off map icons."] = "Toggle on/off map icons.",
-["Mini-Map icon size"] = "Mini-Map icon size",
-["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons.",
-["World Map icon size"] = "World Map icon size",
-["Change the size of the World Map icons."] = "Change the size of the World Map icons.",
-["Auto select transport"] = "Auto select transport",
-["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform.",
-["Crew chat filter"] = "Crew chat filter",
-["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam.",
-["Alarm delay"] = "Alarm delay",
-["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds).",
+L["Options"] = "Options"
+L["Icons"] = "Icons"
+L["Icon options."] = "Icon options."
+L["Show icons"] = "Show icons"
+L["Toggle on/off map icons."] = "Toggle on/off map icons."
+L["Mini-Map icon size"] = "Mini-Map icon size"
+L["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons."
+L["World Map icon size"] = "World Map icon size"
+L["Change the size of the World Map icons."] = "Change the size of the World Map icons."
+L["Auto select transport"] = "Auto select transport"
+L["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform."
+L["Crew chat filter"] = "Crew chat filter"
+L["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam."
+L["Alarm delay"] = "Alarm delay"
+L["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds)."
 
 -- miscellaneous
-["Arrival"] = "도착",
-["Departure"] = "출발",
-["Arr"] = "Arr", -- abbreviation for Arrival
-["Dep"] = "Dep", -- abbreviation for Departure
-["Select Transport"] = "이동수단을 선택하세요",
+L["Arrival"] = "도착"
+L["Departure"] = "출발"
+L["Arr"] = "Arr" -- abbreviation for Arrival
+L["Dep"] = "Dep" -- abbreviation for Departure
+L["Select Transport"] = "이동수단을 선택하세요"
 -- TO DO:
-["Select None"] = "Select None", -- to do
-["No Transport Selected"] = "No Transport Selected",
-["Not Available"] = "Not Available",
-["N/A"] = "N/A", -- abbreviation for Not Available
-["Nauticus Options"] = "Nauticus Options",
-["Alarm is now: "] = "Alarm is now: ",
-["ON"] = "ON",
-["OFF"] = "OFF",
-["Daily: "] = "Daily: ",
+L["Select None"] = "Select None" -- to do
+L["No Transport Selected"] = "No Transport Selected"
+L["Not Available"] = "Not Available"
+L["N/A"] = "N/A" -- abbreviation for Not Available
+L["Nauticus Options"] = "Nauticus Options"
+L["Alarm is now: "] = "Alarm is now: "
+L["ON"] = "ON"
+L["OFF"] = "OFF"
+L["Daily: "] = "Daily: "
 
 -- TO DO:
-["Show only transports for your faction"] =
-	"해당 진영의 이동수단만 표시",
-["Shows only neutral and transports specific to your faction."] =
-	"Shows only neutral and transports specific to your faction.",
-["Show only transports in your current zone"] =
-	"현재 지역의 이동수단만 표시",
-["Shows only transports in your current zone."] =
-	"Shows only transports in your current zone.",
-["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
-	"힌트: Click to cycle transport. Alt-Click to set up alarm",
-["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
-	"There is a new version of Nauticus available! Please visit http://drool.me.uk/naut.",
-["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] =
-	"You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled.",
-["Thank you for upgrading."] =
-	"Thank you for upgrading.",
+L["Show only transports for your faction"] =
+	"해당 진영의 이동수단만 표시"
+L["Shows only neutral and transports specific to your faction."] =
+	"Shows only neutral and transports specific to your faction."
+L["Show only transports in your current zone"] =
+	"현재 지역의 이동수단만 표시"
+L["Shows only transports in your current zone."] =
+	"Shows only transports in your current zone."
+L["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
+	"힌트: Click to cycle transport. Alt-Click to set up alarm"
+L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
+	"There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."
+L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] =
+	"You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."
+L["Thank you for upgrading."] =
+	"Thank you for upgrading."
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name); TO DO:
 -- org2uc:
-["Frezza"] = "Frezza",
-["Zapetta"] = "Zapetta",
-["Sky-Captain Cloudkicker"] = "Sky-Captain Cloudkicker",
-["Chief Officer Coppernut"] = "Chief Officer Coppernut",
-["Navigator Fairweather"] = "Navigator Fairweather",
+L["Frezza"] = "Frezza"
+L["Zapetta"] = "Zapetta"
+L["Sky-Captain Cloudkicker"] = "Sky-Captain Cloudkicker"
+L["Chief Officer Coppernut"] = "Chief Officer Coppernut"
+L["Navigator Fairweather"] = "Navigator Fairweather"
 -- uc2gg:
-["Hin Denburg"] = "Hin Denburg",
-["Navigator Hatch"] = "Navigator Hatch",
-["Chief Officer Hammerflange"] = "Chief Officer Hammerflange",
-["Sky-Captain Cableclamp"] = "Sky-Captain Cableclamp",
+L["Hin Denburg"] = "Hin Denburg"
+L["Navigator Hatch"] = "Navigator Hatch"
+L["Chief Officer Hammerflange"] = "Chief Officer Hammerflange"
+L["Sky-Captain Cableclamp"] = "Sky-Captain Cableclamp"
 -- org2gg:
-["Snurk Bucksquick"] = "Snurk Bucksquick",
+L["Snurk Bucksquick"] = "Snurk Bucksquick"
 -- mh2ther:
-["Captain \"Stash\" Torgoley"] = "Captain \"Stash\" Torgoley",
-["First Mate Kowalski"] = "First Mate Kowalski",
-["Navigator Mehran"] = "Navigator Mehran",
+L["Captain \"Stash\" Torgoley"] = "Captain \"Stash\" Torgoley"
+L["First Mate Kowalski"] = "First Mate Kowalski"
+L["Navigator Mehran"] = "Navigator Mehran"
 -- uc2ven
-["Meefi Farthrottle"] = "Meefi Farthrottle",
-["Drenk Spannerspark"] = "Drenk Spannerspark",
+L["Meefi Farthrottle"] = "Meefi Farthrottle"
+L["Drenk Spannerspark"] = "Drenk Spannerspark"
 -- war2org
-["Greeb Ramrocket"] = "Greeb Ramrocket",
-["Nargo Screwbore"] = "Nargo Screwbore",
+L["Greeb Ramrocket"] = "Greeb Ramrocket"
+L["Nargo Screwbore"] = "Nargo Screwbore"
 -- wg2wg:
-["Harrowmeiser"] = "Harrowmeiser",
+L["Harrowmeiser"] = "Harrowmeiser"
 
 -- ship names; TO DO:
-["The Thundercaller"] = "The Thundercaller",
-["The Iron Eagle"] = "The Iron Eagle",
-["The Purple Princess"] = "The Purple Princess",
-["The Maiden's Fancy"] = "The Maiden's Fancy",
-["The Bravery"] = "The Bravery",
-["The Lady Mehley"] = "The Lady Mehley",
-["The Moonspray"] = "The Moonspray",
-["Feathermoon Ferry"] = "Feathermoon Ferry",
-["Elune's Blessing"] = "Elune's Blessing",
-["The Mighty Wind"] = "The Mighty Wind",
-["Cloudkisser"] = "Cloudkisser",
-["Walker of Waves"] = "Walker of Waves",
-["Green Island"] = "Green Island",
-["The Kraken"] = "The Kraken",
-["Northspear"] = "Northspear",
-["Captured Zeppelin"] = "Captured Zeppelin",
+L["The Thundercaller"] = "The Thundercaller"
+L["The Iron Eagle"] = "The Iron Eagle"
+L["The Purple Princess"] = "The Purple Princess"
+L["The Maiden's Fancy"] = "The Maiden's Fancy"
+L["The Bravery"] = "The Bravery"
+L["The Lady Mehley"] = "The Lady Mehley"
+L["The Moonspray"] = "The Moonspray"
+L["Feathermoon Ferry"] = "Feathermoon Ferry"
+L["Elune's Blessing"] = "Elune's Blessing"
+L["The Mighty Wind"] = "The Mighty Wind"
+L["Cloudkisser"] = "Cloudkisser"
+L["Walker of Waves"] = "Walker of Waves"
+L["Green Island"] = "Green Island"
+L["The Kraken"] = "The Kraken"
+L["Northspear"] = "Northspear"
+L["Captured Zeppelin"] = "Captured Zeppelin"
 
 -- zones (*must* strictly match the in-game name)
-["Orgrimmar"] = "오그리마",
-["Undercity"] = "언더시티",
-["The Exodar"] = "엑소다르",
-["Stormwind City"] = "스톰윈드",
+L["Orgrimmar"] = "오그리마"
+L["Undercity"] = "언더시티"
+L["The Exodar"] = "엑소다르"
+L["Stormwind City"] = "스톰윈드"
 
-["Durotar"] = "듀로타",
-["Tirisfal Glades"] = "티리스팔 숲",
-["Stranglethorn Vale"] = "가시덤불 골짜기",
-["The Barrens"] = "불모의 땅",
-["Wetlands"] = "저습지",
-["Darkshore"] = "어둠의 해안",
-["Dustwallow Marsh"] = "먼지진흙 습지대",
-["Teldrassil"] = "텔드랏실",
-["Azuremyst Isle"] = "하늘안개 섬",
-["Feralas"] = "페랄라스",
-["Westfall"] = "서부 몰락지대",
-["Borean Tundra"] = "북풍의 땅",
-["Howling Fjord"] = "울부짖는 협만",
-["Dragonblight"] = "용의 안식처",
+L["Durotar"] = "듀로타"
+L["Tirisfal Glades"] = "티리스팔 숲"
+L["Stranglethorn Vale"] = "가시덤불 골짜기"
+L["The Barrens"] = "불모의 땅"
+L["Wetlands"] = "저습지"
+L["Darkshore"] = "어둠의 해안"
+L["Dustwallow Marsh"] = "먼지진흙 습지대"
+L["Teldrassil"] = "텔드랏실"
+L["Azuremyst Isle"] = "하늘안개 섬"
+L["Feralas"] = "페랄라스"
+L["Westfall"] = "서부 몰락지대"
+L["Borean Tundra"] = "북풍의 땅"
+L["Howling Fjord"] = "울부짖는 협만"
+L["Dragonblight"] = "용의 안식처"
 
-["The Veiled Sea"] = "장막의 바다",
-["Twisting Nether"] = "뒤틀린 황천",
-["The Frozen Sea"] = "The Frozen Sea", -- to do
+L["The Veiled Sea"] = "장막의 바다"
+L["Twisting Nether"] = "뒤틀린 황천"
+L["The Frozen Sea"] = "The Frozen Sea" -- to do
 
 -- subzones
-["Grom'gol"] = "그롬골 주둔지",
-["Booty Bay"] = "무법항",
-["Ratchet"] = "톱니항",
-["Menethil Harbor"] = "메네실 항구",
-["Auberdine"] = "아우버다인",
-["Theramore"] = "테라모어 섬",
-["Rut'Theran Village"] = "루테란 마을",
+L["Grom'gol"] = "그롬골 주둔지"
+L["Booty Bay"] = "무법항"
+L["Ratchet"] = "톱니항"
+L["Menethil Harbor"] = "메네실 항구"
+L["Auberdine"] = "아우버다인"
+L["Theramore"] = "테라모어 섬"
+L["Rut'Theran Village"] = "루테란 마을"
 -- TO DO:
-["Sardor Isle"] = "Sardor Isle",
-["Feathermoon"] = "Feathermoon",
-["Forgotten Coast"] = "Forgotten Coast",
-["Warsong Hold"] = "Warsong Hold",
-["Vengeance Landing"] = "Vengeance Landing",
-["Valiance Keep"] = "Valiance Keep",
-["Valgarde"] = "Valgarde",
-["Unu'pe"] = "Unu'pe",
-["Moa'ki Harbor"] = "Moa'ki Harbor",
-["Kamagua"] = "Kamagua",
-["Westguard Keep"] = "Westguard Keep",
+L["Sardor Isle"] = "Sardor Isle"
+L["Feathermoon"] = "Feathermoon"
+L["Forgotten Coast"] = "Forgotten Coast"
+L["Warsong Hold"] = "Warsong Hold"
+L["Vengeance Landing"] = "Vengeance Landing"
+L["Valiance Keep"] = "Valiance Keep"
+L["Valgarde"] = "Valgarde"
+L["Unu'pe"] = "Unu'pe"
+L["Moa'ki Harbor"] = "Moa'ki Harbor"
+L["Kamagua"] = "Kamagua"
+L["Westguard Keep"] = "Westguard Keep"
 
 -- abbreviations
-["Org"] = "오그",  -- Orgrimmar
-["UC"]  = "언더",  -- Undercity
-["Exo"] = "Exo", -- The Exodar
-["SC"]  = "SC",  -- Stormwind City
+L["Org"] = "오그"  -- Orgrimmar
+L["UC"]  = "언더"  -- Undercity
+L["Exo"] = "Exo" -- The Exodar
+L["SC"]  = "SC"  -- Stormwind City
 
-["GG"]  = "가덤",  -- Grom'gol
-["BB"]  = "무법",  -- Booty Bay
-["Rat"] = "톱니",  -- Ratchet
-["MH"]  = "메네실", -- Menethil Harbor
-["Aub"] = "아우버", -- Auberdine
-["Th"]  = "테라",  -- Theramore
-["RTV"] = "루테란", -- Rut'Theran Village
+L["GG"]  = "가덤"  -- Grom'gol
+L["BB"]  = "무법"  -- Booty Bay
+L["Rat"] = "톱니"  -- Ratchet
+L["MH"]  = "메네실" -- Menethil Harbor
+L["Aub"] = "아우버" -- Auberdine
+L["Th"]  = "테라"  -- Theramore
+L["RTV"] = "루테란" -- Rut'Theran Village
 -- TO DO:
-["FMS"] = "FMS", -- Feathermoon
-["Fer"] = "Fer", -- Feralas
-["War"] = "War", -- Warsong Hold
-["Ven"] = "Ven", -- Vengeance Landing
-["VK"]  = "VK",  -- Valiance Keep
-["VG"]  = "VG",  -- Valgarde
-["Unu"] = "Unu", -- Unu'pe
-["Moa"] = "Moa", -- Moa'ki Harbor
-["Kam"] = "Kam", -- Kamagua
-["WGK"] = "WGK", -- Westguard Keep
-
-} end)
+L["FMS"] = "FMS" -- Feathermoon
+L["Fer"] = "Fer" -- Feralas
+L["War"] = "War" -- Warsong Hold
+L["Ven"] = "Ven" -- Vengeance Landing
+L["VK"]  = "VK"  -- Valiance Keep
+L["VG"]  = "VG"  -- Valgarde
+L["Unu"] = "Unu" -- Unu'pe
+L["Moa"] = "Moa" -- Moa'ki Harbor
+L["Kam"] = "Kam" -- Kamagua
+L["WGK"] = "WGK" -- Westguard Keep

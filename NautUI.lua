@@ -20,7 +20,7 @@ local Nauticus = Nauticus
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 local dataobj = ldb:NewDataObject("Nauticus", { type = "data source", text = "Nauticus", icon = ARTWORK_LOGO } )
 
-local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
+local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
 local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
 	position = { point = "CENTER", x = 0, y = 0 },

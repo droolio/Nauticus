@@ -4,7 +4,7 @@ local ARROW = " ‹–› " -- ascii 139, 150, 155
 
 local Nauticus = Nauticus
 
-local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
+local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
 Nauticus.transports = {
 

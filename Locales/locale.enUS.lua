@@ -1,162 +1,159 @@
 ﻿
-local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
-
-L:RegisterTranslations("enUS", function() return {
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "enUS", true)
+if not L then return; end
 
 -- options
-["Options"] = true,
-["Icons"] = true,
-["Icon options."] = true,
-["Show icons"] = true,
-["Toggle on/off map icons."] = true,
-["Mini-Map icon size"] = true,
-["Change the size of the Mini-Map icons."] = true,
-["World Map icon size"] = true,
-["Change the size of the World Map icons."] = true,
-["Auto select transport"] = true,
-["Automatically select nearest transport when standing at platform."] = true,
-["Crew chat filter"] = true,
-["Toggle on/off chat filter for yelling crew spam."] = true,
-["Alarm delay"] = true,
-["Change the alarm delay (in seconds)."] = true,
+L["Options"] = true
+L["Icons"] = true
+L["Icon options."] = true
+L["Show icons"] = true
+L["Toggle on/off map icons."] = true
+L["Mini-Map icon size"] = true
+L["Change the size of the Mini-Map icons."] = true
+L["World Map icon size"] = true
+L["Change the size of the World Map icons."] = true
+L["Auto select transport"] = true
+L["Automatically select nearest transport when standing at platform."] = true
+L["Crew chat filter"] = true
+L["Toggle on/off chat filter for yelling crew spam."] = true
+L["Alarm delay"] = true
+L["Change the alarm delay (in seconds)."] = true
 
 -- miscellaneous
-["Arrival"] = true,
-["Departure"] = true,
-["Arr"] = true, -- abbreviation for Arrival
-["Dep"] = true, -- abbreviation for Departure
-["Select Transport"] = true,
-["Select None"] = true,
-["No Transport Selected"] = true,
-["Not Available"] = true,
-["N/A"] = true, -- abbreviation for Not Available
-["Nauticus Options"] = true,
-["Alarm is now: "] = true,
-["ON"] = true,
-["OFF"] = true,
-["Daily: "] = true,
+L["Arrival"] = true
+L["Departure"] = true
+L["Arr"] = true -- abbreviation for Arrival
+L["Dep"] = true -- abbreviation for Departure
+L["Select Transport"] = true
+L["Select None"] = true
+L["No Transport Selected"] = true
+L["Not Available"] = true
+L["N/A"] = true -- abbreviation for Not Available
+L["Nauticus Options"] = true
+L["Alarm is now: "] = true
+L["ON"] = true
+L["OFF"] = true
+L["Daily: "] = true
 
-["Show only transports for your faction"] = true,
-["Shows only neutral and transports specific to your faction."] = true,
-["Show only transports in your current zone"] = true,
-["Shows only transports in your current zone."] = true,
-["Hint: Click to cycle transport. Alt-Click to set up alarm"] = true,
-["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = true,
-["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = true,
-["Thank you for upgrading."] = true,
+L["Show only transports for your faction"] = true
+L["Shows only neutral and transports specific to your faction."] = true
+L["Show only transports in your current zone"] = true
+L["Shows only transports in your current zone."] = true
+L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = true
+L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = true
+L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = true
+L["Thank you for upgrading."] = true
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:
-["Frezza"] = true,
-["Zapetta"] = true,
-["Sky-Captain Cloudkicker"] = true,
-["Chief Officer Coppernut"] = true,
-["Navigator Fairweather"] = true,
+L["Frezza"] = true
+L["Zapetta"] = true
+L["Sky-Captain Cloudkicker"] = true
+L["Chief Officer Coppernut"] = true
+L["Navigator Fairweather"] = true
 -- uc2gg:
-["Hin Denburg"] = true,
-["Navigator Hatch"] = true,
-["Chief Officer Hammerflange"] = true,
-["Sky-Captain Cableclamp"] = true,
+L["Hin Denburg"] = true
+L["Navigator Hatch"] = true
+L["Chief Officer Hammerflange"] = true
+L["Sky-Captain Cableclamp"] = true
 -- org2gg:
-["Snurk Bucksquick"] = true,
+L["Snurk Bucksquick"] = true
 -- mh2ther:
-["Captain \"Stash\" Torgoley"] = true,
-["First Mate Kowalski"] = true,
-["Navigator Mehran"] = true,
+L["Captain \"Stash\" Torgoley"] = true
+L["First Mate Kowalski"] = true
+L["Navigator Mehran"] = true
 -- uc2ven
-["Meefi Farthrottle"] = true,
-["Drenk Spannerspark"] = true,
+L["Meefi Farthrottle"] = true
+L["Drenk Spannerspark"] = true
 -- war2org
-["Greeb Ramrocket"] = true,
-["Nargo Screwbore"] = true,
+L["Greeb Ramrocket"] = true
+L["Nargo Screwbore"] = true
 -- wg2wg:
-["Harrowmeiser"] = true,
+L["Harrowmeiser"] = true
 
 -- ship names
-["The Thundercaller"] = true,
-["The Iron Eagle"] = true,
-["The Purple Princess"] = true,
-["The Maiden's Fancy"] = true,
-["The Bravery"] = true,
-["The Lady Mehley"] = true,
-["The Moonspray"] = true,
-["Feathermoon Ferry"] = true,
-["Elune's Blessing"] = true,
-["The Mighty Wind"] = true,
-["Cloudkisser"] = true,
-["Walker of Waves"] = true,
-["Green Island"] = true,
-["The Kraken"] = true,
-["Northspear"] = true,
-["Captured Zeppelin"] = true,
+L["The Thundercaller"] = true
+L["The Iron Eagle"] = true
+L["The Purple Princess"] = true
+L["The Maiden's Fancy"] = true
+L["The Bravery"] = true
+L["The Lady Mehley"] = true
+L["The Moonspray"] = true
+L["Feathermoon Ferry"] = true
+L["Elune's Blessing"] = true
+L["The Mighty Wind"] = true
+L["Cloudkisser"] = true
+L["Walker of Waves"] = true
+L["Green Island"] = true
+L["The Kraken"] = true
+L["Northspear"] = true
+L["Captured Zeppelin"] = true
 
 -- zones (*must* strictly match the in-game name)
-["Orgrimmar"] = true,
-["Undercity"] = true,
-["The Exodar"] = true,
-["Stormwind City"] = true,
+L["Orgrimmar"] = true
+L["Undercity"] = true
+L["The Exodar"] = true
+L["Stormwind City"] = true
 
-["Durotar"] = true,
-["Tirisfal Glades"] = true,
-["Stranglethorn Vale"] = true,
-["The Barrens"] = true,
-["Wetlands"] = true,
-["Darkshore"] = true,
-["Dustwallow Marsh"] = true,
-["Teldrassil"] = true,
-["Azuremyst Isle"] = true,
-["Feralas"] = true,
-["Westfall"] = true,
-["Borean Tundra"] = true,
-["Howling Fjord"] = true,
-["Dragonblight"] = true,
+L["Durotar"] = true
+L["Tirisfal Glades"] = true
+L["Stranglethorn Vale"] = true
+L["The Barrens"] = true
+L["Wetlands"] = true
+L["Darkshore"] = true
+L["Dustwallow Marsh"] = true
+L["Teldrassil"] = true
+L["Azuremyst Isle"] = true
+L["Feralas"] = true
+L["Westfall"] = true
+L["Borean Tundra"] = true
+L["Howling Fjord"] = true
+L["Dragonblight"] = true
 
-["The Veiled Sea"] = true,
-["Twisting Nether"] = true,
-["The Frozen Sea"] = true,
+L["The Veiled Sea"] = true
+L["Twisting Nether"] = true
+L["The Frozen Sea"] = true
 
 -- subzones
-["Grom'gol"] = true,
-["Booty Bay"] = true,
-["Ratchet"] = true,
-["Menethil Harbor"] = true,
-["Auberdine"] = true,
-["Theramore"] = true,
-["Rut'Theran Village"] = true,
-["Sardor Isle"] = true,
-["Feathermoon"] = true,
-["Forgotten Coast"] = true,
-["Warsong Hold"] = true,
-["Vengeance Landing"] = true,
-["Valiance Keep"] = true,
-["Valgarde"] = true,
-["Unu'pe"] = true,
-["Moa'ki Harbor"] = true,
-["Kamagua"] = true,
-["Westguard Keep"] = true,
+L["Grom'gol"] = true
+L["Booty Bay"] = true
+L["Ratchet"] = true
+L["Menethil Harbor"] = true
+L["Auberdine"] = true
+L["Theramore"] = true
+L["Rut'Theran Village"] = true
+L["Sardor Isle"] = true
+L["Feathermoon"] = true
+L["Forgotten Coast"] = true
+L["Warsong Hold"] = true
+L["Vengeance Landing"] = true
+L["Valiance Keep"] = true
+L["Valgarde"] = true
+L["Unu'pe"] = true
+L["Moa'ki Harbor"] = true
+L["Kamagua"] = true
+L["Westguard Keep"] = true
 
 -- abbreviations
-["Org"]	= true,	-- Orgrimmar
-["UC"]	= true,	-- Undercity
-["Exo"]	= true,	-- The Exodar
-["SC"]	= true,	-- Stormwind City
+L["Org"] = true -- Orgrimmar
+L["UC"]  = true -- Undercity
+L["Exo"] = true -- The Exodar
+L["SC"]  = true -- Stormwind City
 
-["GG"]  = true,	-- Grom'gol
-["BB"]  = true,	-- Booty Bay
-["Rat"] = true,	-- Ratchet
-["MH"]  = true,	-- Menethil Harbor
-["Aub"] = true,	-- Auberdine
-["Th"]  = true,	-- Theramore
-["RTV"] = true,	-- Rut'Theran Village
-["FMS"] = true,	-- Feathermoon
-["Fer"] = true,	-- Feralas
-["War"] = true, -- Warsong Hold
-["Ven"] = true, -- Vengeance Landing
-["VK"]  = true, -- Valiance Keep
-["VG"]  = true, -- Valgarde
-["Unu"] = true, -- Unu'pe
-["Moa"] = true, -- Moa'ki Harbor
-["Kam"] = true, -- Kamagua
-["WGK"] = true, -- Westguard Keep
-
-} end)
+L["GG"]  = true -- Grom'gol
+L["BB"]  = true -- Booty Bay
+L["Rat"] = true -- Ratchet
+L["MH"]  = true -- Menethil Harbor
+L["Aub"] = true -- Auberdine
+L["Th"]  = true -- Theramore
+L["RTV"] = true -- Rut'Theran Village
+L["FMS"] = true -- Feathermoon
+L["Fer"] = true -- Feralas
+L["War"] = true -- Warsong Hold
+L["Ven"] = true -- Vengeance Landing
+L["VK"]  = true -- Valiance Keep
+L["VG"]  = true -- Valgarde
+L["Unu"] = true -- Unu'pe
+L["Moa"] = true -- Moa'ki Harbor
+L["Kam"] = true -- Kamagua
+L["WGK"]  = true -- Westguard Keep

@@ -14,24 +14,25 @@ local DATA_VERSION = 303 -- route calibration versioning
 
 local Nauticus = Nauticus
 
-local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
+local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
 local rtts, transports = Nauticus.rtts, Nauticus.transports
 
 local GetLag
 
+local request
 local requestVersion = false
 
 
 function Nauticus:CancelRequest()
-	if self:IsEventScheduled("NAUT_REQUEST") then
-		self:CancelScheduledEvent("NAUT_REQUEST")
-	end
+	if request then self:CancelTimer(request, true); request = nil; end
 end
 
 function Nauticus:DoRequest(wait)
+	self:CancelRequest()
+
 	if wait then
-		self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, wait, self)
+		request = self:ScheduleTimer("DoRequest", wait)
 		return
 	end
 
@@ -39,7 +40,7 @@ function Nauticus:DoRequest(wait)
 		self:BroadcastTransportData()
 
 		if requestVersion then
-			self:ScheduleEvent("NAUT_REQUEST", self.DoRequest, 5, self)
+			request = self:ScheduleTimer("DoRequest", 5)
 			return
 		end
 	end
@@ -96,18 +97,21 @@ function Nauticus:SendMessage(msg)
 	end
 end
 
+local joinedChannel
+
 -- if we joined a channel
-function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _, num, channel)
+function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndName, _, _, _, num, channel)
 	if noticeType == "YOU_JOINED" then
 		if strlower(channel) ~= strlower(DEFAULT_CHANNEL) and
 			GetChannelName(DEFAULT_CHANNEL) == 0 then
 
-			self:ScheduleEvent("NAUT_CHAN_JOIN", function()
+			if joinedChannel then self:CancelTimer(joinedChannel, true); end
+			joinedChannel = self:ScheduleTimer(function()
 				if GetChannelName(DEFAULT_CHANNEL) == 0 then
 					JoinChannelByName(DEFAULT_CHANNEL)
 					self:UpdateChannel()
 				end
-			end, 5, self)
+			end, 5)
 		end
 	end
 
@@ -124,7 +128,7 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(noticeType, _, _, numAndName, _, _, _,
 	end
 end
 
-function Nauticus:CHAT_MSG_CHANNEL(msg, sender, _, numAndName, _, _, _, _, channel)
+function Nauticus:CHAT_MSG_CHANNEL(eventName, msg, sender, _, numAndName, _, _, _, _, channel)
 	if sender ~= UnitName("player") and strlower(channel) == strlower(DEFAULT_CHANNEL) then
 		local Args = self:GetArgs(msg, " ")
 
@@ -138,11 +142,11 @@ end
 
 function Nauticus:ReceiveMessage_version(clientversion)
 	if clientversion > self.versionNum then
-		if not self.db.account.newerVersion then
-			self.db.account.newerVersion = clientversion
-			self.db.account.newerVerAge = time()
-		elseif clientversion > self.db.account.newerVersion then
-			self.db.account.newerVersion = clientversion
+		if not self.db.global.newerVersion then
+			self.db.global.newerVersion = clientversion
+			self.db.global.newerVerAge = time()
+		elseif clientversion > self.db.global.newerVersion then
+			self.db.global.newerVersion = clientversion
 		end
 
 	elseif clientversion < self.versionNum then
@@ -277,15 +281,13 @@ function Nauticus:StringToKnown(transports)
 	return trans_tab
 end
 
-local inChannel
+local inChannel, updateChannel
 
 function Nauticus:UpdateChannel(wait)
+	if updateChannel then self:CancelTimer(updateChannel, true); updateChannel = nil; end
 
 	if wait then
-		self:ScheduleEvent("NAUT_UPD_DISTRO", function()
-			self:UpdateChannel()
-		end, wait, self)
-
+		updateChannel = self:ScheduleTimer("UpdateChannel", wait)
 		return
 	end
 
@@ -302,7 +304,6 @@ function Nauticus:UpdateChannel(wait)
 		requestVersion = true
 		self:DoRequest(5 + math.random() * 15)
 	end
-
 end
 
 function GetLag()

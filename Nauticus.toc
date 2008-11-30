@@ -8,12 +8,11 @@
 ## Notes-zhCN: 显示艾泽拉斯的交通船抵达/离开的时间
 ## Notes-zhTW: 顯示艾澤拉斯的交通船抵達/離開的時間
 ## Notes-esES: Rastrea la ubicacion precisa y la llegada y salida de barcos y zeppelins
-## OptionalDeps: Ace2, Titan
+## OptionalDeps: Ace3, Titan
 ## eMail: droolio@gmail.com
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: NauticusDB
-## SavedVariablesPerCharacter: NauticusDBPC
+## SavedVariables: Nauticus3DB, NauticusDB
 ## X-Revision: @project-revision@
 ## X-Date: @project-date-iso@
 ## X-Category: Maps
@@ -23,13 +22,14 @@
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
-Libs\AceLibrary\AceLibrary.lua
-Libs\AceOO-2.0\AceOO-2.0.lua
-Libs\AceAddon-2.0\AceAddon-2.0.lua
-Libs\AceDB-2.0\AceDB-2.0.lua
-Libs\AceConsole-2.0\AceConsole-2.0.lua
-Libs\AceEvent-2.0\AceEvent-2.0.lua
-Libs\AceLocale-2.2\AceLocale-2.2.lua
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\AceConfigRegistry-3.0\AceConfigRegistry-3.0.xml
+Libs\AceConfigCmd-3.0\AceConfigCmd-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceTimer-3.0\AceTimer-3.0.xml
+Libs\AceLocale-3.0\AceLocale-3.0.xml
 #@end-no-lib-strip@
 Libs\Astrolabe\Load.xml
 Libs\LibSimpleFrame-Mod-1.0\lib.xml

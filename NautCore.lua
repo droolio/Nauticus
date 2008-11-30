@@ -19,10 +19,10 @@ local ARTWORK_DOCKED = ARTWORK_PATH.."Docked"
 local MAX_FORMATTED_TIME = 444 -- the longest route minus 60
 local ICON_DEFAULT_SIZE = 18
 
-Nauticus = AceLibrary("AceAddon-2.0"):new("AceDB-2.0", "AceConsole-2.0", "AceEvent-2.0")
+Nauticus = LibStub("AceAddon-3.0"):NewAddon("Nauticus", "AceEvent-3.0", "AceTimer-3.0")
 local Nauticus = Nauticus
 
-local L = AceLibrary("AceLocale-2.2"):new("Nauticus")
+local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
 
@@ -50,23 +50,24 @@ local rtts, platforms, triggers, transports, transitData, zonings
 local GetTexCoord, formattedTimeCache
 local filterChat, autoSelect
 
-Nauticus:RegisterDB("NauticusDB", "NauticusDBPC")
-Nauticus:RegisterDefaults("profile", {
-	factionSpecific = true,
-	zoneSpecific = false,
-	filterChat = true,
-	alarmOffset = 20,
-	miniIconSize = 1,
-	worldIconSize = 1,
-} )
-Nauticus:RegisterDefaults("account", {
-	knownCycles = {},
-} )
-Nauticus:RegisterDefaults("char", {
-	activeTransit = -1,
-	showIcons = true,
-	autoSelect = true,
-} )
+local defaults = {
+	profile = {
+		factionSpecific = true,
+		zoneSpecific = false,
+		filterChat = true,
+		alarmOffset = 20,
+		miniIconSize = 1,
+		worldIconSize = 1,
+	},
+	global = {
+		knownCycles = {},
+	},
+	char = {
+		activeTransit = -1,
+		showIcons = true,
+		autoSelect = true,
+	},
+}
 
 local options = {
 	icons = {
@@ -83,10 +84,10 @@ local options = {
 				get = function()
 					return Nauticus.db.char.showIcons
 				end,
-				set = function(v)
-					Nauticus.db.char.showIcons = v
-					Nauticus.showIcons = v
-					if not v then
+				set = function(info, val)
+					Nauticus.db.char.showIcons = val
+					Nauticus.showIcons = val
+					if not val then
 						Nauticus:RemoveAllIcons()
 					end
 				end,
@@ -99,12 +100,12 @@ local options = {
 				get = function()
 					return Nauticus.db.profile.miniIconSize
 				end,
-				set = function(v)
+				set = function(info, val)
 					for t = 1, #(transports), 1 do
-						transports[t].minimap_icon:SetHeight(v * ICON_DEFAULT_SIZE)
-						transports[t].minimap_icon:SetWidth(v * ICON_DEFAULT_SIZE)
+						transports[t].minimap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
+						transports[t].minimap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
 					end
-					Nauticus.db.profile.miniIconSize = v
+					Nauticus.db.profile.miniIconSize = val
 				end,
 				isPercent = true,
 				min = .5, max = 2, step = .01,
@@ -117,12 +118,12 @@ local options = {
 				get = function()
 					return Nauticus.db.profile.worldIconSize
 				end,
-				set = function(v)
+				set = function(info, val)
 					for t = 1, #(transports), 1 do
-						transports[t].worldmap_icon:SetHeight(v * ICON_DEFAULT_SIZE)
-						transports[t].worldmap_icon:SetWidth(v * ICON_DEFAULT_SIZE)
+						transports[t].worldmap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
+						transports[t].worldmap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
 					end
-					Nauticus.db.profile.worldIconSize = v
+					Nauticus.db.profile.worldIconSize = val
 				end,
 				isPercent = true,
 				min = .5, max = 2, step = .01,
@@ -137,9 +138,9 @@ local options = {
 		get = function()
 			return Nauticus.db.char.autoSelect
 		end,
-		set = function(v)
-			Nauticus.db.char.autoSelect = v
-			autoSelect = v
+		set = function(info, val)
+			Nauticus.db.char.autoSelect = val
+			autoSelect = val
 		end,
 	},
 	filter = {
@@ -150,9 +151,9 @@ local options = {
 		get = function()
 			return Nauticus.db.profile.filterChat
 		end,
-		set = function(v)
-			Nauticus.db.profile.filterChat = v
-			filterChat = v
+		set = function(info, val)
+			Nauticus.db.profile.filterChat = val
+			filterChat = val
 		end,
 	},
 	alarm = {
@@ -163,30 +164,19 @@ local options = {
 		get = function()
 			return Nauticus.db.profile.alarmOffset
 		end,
-		set = function(v)
-			alarmOffset = v
-			Nauticus.db.profile.alarmOffset = v
+		set = function(info, val)
+			alarmOffset = val
+			Nauticus.db.profile.alarmOffset = val
 		end,
 		min = 0, max = 90, step = 5,
 	},
 }
-Nauticus.options = options
-Nauticus.optionsFu = { type = 'group', args = {
-	options = {
-		type = 'group',
-		name = L["Options"],
-		desc = L["Options"],
-		args = options,
-	}
-} }
-Nauticus.cmdOptions = { type = 'group', args = {
-	gui = options.gui,
+local optionsSlash = { type = 'group', args = {
 	icons = options.icons,
 	autoselect = options.autoselect,
 	filter = options.filter,
 	alarm = options.alarm,
 } }
-Nauticus:RegisterChatCommand( { "/nauticus", "/naut" }, Nauticus.cmdOptions)
 
 
 local FILTER_NPC = {
@@ -237,8 +227,10 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", ChatFilter_CrewChat)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", ChatFilter_CrewChat)
 
 function Nauticus:OnInitialize()
-	local a = self.cmdOptions.args
-	a.icon, a.text, a.colorText, a.detachTooltip, a.lockTooltip, a.position, a.minimapAttach = nil
+	self.db = LibStub("AceDB-3.0"):New("Nauticus3DB", defaults)
+	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("Nauticus", optionsSlash)
+	LibStub("AceConfigCmd-3.0"):CreateChatCommand("nauticus", "Nauticus")
+	LibStub("AceConfigCmd-3.0"):CreateChatCommand("naut", "Nauticus")
 
 	rtts, platforms, transports =
 		self.rtts, self.platforms, self.transports
@@ -255,9 +247,9 @@ function Nauticus:OnEnable()
 	local c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
 	if x then oldx, oldy = NautAstrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0); end
 
-	self:ScheduleRepeatingEvent(self.DrawMapIcons, 0.2, self) -- every 1/5th of a second
-	self:ScheduleRepeatingEvent(self.Clock_OnUpdate, 1, self) -- every second (clock tick)
-	self:ScheduleRepeatingEvent(self.CheckTriggers_OnUpdate, 0.8, self) -- every 4/5th of a second
+	self:ScheduleRepeatingTimer("DrawMapIcons", 0.2) -- every 1/5th of a second
+	self:ScheduleRepeatingTimer("Clock_OnUpdate", 1) -- every second (clock tick)
+	self:ScheduleRepeatingTimer("CheckTriggers_OnUpdate", 0.8) -- every 4/5th of a second
 
 	self:RegisterEvent("WORLD_MAP_UPDATE")
 
@@ -522,14 +514,21 @@ end
 -- initialise saved variables and data
 function Nauticus:InitialiseConfig()
 
-	if self.db.account.newerVersion then
-		if self.db.account.newerVersion > self.versionNum then
+	if NauticusDB and NauticusDB.account and not self.db.global.uptime then
+		self.db.global.uptime = NauticusDB.account.uptime
+		self.db.global.timestamp = NauticusDB.account.timestamp
+		self.db.global.knownCycles = NauticusDB.account.knownCycles
+		NauticusDB = nil
+	end
+
+	if self.db.global.newerVersion then
+		if self.db.global.newerVersion > self.versionNum then
 			DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..
 				L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."])
 
 			-- major update released and running old version longer than 10 days?
-			if math.floor(self.db.account.newerVersion/10) > math.floor(self.versionNum/10) and
-				864000.0 < (time() - self.db.account.newerVerAge) then
+			if math.floor(self.db.global.newerVersion/10) > math.floor(self.versionNum/10) and
+				864000.0 < (time() - self.db.global.newerVerAge) then
 
 				self.comm_disable = true
 				DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..RED..
@@ -537,8 +536,8 @@ function Nauticus:InitialiseConfig()
 			end
 
 		else
-			self.db.account.newerVersion = nil
-			self.db.account.newerVerAge = nil
+			self.db.global.newerVersion = nil
+			self.db.global.newerVerAge = nil
 			DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..L["Thank you for upgrading."])
 		end
 	end
@@ -553,17 +552,17 @@ function Nauticus:InitialiseConfig()
 	local now = GetTime()
 	local the_time = time()
 
-	if self.db.account.uptime ~= nil then
+	if self.db.global.uptime then
 		-- calculate potential drift time in ms between sessions
-		local drift = (the_time - now) - (self.db.account.timestamp - self.db.account.uptime)
+		local drift = (the_time - now) - (self.db.global.timestamp - self.db.global.uptime)
 
 		-- if more than 3 mins drift, that means reboot occured. we need to adjust ms timers
 		if math.abs(drift) > 180 then
 			local since
-			local knownCycles = self.db.account.knownCycles
+			local knownCycles = self.db.global.knownCycles
 
 			-- adjust all available transport times by drift
-			for transport, times in pairs(self.db.account.knownCycles) do
+			for transport, times in pairs(self.db.global.knownCycles) do
 				since = knownCycles[transport].since
 
 				if since ~= nil then
@@ -578,8 +577,8 @@ function Nauticus:InitialiseConfig()
 	end
 
 	-- record uptime and 'when' (relative to local system clock) this was made
-	self.db.account.uptime = now
-	self.db.account.timestamp = the_time
+	self.db.global.uptime = now
+	self.db.global.timestamp = the_time
 
 	-- unpack transport data
 	local packedData = self.packedData
@@ -678,14 +677,19 @@ function Nauticus:PLAYER_ENTERING_WORLD()
 	end
 end
 
+local zoneChanged
+
 function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
+	if zoneChanged then self:CancelTimer(zoneChanged, true); zoneChanged = nil; end
+
 	if not loopback and self.currentZone == GetRealZoneText() then
-		self:ScheduleEvent(self.ZONE_CHANGED_NEW_AREA, 1, self, true)
-	else
-		self.currentZone = GetRealZoneText()
-		self.currentZoneTransports = self.transitZones[self.currentZone]
-		if self:IsZoneSpecific() then self:RefreshMenu(); end
+		zoneChanged = self:ScheduleTimer("ZONE_CHANGED_NEW_AREA", 1, true)
+		return
 	end
+
+	self.currentZone = GetRealZoneText()
+	self.currentZoneTransports = self.transitZones[self.currentZone]
+	if self:IsZoneSpecific() then self:RefreshMenu(); end
 end
 
 local last_map_update = 0
@@ -708,7 +712,7 @@ function Nauticus:IsAlarmSet()
 end
 
 function Nauticus:GetKnownCycle(transport)
-	local knownCycle = self.db.account.knownCycles[transport]
+	local knownCycle = self.db.global.knownCycles[transport]
 	if knownCycle == nil then return nil; end
 	local since = knownCycle.since
 	if since ~= nil then since = GetTime()-since; end
@@ -716,22 +720,22 @@ function Nauticus:GetKnownCycle(transport)
 end
 
 function Nauticus:SetKnownCycle(transport, since, boots, swaps)
-	if self.db.account.knownCycles[transport] == nil then
-		self.db.account.knownCycles[transport] = {}
+	if self.db.global.knownCycles[transport] == nil then
+		self.db.global.knownCycles[transport] = {}
 	end
 
-	local knownCycle = self.db.account.knownCycles[transport]
+	local knownCycle = self.db.global.knownCycles[transport]
 
 	knownCycle.since, knownCycle.boots, knownCycle.swaps =
 		GetTime()-since, boots, swaps
 
-	self.db.account.uptime = GetTime()
-	self.db.account.timestamp = time()
+	self.db.global.uptime = GetTime()
+	self.db.global.timestamp = time()
 end
 
 function Nauticus:HasKnownCycle(transport)
 	if transport == -1 then return nil; end
-	return self.db.account.knownCycles[transport] ~= nil
+	return self.db.global.knownCycles[transport] ~= nil
 end
 
 -- extract key/value from message
