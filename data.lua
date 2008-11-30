@@ -186,9 +186,9 @@ Nauticus.rtts = {
 }
 
 Nauticus.transitZones = {
-[ L["Durotar"] ] = { ["org2uc"] = true, ["org2gg"] = true, ["war2org"] = true, },
-[ L["Tirisfal Glades"] ] = { ["org2uc"] = true, ["uc2gg"] = true, ["ven2uc"] = true, },
-[ L["Stranglethorn Vale"] ] = { ["org2gg"] = true, ["uc2gg"] = true, ["rat2bb"] = true, },
+[ L["Durotar"] ] = { ["org2uc"] = true, ["org2gg"] = true, ["war2org"] = true, ["uc2gg"] = true, },
+[ L["Tirisfal Glades"] ] = { ["org2uc"] = true, ["uc2gg"] = true, ["ven2uc"] = true, ["org2gg"] = true, },
+[ L["Stranglethorn Vale"] ] = { ["org2gg"] = true, ["uc2gg"] = true, ["rat2bb"] = true, ["org2uc"] = true, },
 [ L["The Barrens"] ] = { ["rat2bb"] = true, ["war2org"] = true, },
 [ L["Wetlands"] ] = { ["mh2ther"] = true, ["vg2mh"] = true, },
 [ L["Azuremyst Isle"] ] = { ["exo2aub"] = true, },
@@ -204,8 +204,8 @@ Nauticus.transitZones = {
 [ L["The Veiled Sea"] ] = { ["exo2aub"] = true, }, -- special case
 [ L["Twisting Nether"] ] = { ["exo2aub"] = true, }, -- special case
 [ L["The Frozen Sea"] ] = { ["unu2moa"] = true, ["kam2moa"] = true, }, -- special case
-[ L["Orgrimmar"] ] = { ["org2uc"] = true, ["org2gg"] = true, virtual = true, }, -- extend to city
-[ L["Undercity"] ] = { ["org2uc"] = true, ["uc2gg"] = true, virtual = true, }, -- extend to city
+[ L["Orgrimmar"] ] = { ["org2uc"] = true, ["org2gg"] = true, ["war2org"] = true, virtual = true, }, -- extend to city
+[ L["Undercity"] ] = { ["org2uc"] = true, ["uc2gg"] = true, ["ven2uc"] = true, virtual = true, }, -- extend to city
 }
 
 Nauticus.platforms = {
