@@ -1,6 +1,6 @@
 ﻿
 -- French localisation by thelys
-local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "frFR", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "frFR")
 if not L then return; end
 
 -- options
@@ -31,9 +31,9 @@ L["No Transport Selected"] = "Aucun Transport"
 L["Not Available"] = "Non Disponible"
 L["N/A"] = "ND" -- abbreviation for Not Available
 L["Nauticus Options"] = "Options de Nauticus"
-L["Alarm is now: "] = "Alarm is now: " -- to do
-L["ON"] = "ON" -- to do
-L["OFF"] = "OFF" -- to do
+L["Alarm is now: "] = true -- to do
+L["ON"] = true -- to do
+L["OFF"] = true -- to do
 L["Daily: "] = "Journ.: "
 
 L["Show only transports for your faction"] = "Ne montrer que les transports de votre faction"

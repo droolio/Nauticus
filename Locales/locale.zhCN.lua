@@ -1,6 +1,6 @@
 ﻿
 -- Chinese simplified localisation by Juha
-local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "zhCN", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "zhCN")
 if not L then return; end
 
 -- options
@@ -65,13 +65,13 @@ L["First Mate Kowalski"] = "大副科瓦斯基"
 L["Navigator Mehran"] = "领航员梅拉"
 -- TO DO:
 -- uc2ven
-L["Meefi Farthrottle"] = "Meefi Farthrottle"
-L["Drenk Spannerspark"] = "Drenk Spannerspark"
+L["Meefi Farthrottle"] = true
+L["Drenk Spannerspark"] = true
 -- war2org
-L["Greeb Ramrocket"] = "Greeb Ramrocket"
-L["Nargo Screwbore"] = "Nargo Screwbore"
+L["Greeb Ramrocket"] = true
+L["Nargo Screwbore"] = true
 -- wg2wg:
-L["Harrowmeiser"] = "Harrowmeiser"
+L["Harrowmeiser"] = true
 
 -- ship names
 L["The Thundercaller"] = "唤雷号"
@@ -84,13 +84,13 @@ L["The Moonspray"] = "月海之浪号"
 L["Feathermoon Ferry"] = "羽月渡船"
 L["Elune's Blessing"] = "艾露恩的祝福"
 -- TO DO:
-L["The Mighty Wind"] = "The Mighty Wind"
-L["Cloudkisser"] = "Cloudkisser"
-L["Walker of Waves"] = "Walker of Waves"
-L["Green Island"] = "Green Island"
-L["The Kraken"] = "The Kraken"
-L["Northspear"] = "Northspear"
-L["Captured Zeppelin"] = "Captured Zeppelin"
+L["The Mighty Wind"] = true
+L["Cloudkisser"] = true
+L["Walker of Waves"] = true
+L["Green Island"] = true
+L["The Kraken"] = true
+L["Northspear"] = true
+L["Captured Zeppelin"] = true
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "奥格瑞玛"

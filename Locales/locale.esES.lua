@@ -1,25 +1,25 @@
 ﻿
 -- Spanish localisation by StiviS
-local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "esES", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "esES")
 if not L then return; end
 
 -- options
 L["Options"] = "Opciones"
 -- TO DO:
-L["Icons"] = "Icons"
-L["Icon options."] = "Icon options."
-L["Show icons"] = "Show icons"
-L["Toggle on/off map icons."] = "Toggle on/off map icons."
-L["Mini-Map icon size"] = "Mini-Map icon size"
-L["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons."
-L["World Map icon size"] = "World Map icon size"
-L["Change the size of the World Map icons."] = "Change the size of the World Map icons."
-L["Auto select transport"] = "Auto select transport"
-L["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform."
-L["Crew chat filter"] = "Crew chat filter"
-L["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam."
-L["Alarm delay"] = "Alarm delay"
-L["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds)."
+L["Icons"] = true
+L["Icon options."] = true
+L["Show icons"] = true
+L["Toggle on/off map icons."] = true
+L["Mini-Map icon size"] = true
+L["Change the size of the Mini-Map icons."] = true
+L["World Map icon size"] = true
+L["Change the size of the World Map icons."] = true
+L["Auto select transport"] = true
+L["Automatically select nearest transport when standing at platform."] = true
+L["Crew chat filter"] = true
+L["Toggle on/off chat filter for yelling crew spam."] = true
+L["Alarm delay"] = true
+L["Change the alarm delay (in seconds)."] = true
 
 -- miscellaneous
 L["Arrival"] = "Llegada"
@@ -32,10 +32,11 @@ L["No Transport Selected"] = "Ningun Transporte Seleccionado"
 L["Not Available"] = "No Disponible"
 L["N/A"] = "N/D" -- abbreviation for Not Available
 L["Nauticus Options"] = "Opciones de Nauticus"
-L["Alarm is now: "] = "Alarm is now: "
-L["ON"] = "ON"
-L["OFF"] = "OFF"
-L["Daily: "] = "Daily: "
+-- TO DO:
+L["Alarm is now: "] = true
+L["ON"] = true
+L["OFF"] = true
+L["Daily: "] = true
 
 L["Show only transports for your faction"] = "Mostrar sólo transportes para su facción"
 L["Shows only neutral and transports specific to your faction."] = "Muestra sólo neutrales y transportes específicos para su facción."
@@ -89,7 +90,7 @@ L["Walker of Waves"] = "Errante de olas"
 L["Green Island"] = "Isla verde"
 L["The Kraken"] = "Los kraken"
 L["Northspear"] = "Picanorte"
-L["Captured Zeppelin"] = "Captured Zeppelin" -- to do
+L["Captured Zeppelin"] = true -- to do
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "Orgrimmar"
@@ -116,46 +117,46 @@ L["The Veiled Sea"] = "Mar de la Bruma"
 L["Twisting Nether"] = "El Vacío Abisal"
 L["The Frozen Sea"] = "El Mar Gélido"
 
--- subzones
-L["Grom'gol"] = "Grom'gol"
-L["Booty Bay"] = "Booty Bay"
-L["Ratchet"] = "Ratchet"
-L["Menethil Harbor"] = "Menethil Harbor"
-L["Auberdine"] = "Auberdine"
-L["Theramore"] = "Theramore"
-L["Rut'Theran Village"] = "Rut'Theran Village"
-L["Sardor Isle"] = "Sardor Isle"
-L["Feathermoon"] = "Feathermoon"
-L["Forgotten Coast"] = "Forgotten Coast"
-L["Warsong Hold"] = "Warsong Hold"
-L["Vengeance Landing"] = "Vengeance Landing"
-L["Valiance Keep"] = "Valiance Keep"
-L["Valgarde"] = "Valgarde"
-L["Unu'pe"] = "Unu'pe"
-L["Moa'ki Harbor"] = "Moa'ki Harbor"
-L["Kamagua"] = "Kamagua"
-L["Westguard Keep"] = "Westguard Keep"
+-- subzones; TO DO:
+L["Grom'gol"] = true
+L["Booty Bay"] = true
+L["Ratchet"] = true
+L["Menethil Harbor"] = true
+L["Auberdine"] = true
+L["Theramore"] = true
+L["Rut'Theran Village"] = true
+L["Sardor Isle"] = true
+L["Feathermoon"] = true
+L["Forgotten Coast"] = true
+L["Warsong Hold"] = true
+L["Vengeance Landing"] = true
+L["Valiance Keep"] = true
+L["Valgarde"] = true
+L["Unu'pe"] = true
+L["Moa'ki Harbor"] = true
+L["Kamagua"] = true
+L["Westguard Keep"] = true
 
--- abbreviations
-L["Org"] = "Org" -- Orgrimmar
-L["UC"]  = "UC"  -- Undercity
-L["Exo"] = "Exo" -- The Exodar
-L["SC"]  = "SC"  -- Stormwind City
+-- abbreviations; TO DO:
+L["Org"] = true -- Orgrimmar
+L["UC"]  = true -- Undercity
+L["Exo"] = true -- The Exodar
+L["SC"]  = true -- Stormwind City
 
-L["GG"]  = "GG"  -- Grom'gol
-L["BB"]  = "BB"  -- Booty Bay
-L["Rat"] = "Rat" -- Ratchet
-L["MH"]  = "MH"  -- Menethil Harbor
-L["Aub"] = "Aub" -- Auberdine
-L["Th"]  = "Th"  -- Theramore
-L["RTV"] = "RTV" -- Rut'Theran Village
-L["FMS"] = "FMS" -- Feathermoon
-L["Fer"] = "Fer" -- Feralas
-L["War"] = "War" -- Warsong Hold
-L["Ven"] = "Ven" -- Vengeance Landing
-L["VK"]  = "VK"  -- Valiance Keep
-L["VG"]  = "VG"  -- Valgarde
-L["Unu"] = "Unu" -- Unu'pe
-L["Moa"] = "Moa" -- Moa'ki Harbor
-L["Kam"] = "Kam" -- Kamagua
-L["WGK"] = "WGK" -- Westguard Keep
+L["GG"]  = true -- Grom'gol
+L["BB"]  = true -- Booty Bay
+L["Rat"] = true -- Ratchet
+L["MH"]  = true -- Menethil Harbor
+L["Aub"] = true -- Auberdine
+L["Th"]  = true -- Theramore
+L["RTV"] = true -- Rut'Theran Village
+L["FMS"] = true -- Feathermoon
+L["Fer"] = true -- Feralas
+L["War"] = true -- Warsong Hold
+L["Ven"] = true -- Vengeance Landing
+L["VK"]  = true -- Valiance Keep
+L["VG"]  = true -- Valgarde
+L["Unu"] = true -- Unu'pe
+L["Moa"] = true -- Moa'ki Harbor
+L["Kam"] = true -- Kamagua
+L["WGK"] = true -- Westguard Keep

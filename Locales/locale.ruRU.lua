@@ -1,6 +1,6 @@
 ﻿
 -- Russian localisation by Yuris Auzinsh (Zuz666)
-local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "ruRU", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "ruRU")
 if not L then return; end
 
 -- options

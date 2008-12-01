@@ -1,6 +1,6 @@
 ﻿
 -- Chinese traditional localisation by Juha
-local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "zhTW", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "zhTW")
 if not L then return; end
 
 -- options

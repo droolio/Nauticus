@@ -156,4 +156,4 @@ L["VG"]  = true -- Valgarde
 L["Unu"] = true -- Unu'pe
 L["Moa"] = true -- Moa'ki Harbor
 L["Kam"] = true -- Kamagua
-L["WGK"]  = true -- Westguard Keep
+L["WGK"] = true -- Westguard Keep

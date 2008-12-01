@@ -1,6 +1,6 @@
 ﻿
 -- German localisation by Alex6002 & LarryCurse
-local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "deDE", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "deDE")
 if not L then return; end
 
 -- options

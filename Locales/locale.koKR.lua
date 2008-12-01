@@ -1,103 +1,102 @@
 ﻿
-local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "koKR", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "koKR")
 if not L then return; end
 
 -- options; TO DO:
-L["Options"] = "Options"
-L["Icons"] = "Icons"
-L["Icon options."] = "Icon options."
-L["Show icons"] = "Show icons"
-L["Toggle on/off map icons."] = "Toggle on/off map icons."
-L["Mini-Map icon size"] = "Mini-Map icon size"
-L["Change the size of the Mini-Map icons."] = "Change the size of the Mini-Map icons."
-L["World Map icon size"] = "World Map icon size"
-L["Change the size of the World Map icons."] = "Change the size of the World Map icons."
-L["Auto select transport"] = "Auto select transport"
-L["Automatically select nearest transport when standing at platform."] = "Automatically select nearest transport when standing at platform."
-L["Crew chat filter"] = "Crew chat filter"
-L["Toggle on/off chat filter for yelling crew spam."] = "Toggle on/off chat filter for yelling crew spam."
-L["Alarm delay"] = "Alarm delay"
-L["Change the alarm delay (in seconds)."] = "Change the alarm delay (in seconds)."
+L["Options"] = true
+L["Icons"] = true
+L["Icon options."] = true
+L["Show icons"] = true
+L["Toggle on/off map icons."] = true
+L["Mini-Map icon size"] = true
+L["Change the size of the Mini-Map icons."] = true
+L["World Map icon size"] = true
+L["Change the size of the World Map icons."] = true
+L["Auto select transport"] = true
+L["Automatically select nearest transport when standing at platform."] = true
+L["Crew chat filter"] = true
+L["Toggle on/off chat filter for yelling crew spam."] = true
+L["Alarm delay"] = true
+L["Change the alarm delay (in seconds)."] = true
 
 -- miscellaneous
 L["Arrival"] = "도착"
 L["Departure"] = "출발"
-L["Arr"] = "Arr" -- abbreviation for Arrival
-L["Dep"] = "Dep" -- abbreviation for Departure
+L["Arr"] = true -- abbreviation for Arrival
+L["Dep"] = true -- abbreviation for Departure
 L["Select Transport"] = "이동수단을 선택하세요"
 -- TO DO:
-L["Select None"] = "Select None" -- to do
-L["No Transport Selected"] = "No Transport Selected"
-L["Not Available"] = "Not Available"
-L["N/A"] = "N/A" -- abbreviation for Not Available
-L["Nauticus Options"] = "Nauticus Options"
-L["Alarm is now: "] = "Alarm is now: "
-L["ON"] = "ON"
-L["OFF"] = "OFF"
-L["Daily: "] = "Daily: "
+L["Select None"] = true
+L["No Transport Selected"] = true
+L["Not Available"] = true
+L["N/A"] = true -- abbreviation for Not Available
+L["Nauticus Options"] = true
+L["Alarm is now: "] = true
+L["ON"] = true
+L["OFF"] = true
+L["Daily: "] = true
 
--- TO DO:
 L["Show only transports for your faction"] =
 	"해당 진영의 이동수단만 표시"
 L["Shows only neutral and transports specific to your faction."] =
-	"Shows only neutral and transports specific to your faction."
+	true -- to do
 L["Show only transports in your current zone"] =
 	"현재 지역의 이동수단만 표시"
 L["Shows only transports in your current zone."] =
-	"Shows only transports in your current zone."
+	true -- to do
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] =
-	"힌트: Click to cycle transport. Alt-Click to set up alarm"
+	"힌트: Click to cycle transport. Alt-Click to set up alarm" -- re do
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] =
-	"There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."
+	true -- to do
 L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] =
-	"You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."
+	true -- to do
 L["Thank you for upgrading."] =
-	"Thank you for upgrading."
+	true -- to do
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name); TO DO:
 -- org2uc:
-L["Frezza"] = "Frezza"
-L["Zapetta"] = "Zapetta"
-L["Sky-Captain Cloudkicker"] = "Sky-Captain Cloudkicker"
-L["Chief Officer Coppernut"] = "Chief Officer Coppernut"
-L["Navigator Fairweather"] = "Navigator Fairweather"
+L["Frezza"] = true
+L["Zapetta"] = true
+L["Sky-Captain Cloudkicker"] = true
+L["Chief Officer Coppernut"] = true
+L["Navigator Fairweather"] = true
 -- uc2gg:
-L["Hin Denburg"] = "Hin Denburg"
-L["Navigator Hatch"] = "Navigator Hatch"
-L["Chief Officer Hammerflange"] = "Chief Officer Hammerflange"
-L["Sky-Captain Cableclamp"] = "Sky-Captain Cableclamp"
+L["Hin Denburg"] = true
+L["Navigator Hatch"] = true
+L["Chief Officer Hammerflange"] = true
+L["Sky-Captain Cableclamp"] = true
 -- org2gg:
-L["Snurk Bucksquick"] = "Snurk Bucksquick"
+L["Snurk Bucksquick"] = true
 -- mh2ther:
-L["Captain \"Stash\" Torgoley"] = "Captain \"Stash\" Torgoley"
-L["First Mate Kowalski"] = "First Mate Kowalski"
-L["Navigator Mehran"] = "Navigator Mehran"
+L["Captain \"Stash\" Torgoley"] = true
+L["First Mate Kowalski"] = true
+L["Navigator Mehran"] = true
 -- uc2ven
-L["Meefi Farthrottle"] = "Meefi Farthrottle"
-L["Drenk Spannerspark"] = "Drenk Spannerspark"
+L["Meefi Farthrottle"] = true
+L["Drenk Spannerspark"] = true
 -- war2org
-L["Greeb Ramrocket"] = "Greeb Ramrocket"
-L["Nargo Screwbore"] = "Nargo Screwbore"
+L["Greeb Ramrocket"] = true
+L["Nargo Screwbore"] = true
 -- wg2wg:
-L["Harrowmeiser"] = "Harrowmeiser"
+L["Harrowmeiser"] = true
 
 -- ship names; TO DO:
-L["The Thundercaller"] = "The Thundercaller"
-L["The Iron Eagle"] = "The Iron Eagle"
-L["The Purple Princess"] = "The Purple Princess"
-L["The Maiden's Fancy"] = "The Maiden's Fancy"
-L["The Bravery"] = "The Bravery"
-L["The Lady Mehley"] = "The Lady Mehley"
-L["The Moonspray"] = "The Moonspray"
-L["Feathermoon Ferry"] = "Feathermoon Ferry"
-L["Elune's Blessing"] = "Elune's Blessing"
-L["The Mighty Wind"] = "The Mighty Wind"
-L["Cloudkisser"] = "Cloudkisser"
-L["Walker of Waves"] = "Walker of Waves"
-L["Green Island"] = "Green Island"
-L["The Kraken"] = "The Kraken"
-L["Northspear"] = "Northspear"
-L["Captured Zeppelin"] = "Captured Zeppelin"
+L["The Thundercaller"] = true
+L["The Iron Eagle"] = true
+L["The Purple Princess"] = true
+L["The Maiden's Fancy"] = true
+L["The Bravery"] = true
+L["The Lady Mehley"] = true
+L["The Moonspray"] = true
+L["Feathermoon Ferry"] = true
+L["Elune's Blessing"] = true
+L["The Mighty Wind"] = true
+L["Cloudkisser"] = true
+L["Walker of Waves"] = true
+L["Green Island"] = true
+L["The Kraken"] = true
+L["Northspear"] = true
+L["Captured Zeppelin"] = true
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "오그리마"
@@ -122,7 +121,7 @@ L["Dragonblight"] = "용의 안식처"
 
 L["The Veiled Sea"] = "장막의 바다"
 L["Twisting Nether"] = "뒤틀린 황천"
-L["The Frozen Sea"] = "The Frozen Sea" -- to do
+L["The Frozen Sea"] = true -- to do
 
 -- subzones
 L["Grom'gol"] = "그롬골 주둔지"
@@ -133,17 +132,17 @@ L["Auberdine"] = "아우버다인"
 L["Theramore"] = "테라모어 섬"
 L["Rut'Theran Village"] = "루테란 마을"
 -- TO DO:
-L["Sardor Isle"] = "Sardor Isle"
-L["Feathermoon"] = "Feathermoon"
-L["Forgotten Coast"] = "Forgotten Coast"
-L["Warsong Hold"] = "Warsong Hold"
-L["Vengeance Landing"] = "Vengeance Landing"
-L["Valiance Keep"] = "Valiance Keep"
-L["Valgarde"] = "Valgarde"
-L["Unu'pe"] = "Unu'pe"
-L["Moa'ki Harbor"] = "Moa'ki Harbor"
-L["Kamagua"] = "Kamagua"
-L["Westguard Keep"] = "Westguard Keep"
+L["Sardor Isle"] = true
+L["Feathermoon"] = true
+L["Forgotten Coast"] = true
+L["Warsong Hold"] = true
+L["Vengeance Landing"] = true
+L["Valiance Keep"] = true
+L["Valgarde"] = true
+L["Unu'pe"] = true
+L["Moa'ki Harbor"] = true
+L["Kamagua"] = true
+L["Westguard Keep"] = true
 
 -- abbreviations
 L["Org"] = "오그"  -- Orgrimmar
@@ -159,13 +158,13 @@ L["Aub"] = "아우버" -- Auberdine
 L["Th"]  = "테라"  -- Theramore
 L["RTV"] = "루테란" -- Rut'Theran Village
 -- TO DO:
-L["FMS"] = "FMS" -- Feathermoon
-L["Fer"] = "Fer" -- Feralas
-L["War"] = "War" -- Warsong Hold
-L["Ven"] = "Ven" -- Vengeance Landing
-L["VK"]  = "VK"  -- Valiance Keep
-L["VG"]  = "VG"  -- Valgarde
-L["Unu"] = "Unu" -- Unu'pe
-L["Moa"] = "Moa" -- Moa'ki Harbor
-L["Kam"] = "Kam" -- Kamagua
-L["WGK"] = "WGK" -- Westguard Keep
+L["FMS"] = true  -- Feathermoon
+L["Fer"] = true  -- Feralas
+L["War"] = true  -- Warsong Hold
+L["Ven"] = true  -- Vengeance Landing
+L["VK"]  = true  -- Valiance Keep
+L["VG"]  = true  -- Valgarde
+L["Unu"] = true  -- Unu'pe
+L["Moa"] = true  -- Moa'ki Harbor
+L["Kam"] = true  -- Kamagua
+L["WGK"] = true  -- Westguard Keep
