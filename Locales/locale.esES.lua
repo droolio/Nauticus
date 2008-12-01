@@ -117,25 +117,25 @@ L["The Veiled Sea"] = "Mar de la Bruma"
 L["Twisting Nether"] = "El Vacío Abisal"
 L["The Frozen Sea"] = "El Mar Gélido"
 
--- subzones; TO DO:
-L["Grom'gol"] = true
-L["Booty Bay"] = true
-L["Ratchet"] = true
-L["Menethil Harbor"] = true
-L["Auberdine"] = true
-L["Theramore"] = true
-L["Rut'Theran Village"] = true
-L["Sardor Isle"] = true
-L["Feathermoon"] = true
-L["Forgotten Coast"] = true
-L["Warsong Hold"] = true
-L["Vengeance Landing"] = true
-L["Valiance Keep"] = true
-L["Valgarde"] = true
-L["Unu'pe"] = true
-L["Moa'ki Harbor"] = true
-L["Kamagua"] = true
-L["Westguard Keep"] = true
+-- subzones
+L["Grom'gol"] = "Grom'Gol"
+L["Booty Bay"] = "Bahía del Botín"
+L["Ratchet"] = "Trinquete"
+L["Menethil Harbor"] = "Refugio de Marshal"
+L["Auberdine"] = "Auberdine"
+L["Theramore"] = "Theramore"
+L["Rut'Theran Village"] = "Aldea Rut'Theran"
+L["Sardor Isle"] = "Isla de Sardor"
+L["Feathermoon"] = "Plumaluna"
+L["Forgotten Coast"] = "Costa Olvidada"
+L["Warsong Hold"] = "Bastión Grito de Guerra"
+L["Vengeance Landing"] = "Campo Venganza"
+L["Valiance Keep"] = "Fortaleza Denuedo"
+L["Valgarde"] = "Valgarde"
+L["Unu'pe"] = "Unu'pe"
+L["Moa'ki Harbor"] = "Puerto Moa'ki"
+L["Kamagua"] = "Kamagua"
+L["Westguard Keep"] = "Fortaleza de la Guardia Oeste"
 
 -- abbreviations; TO DO:
 L["Org"] = true -- Orgrimmar

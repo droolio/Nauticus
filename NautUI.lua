@@ -19,6 +19,7 @@ local Nauticus = Nauticus
 
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 local dataobj = ldb:NewDataObject("Nauticus", { type = "data source", text = "Nauticus", icon = ARTWORK_LOGO } )
+Nauticus.dataobj = dataobj
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 

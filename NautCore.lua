@@ -23,8 +23,8 @@ Nauticus = LibStub("AceAddon-3.0"):NewAddon("Nauticus", "AceEvent-3.0", "AceTime
 local Nauticus = Nauticus
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
-
 local NautAstrolabe = DongleStub("Astrolabe-0.4")
+local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
 Nauticus.versionStr = "3.0.3" -- for display
@@ -58,6 +58,9 @@ local defaults = {
 		alarmOffset = 20,
 		miniIconSize = 1,
 		worldIconSize = 1.25,
+		minimap = {
+			hide = true,
+		},
 	},
 	global = {
 		knownCycles = {},
@@ -126,7 +129,7 @@ local _options = {
 		type = 'toggle',
 		name = L["Auto select transport"],
 		desc = L["Automatically select nearest transport when standing at platform."],
-		order = 100,
+		order = 150,
 		get = function()
 			return Nauticus.db.char.autoSelect
 		end,
@@ -162,6 +165,23 @@ local _options = {
 		end,
 		min = 0, max = 90, step = 5,
 	},
+	minibutton = {
+		type = 'toggle',
+		name = "Mini-Map button",
+		desc = "Toggle the Mini-Map button.",
+		order = 100,
+		get = function()
+			return not Nauticus.db.profile.minimap.hide
+		end,
+		set = function(info, val)
+			Nauticus.db.profile.minimap.hide = not val
+			if val then
+				ldbicon:Show("Nauticus")
+			else
+				ldbicon:Hide("Nauticus")
+			end
+		end,
+	},
 }
 local options = { type = "group", args = {
 	GUI = {
@@ -178,6 +198,7 @@ local options = { type = "group", args = {
 				name = "General Settings",
 				order = 99,
 			},
+			minibutton = _options.minibutton,
 			autoselect = _options.autoselect,
 			filter = _options.filter,
 			alarm = _options.alarm,
@@ -204,6 +225,7 @@ local optionsSlash = { type = 'group', name = "Nauticus", args = {
 			worldsize = _options.iconworldsize,
 		},
 	},
+	minibutton = _options.minibutton,
 	autoselect = _options.autoselect,
 	filter = _options.filter,
 	alarm = _options.alarm,
@@ -263,6 +285,7 @@ function Nauticus:OnInitialize()
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("NauticusSlashCommand", optionsSlash, { "nauticus", "naut" })
 	options.args.NauticusSlashCommand = optionsSlash
 	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Nauticus", nil, nil, "GUI")
+	ldbicon:Register("Nauticus", self.dataobj, self.db.profile.minimap)
 
 	rtts, platforms, transports =
 		self.rtts, self.platforms, self.transports
