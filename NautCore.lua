@@ -57,7 +57,7 @@ local defaults = {
 		filterChat = true,
 		alarmOffset = 20,
 		miniIconSize = 1,
-		worldIconSize = 1,
+		worldIconSize = 1.25,
 	},
 	global = {
 		knownCycles = {},
@@ -69,72 +69,64 @@ local defaults = {
 	},
 }
 
-local options = {
-	icons = {
-		type = 'group',
-		name = L["Icons"],
-		desc = L["Icon options."],
-		order = 1,
-		args = {
-			show = {
-				type = 'toggle',
-				name = L["Show icons"],
-				desc = L["Toggle on/off map icons."],
-				order = 1,
-				get = function()
-					return Nauticus.db.char.showIcons
-				end,
-				set = function(info, val)
-					Nauticus.db.char.showIcons = val
-					Nauticus.showIcons = val
-					if not val then
-						Nauticus:RemoveAllIcons()
-					end
-				end,
-			},
-			minisize = {
-				type = 'range',
-				name = L["Mini-Map icon size"],
-				desc = L["Change the size of the Mini-Map icons."],
-				order = 3,
-				get = function()
-					return Nauticus.db.profile.miniIconSize
-				end,
-				set = function(info, val)
-					for t = 1, #(transports), 1 do
-						transports[t].minimap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
-						transports[t].minimap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
-					end
-					Nauticus.db.profile.miniIconSize = val
-				end,
-				isPercent = true,
-				min = .5, max = 2, step = .01,
-			},
-			worldsize = {
-				type = 'range',
-				name = L["World Map icon size"],
-				desc = L["Change the size of the World Map icons."],
-				order = 2,
-				get = function()
-					return Nauticus.db.profile.worldIconSize
-				end,
-				set = function(info, val)
-					for t = 1, #(transports), 1 do
-						transports[t].worldmap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
-						transports[t].worldmap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
-					end
-					Nauticus.db.profile.worldIconSize = val
-				end,
-				isPercent = true,
-				min = .5, max = 2, step = .01,
-			},
-		},
+local _options = {
+	iconshow = {
+		type = 'toggle',
+		name = L["Show icons"],
+		desc = L["Toggle on/off map icons."],
+		order = 600,
+		get = function()
+			return Nauticus.db.char.showIcons
+		end,
+		set = function(info, val)
+			Nauticus.db.char.showIcons = val
+			Nauticus.showIcons = val
+			if not val then
+				Nauticus:RemoveAllIcons()
+			end
+		end,
+	},
+	iconminisize = {
+		type = 'range',
+		name = L["Mini-Map icon size"],
+		desc = L["Change the size of the Mini-Map icons."],
+		order = 400,
+		get = function()
+			return Nauticus.db.profile.miniIconSize
+		end,
+		set = function(info, val)
+			for t = 1, #(transports), 1 do
+				transports[t].minimap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
+				transports[t].minimap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
+			end
+			Nauticus.db.profile.miniIconSize = val
+		end,
+		isPercent = true,
+		min = .5, max = 2, step = .01,
+	},
+	iconworldsize = {
+		type = 'range',
+		name = L["World Map icon size"],
+		desc = L["Change the size of the World Map icons."],
+		order = 500,
+		get = function()
+			return Nauticus.db.profile.worldIconSize
+		end,
+		set = function(info, val)
+			for t = 1, #(transports), 1 do
+				transports[t].worldmap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
+				transports[t].worldmap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
+			end
+			Nauticus.db.profile.worldIconSize = val
+		end,
+		isPercent = true,
+		min = .5, max = 2, step = .01,
 	},
 	autoselect = {
 		type = 'toggle',
 		name = L["Auto select transport"],
 		desc = L["Automatically select nearest transport when standing at platform."],
-		order = 4,
+		order = 100,
 		get = function()
 			return Nauticus.db.char.autoSelect
 		end,
@@ -147,7 +139,7 @@ local options = {
 		type = 'toggle',
 		name = L["Crew chat filter"],
 		desc = L["Toggle on/off chat filter for yelling crew spam."],
-		order = 5,
+		order = 200,
 		get = function()
 			return Nauticus.db.profile.filterChat
 		end,
@@ -160,7 +152,7 @@ local options = {
 		type = 'range',
 		name = L["Alarm delay"],
 		desc = L["Change the alarm delay (in seconds)."],
-		order = 2,
+		order = 300,
 		get = function()
 			return Nauticus.db.profile.alarmOffset
 		end,
@@ -171,11 +163,50 @@ local options = {
 		min = 0, max = 90, step = 5,
 	},
 }
-local optionsSlash = { type = 'group', args = {
-	icons = options.icons,
-	autoselect = options.autoselect,
-	filter = options.filter,
-	alarm = options.alarm,
+local options = { type = "group", args = {
+	GUI = {
+		type = 'group',
+		name = "Nauticus",
+		args = {
+			nautdesc = {
+				type = 'description',
+				name = "Track the precise location and arrival & departure times of boats and zeppelins.",
+				order = 1,
+			},
+			header1 = {
+				type = 'header',
+				name = "General Settings",
+				order = 99,
+			},
+			autoselect = _options.autoselect,
+			filter = _options.filter,
+			alarm = _options.alarm,
+			header2 = {
+				type = 'header',
+				name = "Map Icons",
+				order = 399,
+			},
+			iconminisize = _options.iconminisize,
+			iconworldsize = _options.iconworldsize,
+			iconshow = _options.iconshow,
+		},
+	},
+} }
+local optionsSlash = { type = 'group', name = "Nauticus", args = {
+	icons = {
+		type = 'group',
+		name = L["Icons"],
+		desc = L["Icon options."],
+		order = 399,
+		args = {
+			show = _options.iconshow,
+			minisize = _options.iconminisize,
+			worldsize = _options.iconworldsize,
+		},
+	},
+	autoselect = _options.autoselect,
+	filter = _options.filter,
+	alarm = _options.alarm,
 } }
 
 
@@ -228,9 +259,10 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", ChatFilter_CrewChat)
 
 function Nauticus:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("Nauticus3DB", defaults)
-	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("Nauticus", optionsSlash)
-	LibStub("AceConfigCmd-3.0"):CreateChatCommand("nauticus", "Nauticus")
-	LibStub("AceConfigCmd-3.0"):CreateChatCommand("naut", "Nauticus")
+	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("Nauticus", options)
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("NauticusSlashCommand", optionsSlash, { "nauticus", "naut" })
+	options.args.NauticusSlashCommand = optionsSlash
+	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Nauticus", nil, nil, "GUI")
 
 	rtts, platforms, transports =
 		self.rtts, self.platforms, self.transports

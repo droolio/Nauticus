@@ -228,6 +228,13 @@ function Nauticus:TransportSelectInitialise(frame, level)
 			end
 		end
 
+		AddSeparator()
+
+		AddLine(
+			L["Options"], -- text
+			function() InterfaceOptionsFrame_OpenToCategory(self.optionsFrame); end -- func
+		)
+
 	end
 
 end
