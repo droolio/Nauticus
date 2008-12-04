@@ -186,9 +186,9 @@ Nauticus.rtts = {
 }
 
 Nauticus.transitZones = {
-[ L["Durotar"] ] = { ["org2uc"] = true, ["org2gg"] = true, ["war2org"] = true, ["uc2gg"] = true, },
-[ L["Tirisfal Glades"] ] = { ["org2uc"] = true, ["uc2gg"] = true, ["ven2uc"] = true, ["org2gg"] = true, },
-[ L["Stranglethorn Vale"] ] = { ["org2gg"] = true, ["uc2gg"] = true, ["rat2bb"] = true, ["org2uc"] = true, },
+[ L["Durotar"] ] = { ["org2uc"] = true, ["org2gg"] = true, ["war2org"] = true, },
+[ L["Tirisfal Glades"] ] = { ["org2uc"] = true, ["uc2gg"] = true, ["ven2uc"] = true, },
+[ L["Stranglethorn Vale"] ] = { ["org2gg"] = true, ["uc2gg"] = true, ["rat2bb"] = true, },
 [ L["The Barrens"] ] = { ["rat2bb"] = true, ["war2org"] = true, },
 [ L["Wetlands"] ] = { ["mh2ther"] = true, ["vg2mh"] = true, },
 [ L["Azuremyst Isle"] ] = { ["exo2aub"] = true, },

@@ -602,6 +602,11 @@ function Nauticus:InitialiseConfig()
 	filterChat = self.db.profile.filterChat
 
 	self.activeTransit = self.db.char.activeTransit
+	if self.activeTransit ~= -1 and not self.lookupIndex[self.activeTransit] then
+		self.activeTransit = -1
+		self.db.char.activeTransit = -1
+	end
+
 	self.showIcons = self.db.char.showIcons
 
 	local now = GetTime()
@@ -610,23 +615,21 @@ function Nauticus:InitialiseConfig()
 	if self.db.global.uptime then
 		-- calculate potential drift time in ms between sessions
 		local drift = (the_time - now) - (self.db.global.timestamp - self.db.global.uptime)
-
 		-- if more than 3 mins drift, that means reboot occured. we need to adjust ms timers
 		if math.abs(drift) > 180 then
 			local since
-			local knownCycles = self.db.global.knownCycles
-
 			-- adjust all available transport times by drift
-			for transport, times in pairs(self.db.global.knownCycles) do
-				since = knownCycles[transport].since
-
-				if since ~= nil then
+			for transport, data in pairs(self.db.global.knownCycles) do
+				since = data.since
+				if since then
 					since = since - drift
-					if now - since < 0 then since = nil; end
+					if 0 > now-since then
+						self.db.global.knownCycles[transport] = nil
+					else
+						data.since = since
+						data.boots = data.boots + 1
+					end
 				end
-
-				knownCycles[transport].since = since
-				knownCycles[transport].boots = knownCycles[transport].boots + 1
 			end
 		end
 	end
@@ -768,29 +771,27 @@ end
 
 function Nauticus:GetKnownCycle(transport)
 	local knownCycle = self.db.global.knownCycles[transport]
-	if knownCycle == nil then return nil; end
-	local since = knownCycle.since
-	if since ~= nil then since = GetTime()-since; end
-	return since, knownCycle.boots, knownCycle.swaps
+	if knownCycle and knownCycle.since then
+		return GetTime()-knownCycle.since, knownCycle.boots, knownCycle.swaps
+	end
 end
 
 function Nauticus:SetKnownCycle(transport, since, boots, swaps)
-	if self.db.global.knownCycles[transport] == nil then
-		self.db.global.knownCycles[transport] = {}
-	end
-
 	local knownCycle = self.db.global.knownCycles[transport]
-
-	knownCycle.since, knownCycle.boots, knownCycle.swaps =
-		GetTime()-since, boots, swaps
-
+	if not knownCycle then
+		knownCycle = {}
+		self.db.global.knownCycles[transport] = knownCycle
+	end
+	knownCycle.since, knownCycle.boots, knownCycle.swaps = GetTime()-since, boots, swaps
 	self.db.global.uptime = GetTime()
 	self.db.global.timestamp = time()
 end
 
 function Nauticus:HasKnownCycle(transport)
-	if transport == -1 then return nil; end
-	return self.db.global.knownCycles[transport] ~= nil
+	local knownCycle = self.db.global.knownCycles[transport]
+	if transport ~= -1 then
+		return knownCycle ~= nil and knownCycle.since ~= nil
+	end
 end
 
 -- extract key/value from message
