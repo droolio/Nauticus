@@ -25,7 +25,11 @@ local requestVersion = false
 
 
 function Nauticus:CancelRequest()
-	if request then self:CancelTimer(request, true); request = nil; end
+	if request then
+		--self:DebugMessage("cancel request schedule")
+		self:CancelTimer(request, true)
+		request = nil
+	end
 end
 
 function Nauticus:DoRequest(wait)
@@ -87,6 +91,9 @@ function Nauticus:BroadcastTransportData()
 	if trans_str ~= "" then
 		trans_str = string.sub(trans_str, 1, -2) -- remove the last comma
 		self:SendMessage("KWN "..DATA_VERSION.." "..trans_str)
+		self:DebugMessage("tell our transports")
+	else
+		self:DebugMessage("nothing to tell")
 	end
 
 end
@@ -102,14 +109,18 @@ local joinedChannel
 -- if we joined a channel
 function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndName, _, _, _, num, channel)
 	if noticeType == "YOU_JOINED" then
+		self:DebugMessage("joined: "..channel)
+
 		if strlower(channel) ~= strlower(DEFAULT_CHANNEL) and
 			GetChannelName(DEFAULT_CHANNEL) == 0 then
 
 			if joinedChannel then self:CancelTimer(joinedChannel, true); end
 			joinedChannel = self:ScheduleTimer(function()
 				if GetChannelName(DEFAULT_CHANNEL) == 0 then
+					self:DebugMessage("joining: "..DEFAULT_CHANNEL)
 					JoinChannelByName(DEFAULT_CHANNEL)
 					self:UpdateChannel()
+					if self.debug then ListChannelByName(DEFAULT_CHANNEL); end
 				end
 			end, 5)
 		end
@@ -124,6 +135,8 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndNam
 				self.currentZone = newZone
 				self.currentZoneTransports = self.transitZones[newZone]
 			end
+
+			--self:DebugMessage("channel: "..self.currentZone)
 		end
 	end
 end
@@ -132,15 +145,19 @@ function Nauticus:CHAT_MSG_CHANNEL(eventName, msg, sender, _, numAndName, _, _, 
 	if sender ~= UnitName("player") and strlower(channel) == strlower(DEFAULT_CHANNEL) then
 		local Args = self:GetArgs(msg, " ")
 
+		--self:DebugMessage("sender: "..sender.." ; cmd: "..Args[1])
+
 		if Args[1] == "VER" then -- version, num
-			self:ReceiveMessage_version(tonumber(Args[2]))
+			self:ReceiveMessage_version(tonumber(Args[2]), sender)
 		elseif Args[1] == "KWN" then -- known, { transports }
-			self:ReceiveMessage_known(tonumber(Args[2]), self:StringToKnown(Args[3]))
+			self:ReceiveMessage_known(tonumber(Args[2]), self:StringToKnown(Args[3]), sender)
 		end
 	end
 end
 
-function Nauticus:ReceiveMessage_version(clientversion)
+function Nauticus:ReceiveMessage_version(clientversion, sender)
+	self:DebugMessage(sender.." says: version "..clientversion)
+
 	if clientversion > self.versionNum then
 		if not self.db.global.newerVersion then
 			self.db.global.newerVersion = clientversion
@@ -159,11 +176,12 @@ function Nauticus:ReceiveMessage_version(clientversion)
 
 	-- if we don't need to send back any data, cancel our scheduler immediately
 	if not next(self.requestList) then
+		self:DebugMessage("received: version; no more to send")
 		self:CancelRequest()
 	end
 end
 
-function Nauticus:ReceiveMessage_known(version, transports)
+function Nauticus:ReceiveMessage_known(version, transports, sender)
 
 	if version ~= DATA_VERSION then return; end
 
@@ -182,6 +200,47 @@ function Nauticus:ReceiveMessage_known(version, transports)
 
 		set, respond = self:IsBetter(transit, since, boots, swaps)
 
+		--@debug@
+		if self.debug then
+			local debugColour
+			local ourSince, ourBoots, ourSwaps = self:GetKnownCycle(transit)
+
+			if set ~= nil then
+				if set then
+					debugColour = GREEN
+				elseif respond then
+					debugColour = YELLOW
+				else
+					debugColour = WHITE
+				end
+			else
+				debugColour = RED
+			end
+
+			if ourSince ~= nil then
+				ourSince = math.floor(ourSince*1000.0)/1000.0
+
+				if since ~= nil then
+					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
+						since.."|r (boots: "..boots..", swaps: "..swaps..") vs our "..
+						ourSince.." (boots: "..ourBoots..", swaps: "..ourSwaps..") ; diff: "..
+						math.floor((ourSince-since)*1000.0)/1000.0)
+				else
+					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
+						"nil|r vs our "..ourSince.." (boots: "..ourBoots..", swaps: "..ourSwaps..")")
+				end
+			else
+				if since ~= nil then
+					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
+						since.."|r (boots: "..boots..", swaps: "..swaps..") vs our nil")
+				else
+					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
+						"nil|r vs our nil")
+				end
+			end
+		end
+		--@end-debug@
+
 		if set ~= nil then
 			if set then
 				self:SetKnownCycle(transit, since, boots, swaps)
@@ -195,6 +254,7 @@ function Nauticus:ReceiveMessage_known(version, transports)
 	if next(requestList) then
 		self:DoRequest(5 + math.random() * 15)
 	elseif not requestVersion then
+		self:DebugMessage("received: known; no more to send")
 		self:CancelRequest()
 	end
 
@@ -275,6 +335,8 @@ function Nauticus:StringToKnown(transports)
 			else
 				trans_tab[transit] = {}
 			end
+		else
+			self:DebugMessage("unknown transit: "..transit)
 		end
 	end
 
@@ -293,6 +355,7 @@ function Nauticus:UpdateChannel(wait)
 
 	if not inChannel then
 		inChannel = true
+		--self:DebugMessage("distribution change")
 		self:CancelRequest()
 
 		for index, data in pairs(transports) do
@@ -303,6 +366,7 @@ function Nauticus:UpdateChannel(wait)
 
 		requestVersion = true
 		self:DoRequest(5 + math.random() * 15)
+		--self:DebugMessage("distrib: "..DEFAULT_CHANNEL)
 	end
 end
 

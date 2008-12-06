@@ -317,7 +317,7 @@ function Nauticus:ShowTooltip(transit)
 
 		end
 
-		if IsShiftKeyDown() then
+		if (self.debug and not IsShiftKeyDown()) or (not self.debug and IsShiftKeyDown()) then
 			tablet:AddLine("Metadata")
 				:Color(0.75, 0.75, 0.75, 1)
 
@@ -439,8 +439,8 @@ end
 
 function Nauticus:RemoveAllIcons()
 	for t = 1, #(transports), 1 do
-		NautAstrolabe:RemoveIconFromMinimap(getglobal("Naut_MiniMapIconButton"..t))
-		getglobal("Naut_WorldMapIconButton"..t):Hide()
+		NautAstrolabe:RemoveIconFromMinimap(transports[t].minimap_icon)
+		transports[t].worldmap_icon:Hide()
 	end
 end
 
@@ -502,7 +502,7 @@ end
 
 -- Titan stuff...
 -- don't go any further if Titan isn't loaded
-if not IsAddOnLoaded("Titan") then return; end
+if not IsAddOnLoaded("Titan") then Nauticus:DebugMessage("no titan"); return; end
 
 -- hook menu close
 local orig_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu

@@ -37,6 +37,8 @@ Nauticus.tempTextCount = 0
 
 Nauticus.requestList = {}
 
+Nauticus.debug = false
+
 -- local variables
 local oldx, oldy = 0, 0 -- old player coords
 local lastcheck_timeout = 30
@@ -64,6 +66,7 @@ local defaults = {
 	},
 	global = {
 		knownCycles = {},
+		debug = false,
 	},
 	char = {
 		activeTransit = -1,
@@ -230,6 +233,7 @@ local optionsSlash = { type = 'group', name = "Nauticus", args = {
 	filter = _options.filter,
 	alarm = _options.alarm,
 } }
+Nauticus.optionsSlash = optionsSlash
 
 
 local FILTER_NPC = {
@@ -261,7 +265,7 @@ local FILTER_NPC = {
 }
 
 local function ChatFilter_DataChannel(msg)
-	if strlower(arg9) == strlower(DEFAULT_CHANNEL) then
+	if strlower(arg9) == strlower(DEFAULT_CHANNEL) and not Nauticus.debug then
 		return true -- silence
 	end
 end
@@ -272,6 +276,7 @@ local function ChatFilter_CrewChat(msg)
 	if not filterChat then
 		return false
 	elseif FILTER_NPC[arg2] then
+		--Nauticus:DebugMessage(arg2.." yells: "..arg1)
 		return true -- silence
 	end
 end
@@ -311,6 +316,7 @@ function Nauticus:OnEnable()
 	self:UpdateChannel(10) -- wait 10 seconds before sending to any comms channels
 	self.currentZone = GetRealZoneText()
 	self.currentZoneTransports = self.transitZones[self.currentZone]
+	--self:DebugMessage("enabled: "..self.currentZone)
 	self:TransportSelectSetNone()
 end
 
@@ -519,6 +525,7 @@ function Nauticus:CheckTriggers_OnUpdate()
 					if 25.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
 						0, 0, transitData[transit].x[data.index], transitData[transit].y[data.index]) then
 
+						self:DebugMessage("near: "..transit)
 						self:SetTransport(self.lookupIndex[transit])
 						return
 					end
@@ -535,7 +542,27 @@ function Nauticus:SetKnownTime(transit, index, x, y, set)
 		(NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, ix, iy) /
 		NautAstrolabe:ComputeDistance(0, 0, transitData.x[index], transitData.y[index], 0, 0, ix, iy) )
 
+	--self:DebugMessage("extrapolate: "..extrapolate)
+
 	local sum_time = self:CalcTripCycleTimeByIndex(transit, index) + extrapolate
+
+	--@debug@
+	if self.debug then
+		if self:HasKnownCycle(transit) then
+			local old_time = self:GetKnownCycle(transit)
+			local oldCycle = math.fmod(old_time, rtts[transit])
+			local diff = oldCycle-sum_time
+			local drift = format("%0.6f", diff / ((old_time-sum_time) / rtts[transit]))
+			self.db.global.knownCycles[transit].drift = drift
+			self:DebugMessage(transit..", cycle time: "..sum_time
+				.." ; old: "..format("%0.3f", oldCycle)
+				.." ; diff: "..format("%0.3f", diff)
+				.." ; drift: "..drift)
+		else
+			self:DebugMessage(transit..", cycle time: "..sum_time)
+		end
+	end
+	--@end-debug@
 
 	if set then
 		self:SetKnownCycle(transit, sum_time, 0, 0)
@@ -569,6 +596,9 @@ end
 -- initialise saved variables and data
 function Nauticus:InitialiseConfig()
 
+	--self:DebugMessage("init config...")
+	self.debug = self.db.global.debug
+
 	if NauticusDB and NauticusDB.account and not self.db.global.uptime then
 		self.db.global.uptime = NauticusDB.account.uptime
 		self.db.global.timestamp = NauticusDB.account.timestamp
@@ -577,6 +607,8 @@ function Nauticus:InitialiseConfig()
 	end
 
 	if self.db.global.newerVersion then
+		--self:DebugMessage("new version: "..self.db.global.newerVersion.." vs our "..self.versionNum)
+
 		if self.db.global.newerVersion > self.versionNum then
 			DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..
 				L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."])
@@ -615,6 +647,8 @@ function Nauticus:InitialiseConfig()
 	if self.db.global.uptime then
 		-- calculate potential drift time in ms between sessions
 		local drift = (the_time - now) - (self.db.global.timestamp - self.db.global.uptime)
+		self:DebugMessage(format("boot drift: %0.3f", drift))
+
 		-- if more than 3 mins drift, that means reboot occured. we need to adjust ms timers
 		if math.abs(drift) > 180 then
 			local since
@@ -631,6 +665,8 @@ function Nauticus:InitialiseConfig()
 					end
 				end
 			end
+
+			self:DebugMessage("reboot must have occured")
 		end
 	end
 
@@ -641,7 +677,8 @@ function Nauticus:InitialiseConfig()
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
-	local j, oldX, oldY, oldOffset, oldDir, transport, transit, transit_data, liveData
+	local j, oldX, oldY, oldOffset, oldDir, transport, transit, transit_data, liveData,
+		texture_name, frame, texture
 
 	local miniIconSize = self.db.profile.miniIconSize * ICON_DEFAULT_SIZE
 	local worldIconSize = self.db.profile.worldIconSize * ICON_DEFAULT_SIZE
@@ -653,6 +690,11 @@ function Nauticus:InitialiseConfig()
 	transitData = self.transitData
 	liveData = self.liveData
 	zonings = self.zonings
+
+	frame = CreateFrame("Frame", "Naut_MiniMapFrame", Minimap)
+	frame:EnableMouse(true)
+	frame = CreateFrame("Frame", "Naut_WorldMapFrame", WorldMapDetailFrame)
+	frame:EnableMouse(true)
 
 	for t = 1, #(transports), 1 do
 		oldX, oldY, oldOffset, oldDir = 0, 0, 0, 0
@@ -706,20 +748,30 @@ function Nauticus:InitialiseConfig()
 
 		liveData[transit] = { cycle = 0, index = 1, }
 
-		transport.minimap_icon, transport.worldmap_icon =
-			getglobal("Naut_MiniMapIconButton"..t),
-			getglobal("Naut_WorldMapIconButton"..t)
+		texture_name = ARTWORK_PATH.."MapIcon_"..transport.ship_type
+		transport.texture_name = texture_name
 
-		transport.minimap_texture, transport.worldmap_texture =
-			getglobal("Naut_MiniMapIconButton"..t.."Texture"),
-			getglobal("Naut_WorldMapIconButton"..t.."Texture")
+		frame = CreateFrame("Button", nil, Naut_MiniMapFrame, "Naut_MiniMapIconButton")
+		transport.minimap_icon = frame
+		frame:SetHeight(miniIconSize)
+		frame:SetWidth(miniIconSize)
+		texture = frame:CreateTexture(nil, "ARTWORK")
+		frame.texture = texture
+		transport.minimap_texture = texture
+		texture:SetTexture(texture_name)
+		texture:SetAllPoints(frame)
+		frame:SetID(t)
 
-		transport.texture_name = ARTWORK_PATH.."MapIcon_"..transport.ship_type
-
-		transport.minimap_icon:SetHeight(miniIconSize)
-		transport.minimap_icon:SetWidth(miniIconSize)
-		transport.worldmap_icon:SetHeight(worldIconSize)
-		transport.worldmap_icon:SetWidth(worldIconSize)
+		frame = CreateFrame("Button", nil, Naut_WorldMapFrame, "Naut_WorldMapIconButton")
+		transport.worldmap_icon = frame
+		frame:SetHeight(worldIconSize)
+		frame:SetWidth(worldIconSize)
+		texture = frame:CreateTexture(nil, "ARTWORK")
+		frame.texture = texture
+		transport.worldmap_texture = texture
+		texture:SetTexture(texture_name)
+		texture:SetAllPoints(frame)
+		frame:SetID(t)
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)
@@ -732,6 +784,7 @@ function Nauticus:PLAYER_ENTERING_WORLD()
 	if GetRealZoneText() ~= "" then
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 		self.currentZoneTransports = self.transitZones[GetRealZoneText()]
+		--self:DebugMessage("enter: "..GetRealZoneText())
 	end
 end
 
@@ -743,6 +796,7 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 	if not loopback and self.currentZone == GetRealZoneText() then
 		zoneChanged = self:ScheduleTimer("ZONE_CHANGED_NEW_AREA", 1, true)
 		return
+		--self:DebugMessage("zoned: "..self.currentZone)
 	end
 
 	self.currentZone = GetRealZoneText()
@@ -777,6 +831,7 @@ function Nauticus:GetKnownCycle(transport)
 end
 
 function Nauticus:SetKnownCycle(transport, since, boots, swaps)
+	if self.db.global.freeze then return; end
 	local knownCycle = self.db.global.knownCycles[transport]
 	if not knownCycle then
 		knownCycle = {}
@@ -806,6 +861,16 @@ function Nauticus:GetArgs(message, separator)
 	end
 
 	return args
+end
+
+local lastDebug = GetTime()
+
+function Nauticus:DebugMessage(msg)
+	if self.debug then
+		local now = GetTime()
+		ChatFrame4:AddMessage(format("[Naut] ["..YELLOW.."%0.3f|r]: %s", now-lastDebug, msg))
+		lastDebug = now
+	end
 end
 
 local texCoordCache = { LLx = {}, LLy = {}, URx = {}, URy = {}, }
