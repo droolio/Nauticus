@@ -3,7 +3,6 @@
 local ARROW = " ‹–› " -- ascii 139, 150, 155
 
 local Nauticus = Nauticus
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
 Nauticus.transports = {
@@ -64,7 +63,7 @@ faction = "Alliance",
 },
 [7] = {
 vessel_name = L["The Moonspray"],
-ship_type = "BoatNE",
+ship_type = "Boat_NE",
 name = L["Teldrassil"]..ARROW..L["Darkshore"],
 short_name = L["RTV"]..ARROW..L["Aub"],
 label = "rtv2ds",
@@ -72,7 +71,7 @@ faction = "Alliance",
 },
 [8] = {
 vessel_name = L["Feathermoon Ferry"],
-ship_type = "BoatNE",
+ship_type = "Boat_NE",
 name = L["Sardor Isle"]..ARROW..L["Feralas"],
 short_name = L["FMS"]..ARROW..L["Fer"],
 label = "fms2fer",
@@ -80,7 +79,7 @@ faction = "Alliance",
 },
 [9] = {
 vessel_name = L["Elune's Blessing"],
-ship_type = "BoatNE",
+ship_type = "Boat_NE",
 name = L["Azuremyst Isle"]..ARROW..L["Darkshore"],
 short_name = L["Exo"]..ARROW..L["Aub"],
 label = "exo2aub",
@@ -88,7 +87,7 @@ faction = "Alliance",
 },
 [10] = {
 vessel_name = L["The Mighty Wind"],
-ship_type = "Zeppelin",
+ship_type = "Zeppelin_Horde",
 name = L["Borean Tundra"]..ARROW..L["Durotar"],
 short_name = L["War"]..ARROW..L["Org"],
 label = "war2org",
@@ -96,7 +95,7 @@ faction = "Horde",
 },
 [11] = {
 vessel_name = L["Cloudkisser"],
-ship_type = "Zeppelin",
+ship_type = "Zeppelin_Horde",
 name = L["Howling Fjord"]..ARROW..L["Tirisfal Glades"],
 short_name = L["Ven"]..ARROW..L["UC"],
 label = "ven2uc",
@@ -104,7 +103,7 @@ faction = "Horde",
 },
 [12] = {
 vessel_name = L["Walker of Waves"],
-ship_type = "BoatNE",
+ship_type = "Turtle",
 name = L["Borean Tundra"]..ARROW..L["Dragonblight"],
 short_name = L["Unu"]..ARROW..L["Moa"],
 label = "unu2moa",
@@ -112,7 +111,7 @@ faction = "Neutral",
 },
 [13] = {
 vessel_name = L["Green Island"],
-ship_type = "BoatNE",
+ship_type = "Turtle",
 name = L["Howling Fjord"]..ARROW..L["Dragonblight"],
 short_name = L["Kam"]..ARROW..L["Moa"],
 label = "kam2moa",
@@ -120,7 +119,7 @@ faction = "Neutral",
 },
 [14] = {
 vessel_name = L["The Kraken"],
-ship_type = "Boat",
+ship_type = "Icebreaker",
 name = L["Stormwind City"]..ARROW..L["Borean Tundra"],
 short_name = L["SC"]..ARROW..L["VK"],
 label = "sc2vk",
@@ -128,7 +127,7 @@ faction = "Alliance",
 },
 [15] = {
 vessel_name = L["Northspear"],
-ship_type = "Boat",
+ship_type = "Icebreaker",
 name = L["Howling Fjord"]..ARROW..L["Wetlands"],
 short_name = L["VG"]..ARROW..L["MH"],
 label = "vg2mh",

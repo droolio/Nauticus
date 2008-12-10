@@ -16,12 +16,10 @@ local ARTWORK_LOGO = ARTWORK_PATH.."NauticusLogo"
 local ARTWORK_ALARM = "Interface\\Icons\\INV_Misc_PocketWatch_02"
 
 local Nauticus = Nauticus
-
+local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 local dataobj = ldb:NewDataObject("Nauticus", { type = "data source", text = "Nauticus", icon = ARTWORK_LOGO } )
 Nauticus.dataobj = dataobj
-
-local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
 local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
 	position = { point = "CENTER", x = 0, y = 0 },
@@ -37,27 +35,9 @@ local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
 } )
 tablet:SetFrameLevel(10)
 
-local NautAstrolabe = DongleStub("Astrolabe-0.4")
-
 local rtts, platforms, transports = Nauticus.rtts, Nauticus.platforms, Nauticus.transports
 local iconTooltip, barTooltipFrame
 
-
-function Nauticus:IsFactionSpecific()
-    return self.db.profile.factionSpecific
-end
-
-function Nauticus:ToggleFaction()
-    self.db.profile.factionSpecific = not self.db.profile.factionSpecific
-end
-
-function Nauticus:IsZoneSpecific()
-    return self.db.profile.zoneSpecific
-end
-
-function Nauticus:ToggleZone()
-    self.db.profile.zoneSpecific = not self.db.profile.zoneSpecific
-end
 
 function Nauticus:GetButtonIconText()
 	return
@@ -68,7 +48,7 @@ end
 function Nauticus:IsRouteShown(i)
 	local addtrans = false
 
-	if self:IsFactionSpecific() then
+	if self.db.profile.factionSpecific then
 		if transports[i].faction == UnitFactionGroup("player") or
 			transports[i].faction == "Neutral" then
 
@@ -78,7 +58,7 @@ function Nauticus:IsRouteShown(i)
 		addtrans = true
 	end
 
-	if addtrans and self:IsZoneSpecific() then
+	if addtrans and self.db.profile.zoneSpecific then
 		if not string.find(string.lower(transports[i].name),
 			string.lower(GetRealZoneText())) then
 
@@ -94,14 +74,7 @@ function Nauticus:Button_OnClick()
 	if IsAltKeyDown() then
 		if self:HasKnownCycle(self.activeTransit) then
 			self:ToggleAlarm()
-
-			-- set temporary button text so you know what's happening
-			if self:IsAlarmSet() then
-				self.tempText = "Alarm "..RED.."ON"
-			else
-				self.tempText = "Alarm OFF"
-			end
-
+			self.tempText = "Alarm "..(self:IsAlarmSet() and RED..L["ON"] or GREEN..L["OFF"])
 			self.tempTextCount = 2
 			self:UpdateDisplay()
 		end
@@ -164,10 +137,10 @@ function Nauticus:TransportSelectInitialise(frame, level)
 		AddLine(
 			L["Show only transports for your faction"], -- text
 			function() -- func
-				Nauticus:ToggleFaction()
+				Nauticus.db.profile.factionSpecific = not Nauticus.db.profile.factionSpecific
 				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 			end,
-			self:IsFactionSpecific(), -- checked?
+			self.db.profile.factionSpecific, -- checked?
 			nil, -- value
 			L["Show only transports for your faction"], -- tooltipTitle
 			L["Shows only neutral and transports specific to your faction."] -- tooltipText
@@ -176,10 +149,10 @@ function Nauticus:TransportSelectInitialise(frame, level)
 		AddLine(
 			L["Show only transports in your current zone"], -- text
 			function() -- func
-				Nauticus:ToggleZone()
+				Nauticus.db.profile.zoneSpecific = not Nauticus.db.profile.zoneSpecific
 				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 			end,
-			self:IsZoneSpecific(), -- checked?
+			self.db.profile.zoneSpecific, -- checked?
 			nil, -- value
 			L["Show only transports in your current zone"], -- tooltipTitle
 			L["Shows only transports in your current zone."] -- tooltipText
@@ -274,7 +247,6 @@ function Nauticus:ShowTooltip(transit)
 
 	if has then
 		local plat_time, formatted_time, depOrArr, r,g,b
-
 		local liveData = self.liveData[transit]
 		local cycle, platform = liveData.cycle, liveData.index
 
@@ -434,13 +406,6 @@ function Nauticus:UpdateDisplay()
 		dataobj.OnEnter(iconTooltip)
 	else
 		self:MapIconButtonMouseEnter(iconTooltip)
-	end
-end
-
-function Nauticus:RemoveAllIcons()
-	for t = 1, #(transports), 1 do
-		NautAstrolabe:RemoveIconFromMinimap(transports[t].minimap_icon)
-		transports[t].worldmap_icon:Hide()
 	end
 end
 

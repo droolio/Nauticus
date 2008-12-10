@@ -21,15 +21,12 @@ local ICON_DEFAULT_SIZE = 18
 
 Nauticus = LibStub("AceAddon-3.0"):NewAddon("Nauticus", "AceEvent-3.0", "AceTimer-3.0")
 local Nauticus = Nauticus
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
-local NautAstrolabe = DongleStub("Astrolabe-0.4")
+local Astrolabe = DongleStub("Astrolabe-0.4")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionStr = "3.0.3" -- for display
 Nauticus.versionNum = 303 -- for comparison
-
 Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
@@ -50,7 +47,7 @@ local alarmCountdown = 0
 
 local rtts, platforms, triggers, transports, transitData, zonings
 local GetTexCoord, formattedTimeCache
-local filterChat, autoSelect
+local filterChat, autoSelect, showMiniIcons, worldIconSize
 
 local defaults = {
 	profile = {
@@ -70,25 +67,46 @@ local defaults = {
 	},
 	char = {
 		activeTransit = -1,
-		showIcons = true,
+		showMiniIcons = true,
+		showWorldIcons = true,
 		autoSelect = true,
 	},
 }
 
 local _options = {
-	iconshow = {
+	showminimapicon = {
 		type = 'toggle',
-		name = L["Show icons"],
-		desc = L["Toggle on/off map icons."],
+		name = "Show Mini-Map icons",
+		desc = "Toggle the Mini-Map icons.",
 		order = 600,
 		get = function()
-			return Nauticus.db.char.showIcons
+			return Nauticus.db.char.showMiniIcons
 		end,
 		set = function(info, val)
-			Nauticus.db.char.showIcons = val
-			Nauticus.showIcons = val
+			Nauticus.db.char.showMiniIcons = val
+			showMiniIcons = val
 			if not val then
-				Nauticus:RemoveAllIcons()
+				for t = 1, #(transports), 1 do
+					Astrolabe:RemoveIconFromMinimap(transports[t].minimap_icon)
+				end
+			end
+		end,
+	},
+	showworldmapicon = {
+		type = 'toggle',
+		name = "Show World Map icons",
+		desc = "Toggle the World Map icons.",
+		order = 650,
+		get = function()
+			return Nauticus.db.char.showWorldIcons
+		end,
+		set = function(info, val)
+			Nauticus.db.char.showWorldIcons = val
+			showWorldIcons = val
+			if not val then
+				for t = 1, #(transports), 1 do
+					transports[t].worldmap_icon:Hide()
+				end
 			end
 		end,
 	},
@@ -212,7 +230,8 @@ local options = { type = "group", args = {
 			},
 			iconminisize = _options.iconminisize,
 			iconworldsize = _options.iconworldsize,
-			iconshow = _options.iconshow,
+			showminimapicon = _options.showminimapicon,
+			showworldmapicon = _options.showworldmapicon,
 		},
 	},
 } }
@@ -223,7 +242,8 @@ local optionsSlash = { type = 'group', name = "Nauticus", args = {
 		desc = L["Icon options."],
 		order = 399,
 		args = {
-			show = _options.iconshow,
+			minishow = _options.showminimapicon,
+			worldshow = _options.showworldmapicon,
 			minisize = _options.iconminisize,
 			worldsize = _options.iconworldsize,
 		},
@@ -304,8 +324,8 @@ function Nauticus:OnEnable()
 	self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-	local c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
-	if x then oldx, oldy = NautAstrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0); end
+	local c, z, x, y = Astrolabe:GetCurrentPlayerPosition()
+	if x then oldx, oldy = Astrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0); end
 
 	self:ScheduleRepeatingTimer("DrawMapIcons", 0.2) -- every 1/5th of a second
 	self:ScheduleRepeatingTimer("Clock_OnUpdate", 1) -- every second (clock tick)
@@ -321,7 +341,10 @@ function Nauticus:OnEnable()
 end
 
 function Nauticus:OnDisable()
-	self:RemoveAllIcons()
+	for t = 1, #(transports), 1 do
+		Astrolabe:RemoveIconFromMinimap(transports[t].minimap_icon)
+		transports[t].worldmap_icon:Hide()
+	end
 end
 
 function Nauticus:DrawMapIcons()
@@ -329,7 +352,7 @@ function Nauticus:DrawMapIcons()
 	local transport, transit, liveData, cycle, platform, offsets, currentX, currentY, angle,
 		isZoning, isZoneInteresting, buttonMini, buttonWorld
 
-	local isWorldMapVisible = NautAstrolabe.WorldMapVisible
+	local isWorldMapVisible = Astrolabe.WorldMapVisible
 
 	for t = 1, #(transports), 1 do
 		transport = transports[t]
@@ -355,7 +378,7 @@ function Nauticus:DrawMapIcons()
 
 			liveData.cycle, liveData.index = cycle, platform
 
-			if self.showIcons then
+			if showMiniIcons or showWorldIcons then
 				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit]
 				buttonMini, buttonWorld = transport.minimap_icon, transport.worldmap_icon
 
@@ -363,25 +386,23 @@ function Nauticus:DrawMapIcons()
 					currentX, currentY, angle, isZoning = self:CalcTripPosition(transit, cycle, platform)
 
 					if currentX and currentY then
-						if isWorldMapVisible then
+						if isWorldMapVisible and showWorldIcons then
 							if isZoning ~= transport.status then
 								transport.worldmap_texture:SetTexture(isZoning and ARTWORK_ZONING or transport.texture_name)
 								transport.status = isZoning
 							end
-
-							NautAstrolabe:PlaceIconOnWorldMap(WorldMapDetailFrame, buttonWorld, 0, 0, currentX, currentY)
+							Astrolabe:PlaceIconOnWorldMap(WorldMapDetailFrame, buttonWorld, 0, 0, currentX, currentY)
 							transport.worldmap_texture:SetTexCoord(GetTexCoord(angle))
-
 						elseif buttonWorld:IsVisible() then
-							NautAstrolabe:RemoveIconFromMinimap(buttonWorld)
+							Astrolabe:RemoveIconFromMinimap(buttonWorld)
 						end
 
-						if isZoneInteresting then
-							NautAstrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, currentX, currentY)
+						if isZoneInteresting and showMiniIcons then
+							Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, currentX, currentY)
 							transport.minimap_texture:SetTexCoord(GetTexCoord(angle-math.deg(MiniMapCompassRing:GetFacing())))
-							buttonMini:SetAlpha(NautAstrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
+							buttonMini:SetAlpha(Astrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
 						elseif buttonMini:IsVisible() then
-							NautAstrolabe:RemoveIconFromMinimap(buttonMini)
+							Astrolabe:RemoveIconFromMinimap(buttonMini)
 						end
 					end
 				elseif buttonMini:IsVisible() then
@@ -475,12 +496,12 @@ function Nauticus:CheckTriggers_OnUpdate()
 
 	if not self.currentZoneTransports or self.currentZoneTransports.virtual then return; end
 
-	c, z, x, y = NautAstrolabe:GetCurrentPlayerPosition()
+	c, z, x, y = Astrolabe:GetCurrentPlayerPosition()
 	if not x then return; end
-	x, y = NautAstrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0)
+	x, y = Astrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0)
 	if not x then return; end
 
-	dist = NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy)
+	dist = Astrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy)
 	oldx, oldy = x, y
 
 	-- have we moved by at least 6.16 game yards since the last check? this equates to >~110% movement speed
@@ -493,7 +514,7 @@ function Nauticus:CheckTriggers_OnUpdate()
 				post = 0 > index; if post then index = -index; end
 
 				-- within 20 game yards of trigger coords?
-				if 20.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
+				if 20.0 > Astrolabe:ComputeDistance(0, 0, x, y,
 					0, 0, transitData[transit].x[index], transitData[transit].y[index]) then
 
 					if post then
@@ -522,7 +543,7 @@ function Nauticus:CheckTriggers_OnUpdate()
 			if transit ~= self.activeTransit then
 				for i, data in pairs(platforms[transit]) do
 					-- within 25 game yards of platform coords?
-					if 25.0 > NautAstrolabe:ComputeDistance(0, 0, x, y,
+					if 25.0 > Astrolabe:ComputeDistance(0, 0, x, y,
 						0, 0, transitData[transit].x[data.index], transitData[transit].y[data.index]) then
 
 						self:DebugMessage("near: "..transit)
@@ -539,8 +560,8 @@ function Nauticus:SetKnownTime(transit, index, x, y, set)
 	local transitData = transitData[transit]
 	local ix, iy = transitData.x[index-1], transitData.y[index-1]
 	local extrapolate = -transitData.dt[index] + transitData.dt[index] *
-		(NautAstrolabe:ComputeDistance(0, 0, x, y, 0, 0, ix, iy) /
-		NautAstrolabe:ComputeDistance(0, 0, transitData.x[index], transitData.y[index], 0, 0, ix, iy) )
+		(Astrolabe:ComputeDistance(0, 0, x, y, 0, 0, ix, iy) /
+		Astrolabe:ComputeDistance(0, 0, transitData.x[index], transitData.y[index], 0, 0, ix, iy) )
 
 	--self:DebugMessage("extrapolate: "..extrapolate)
 
@@ -639,7 +660,8 @@ function Nauticus:InitialiseConfig()
 		self.db.char.activeTransit = -1
 	end
 
-	self.showIcons = self.db.char.showIcons
+	showMiniIcons = self.db.char.showMiniIcons
+	showWorldIcons = self.db.char.showWorldIcons
 
 	local now = GetTime()
 	local the_time = time()
@@ -801,7 +823,7 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 
 	self.currentZone = GetRealZoneText()
 	self.currentZoneTransports = self.transitZones[self.currentZone]
-	if self:IsZoneSpecific() then self:RefreshMenu(); end
+	if self.db.profile.zoneSpecific then self:RefreshMenu(); end
 end
 
 local last_map_update = 0
@@ -814,8 +836,8 @@ end
 function Nauticus:ToggleAlarm()
 	alarmSet = not alarmSet
 	if not alarmSet then alarmDinged = false end
-	local is; if alarmSet then is = RED..L["ON"] else is = GREEN..L["OFF"] end
-	DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..L["Alarm is now: "]..is.."|r")
+	DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..
+		L["Alarm is now: "]..(alarmSet and RED..L["ON"] or GREEN..L["OFF"]).."|r")
 	PlaySound("AuctionWindowOpen")
 end
 
