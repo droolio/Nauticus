@@ -47,7 +47,7 @@ local alarmCountdown = 0
 
 local rtts, platforms, triggers, transports, transitData, zonings
 local GetTexCoord, formattedTimeCache
-local filterChat, autoSelect, showMiniIcons, worldIconSize
+local filterChat, autoSelect, showMiniIcons, worldIconSize, factionOnlyIcons
 
 local defaults = {
 	profile = {
@@ -59,6 +59,7 @@ local defaults = {
 		worldIconSize = 1.25,
 		showMiniIcons = true,
 		showWorldIcons = true,
+		factionOnlyIcons = false,
 		minimap = {
 			hide = true,
 		},
@@ -76,7 +77,7 @@ local defaults = {
 local _options = {
 	showminimapicon = {
 		type = 'toggle',
-		name = "Show Mini-Map icons",
+		name = "Show on Mini-Map",
 		desc = "Toggle the Mini-Map icons.",
 		order = 600,
 		get = function()
@@ -94,7 +95,7 @@ local _options = {
 	},
 	showworldmapicon = {
 		type = 'toggle',
-		name = "Show World Map icons",
+		name = "Show on World Map",
 		desc = "Toggle the World Map icons.",
 		order = 650,
 		get = function()
@@ -145,6 +146,19 @@ local _options = {
 		end,
 		isPercent = true,
 		min = .5, max = 2, step = .01,
+	},
+	factiononly = {
+		type = 'toggle',
+		name = "Faction only",
+		desc = "Hide transports of opposite faction from the map, showing only neutral and those specific to your faction.",
+		order = 675,
+		get = function()
+			return Nauticus.db.profile.factionOnlyIcons
+		end,
+		set = function(info, val)
+			Nauticus.db.profile.factionOnlyIcons = val
+			factionOnlyIcons = val
+		end,
 	},
 	autoselect = {
 		type = 'toggle',
@@ -232,6 +246,7 @@ local options = { type = "group", args = {
 			iconworldsize = _options.iconworldsize,
 			showminimapicon = _options.showminimapicon,
 			showworldmapicon = _options.showworldmapicon,
+			factiononly = _options.factiononly,
 		},
 	},
 } }
@@ -246,6 +261,7 @@ local optionsSlash = { type = 'group', name = "Nauticus", args = {
 			worldshow = _options.showworldmapicon,
 			minisize = _options.iconminisize,
 			worldsize = _options.iconworldsize,
+			faction = _options.factiononly,
 		},
 	},
 	minibutton = _options.minibutton,
@@ -303,6 +319,7 @@ end
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", ChatFilter_CrewChat)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", ChatFilter_CrewChat)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_EMOTE", ChatFilter_CrewChat)
 
 function Nauticus:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("Nauticus3DB", defaults)
@@ -352,9 +369,9 @@ end
 function Nauticus:DrawMapIcons()
 
 	local transport, transit, liveData, cycle, platform, offsets, currentX, currentY, angle,
-		isZoning, isZoneInteresting, buttonMini, buttonWorld
+		isZoning, isZoneInteresting, isFactionInteresting, buttonMini, buttonWorld
 
-	local isWorldMapVisible = NauticusWorldMapOverlay:IsVisible()
+	local isWorldMapVisible = Astrolabe.WorldMapVisible
 
 	for t = 1, #(transports), 1 do
 		transport = transports[t]
@@ -382,13 +399,14 @@ function Nauticus:DrawMapIcons()
 
 			if showMiniIcons or showWorldIcons then
 				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit]
+				isFactionInteresting = not factionOnlyIcons or transport.faction == UnitFactionGroup("player") or transport.faction == "Neutral"
 				buttonMini, buttonWorld = transport.minimap_icon, transport.worldmap_icon
 
 				if isZoneInteresting or isWorldMapVisible then
 					currentX, currentY, angle, isZoning = self:CalcTripPosition(transit, cycle, platform)
 
 					if currentX and currentY then
-						if isWorldMapVisible and showWorldIcons then
+						if isWorldMapVisible and showWorldIcons and isFactionInteresting then
 							if isZoning ~= transport.status then
 								transport.worldmap_texture:SetTexture(isZoning and ARTWORK_ZONING or transport.texture_name)
 								transport.status = isZoning
@@ -399,7 +417,7 @@ function Nauticus:DrawMapIcons()
 							Astrolabe:RemoveIconFromMinimap(buttonWorld)
 						end
 
-						if isZoneInteresting and showMiniIcons then
+						if isZoneInteresting and showMiniIcons and isFactionInteresting then
 							Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, currentX, currentY)
 							transport.minimap_texture:SetTexCoord(GetTexCoord(angle-math.deg(MiniMapCompassRing:GetFacing())))
 							buttonMini:SetAlpha(Astrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
@@ -664,6 +682,7 @@ function Nauticus:InitialiseConfig()
 
 	showMiniIcons = self.db.profile.showMiniIcons
 	showWorldIcons = self.db.profile.showWorldIcons
+	factionOnlyIcons = self.db.profile.factionOnlyIcons
 
 	local now = GetTime()
 	local the_time = time()
@@ -716,6 +735,7 @@ function Nauticus:InitialiseConfig()
 	zonings = self.zonings
 
 	local worldMapOverlay = CreateFrame("Frame", "NauticusWorldMapOverlay", WorldMapButton)
+	tinsert(WorldMapDisplayFrames, worldMapOverlay)
 
 	for t = 1, #(transports), 1 do
 		oldX, oldY, oldOffset, oldDir = 0, 0, 0, 0
@@ -829,10 +849,7 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 	if self.db.profile.zoneSpecific then self:RefreshMenu(); end
 end
 
-local last_map_update = 0
 function Nauticus:WORLD_MAP_UPDATE()
-	if 0.2 > GetTime()-last_map_update then return; end
-	last_map_update = GetTime()
 	self:DrawMapIcons()
 end
 
