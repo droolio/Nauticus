@@ -39,4 +39,3 @@ NautCore.lua
 data.lua
 NautComms.lua
 NautUI.lua
-Nauticus.xml

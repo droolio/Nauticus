@@ -57,6 +57,8 @@ local defaults = {
 		alarmOffset = 20,
 		miniIconSize = 1,
 		worldIconSize = 1.25,
+		showMiniIcons = true,
+		showWorldIcons = true,
 		minimap = {
 			hide = true,
 		},
@@ -67,8 +69,6 @@ local defaults = {
 	},
 	char = {
 		activeTransit = -1,
-		showMiniIcons = true,
-		showWorldIcons = true,
 		autoSelect = true,
 	},
 }
@@ -80,10 +80,10 @@ local _options = {
 		desc = "Toggle the Mini-Map icons.",
 		order = 600,
 		get = function()
-			return Nauticus.db.char.showMiniIcons
+			return Nauticus.db.profile.showMiniIcons
 		end,
 		set = function(info, val)
-			Nauticus.db.char.showMiniIcons = val
+			Nauticus.db.profile.showMiniIcons = val
 			showMiniIcons = val
 			if not val then
 				for t = 1, #(transports), 1 do
@@ -98,10 +98,10 @@ local _options = {
 		desc = "Toggle the World Map icons.",
 		order = 650,
 		get = function()
-			return Nauticus.db.char.showWorldIcons
+			return Nauticus.db.profile.showWorldIcons
 		end,
 		set = function(info, val)
-			Nauticus.db.char.showWorldIcons = val
+			Nauticus.db.profile.showWorldIcons = val
 			showWorldIcons = val
 			if not val then
 				for t = 1, #(transports), 1 do
@@ -312,8 +312,10 @@ function Nauticus:OnInitialize()
 	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Nauticus", nil, nil, "GUI")
 	ldbicon:Register("Nauticus", self.dataobj, self.db.profile.minimap)
 
-	rtts, platforms, transports =
-		self.rtts, self.platforms, self.transports
+	rtts, platforms, transports = self.rtts, self.platforms, self.transports
+
+	local frame = CreateFrame("Frame", "Naut_TransportSelectFrame", nil, "UIDropDownMenuTemplate")
+	UIDropDownMenu_Initialize(frame, function(frame, level) Nauticus:TransportSelectInitialise(frame, level); end, "MENU")
 
 	self:InitialiseConfig()
 end
@@ -352,7 +354,7 @@ function Nauticus:DrawMapIcons()
 	local transport, transit, liveData, cycle, platform, offsets, currentX, currentY, angle,
 		isZoning, isZoneInteresting, buttonMini, buttonWorld
 
-	local isWorldMapVisible = Astrolabe.WorldMapVisible
+	local isWorldMapVisible = NauticusWorldMapOverlay:IsVisible()
 
 	for t = 1, #(transports), 1 do
 		transport = transports[t]
@@ -391,7 +393,7 @@ function Nauticus:DrawMapIcons()
 								transport.worldmap_texture:SetTexture(isZoning and ARTWORK_ZONING or transport.texture_name)
 								transport.status = isZoning
 							end
-							Astrolabe:PlaceIconOnWorldMap(WorldMapDetailFrame, buttonWorld, 0, 0, currentX, currentY)
+							Astrolabe:PlaceIconOnWorldMap(WorldMapButton, buttonWorld, 0, 0, currentX, currentY)
 							transport.worldmap_texture:SetTexCoord(GetTexCoord(angle))
 						elseif buttonWorld:IsVisible() then
 							Astrolabe:RemoveIconFromMinimap(buttonWorld)
@@ -660,8 +662,8 @@ function Nauticus:InitialiseConfig()
 		self.db.char.activeTransit = -1
 	end
 
-	showMiniIcons = self.db.char.showMiniIcons
-	showWorldIcons = self.db.char.showWorldIcons
+	showMiniIcons = self.db.profile.showMiniIcons
+	showWorldIcons = self.db.profile.showWorldIcons
 
 	local now = GetTime()
 	local the_time = time()
@@ -713,10 +715,7 @@ function Nauticus:InitialiseConfig()
 	liveData = self.liveData
 	zonings = self.zonings
 
-	frame = CreateFrame("Frame", "Naut_MiniMapFrame", Minimap)
-	frame:EnableMouse(true)
-	frame = CreateFrame("Frame", "Naut_WorldMapFrame", WorldMapDetailFrame)
-	frame:EnableMouse(true)
+	local worldMapOverlay = CreateFrame("Frame", "NauticusWorldMapOverlay", WorldMapButton)
 
 	for t = 1, #(transports), 1 do
 		oldX, oldY, oldOffset, oldDir = 0, 0, 0, 0
@@ -773,7 +772,7 @@ function Nauticus:InitialiseConfig()
 		texture_name = ARTWORK_PATH.."MapIcon_"..transport.ship_type
 		transport.texture_name = texture_name
 
-		frame = CreateFrame("Button", nil, Naut_MiniMapFrame, "Naut_MiniMapIconButton")
+		frame = CreateFrame("Button", "NauticusMiniIcon"..t, Minimap)
 		transport.minimap_icon = frame
 		frame:SetHeight(miniIconSize)
 		frame:SetWidth(miniIconSize)
@@ -782,9 +781,11 @@ function Nauticus:InitialiseConfig()
 		transport.minimap_texture = texture
 		texture:SetTexture(texture_name)
 		texture:SetAllPoints(frame)
+		frame:SetScript("OnEnter", function() Nauticus:MapIconButtonMouseEnter(this) end)
+		frame:SetScript("OnLeave", function() Nauticus:MapIconButtonMouseExit(this) end)
 		frame:SetID(t)
 
-		frame = CreateFrame("Button", nil, Naut_WorldMapFrame, "Naut_WorldMapIconButton")
+		frame = CreateFrame("Button", nil, worldMapOverlay)
 		transport.worldmap_icon = frame
 		frame:SetHeight(worldIconSize)
 		frame:SetWidth(worldIconSize)
@@ -793,6 +794,8 @@ function Nauticus:InitialiseConfig()
 		transport.worldmap_texture = texture
 		texture:SetTexture(texture_name)
 		texture:SetAllPoints(frame)
+		frame:SetScript("OnEnter", function() Nauticus:MapIconButtonMouseEnter(this) end)
+		frame:SetScript("OnLeave", function() Nauticus:MapIconButtonMouseExit(this) end)
 		frame:SetID(t)
 	end
 

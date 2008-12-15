@@ -14,6 +14,7 @@ local GREY    = "|cffbababa"
 local ARTWORK_PATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
 local ARTWORK_LOGO = ARTWORK_PATH.."NauticusLogo"
 local ARTWORK_ALARM = "Interface\\Icons\\INV_Misc_PocketWatch_02"
+local NUMBER_FONT = "Fonts\\ARIALN.TTF"
 
 local Nauticus = Nauticus
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
@@ -285,7 +286,7 @@ function Nauticus:ShowTooltip(transit)
 
 			tablet:AddLine(depOrArr..":", formatted_time, false, 10)
 				:Color(1, 0.82, 0, 1, r, g, b, 1)
-				:Font(nil, nil, nil, Naut_NumberFont:GetFont())
+				:Font(nil, nil, nil, NUMBER_FONT, 14, nil)
 
 		end
 
@@ -296,10 +297,10 @@ function Nauticus:ShowTooltip(transit)
 			local since, boots, swaps = self:GetKnownCycle(transit)
 
 			tablet:AddLine("Age:", SecondsToTime(since), false, 10)
-				:Font(nil, nil, nil, Naut_NumberFont:GetFont())
+				:Font(nil, nil, nil, NUMBER_FONT, 14, nil)
 
 			tablet:AddLine("Boots, Swaps:", boots..", "..swaps, false, 10)
-				:Font(nil, nil, nil, Naut_NumberFont:GetFont())
+				:Font(nil, nil, nil, NUMBER_FONT, 14, nil)
 		end
 
 	elseif has == false then
