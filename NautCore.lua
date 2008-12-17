@@ -366,7 +366,10 @@ function Nauticus:OnDisable()
 	end
 end
 
+local isDrawing
+
 function Nauticus:DrawMapIcons()
+	if isDrawing then return; end; isDrawing = true
 
 	local transport, transit, liveData, cycle, platform, offsets, currentX, currentY, angle,
 		isZoning, isZoneInteresting, isFactionInteresting, buttonMini, buttonWorld
@@ -432,6 +435,7 @@ function Nauticus:DrawMapIcons()
 		end
 	end
 
+	isDrawing = false
 end
 
 function Nauticus:Clock_OnUpdate()

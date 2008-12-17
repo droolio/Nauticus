@@ -34,17 +34,10 @@ local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
 	background = { 0, 0, 0, 1 },
 	min_height = 20,
 } )
-tablet:SetFrameLevel(10)
 
 local rtts, platforms, transports = Nauticus.rtts, Nauticus.platforms, Nauticus.transports
 local iconTooltip, barTooltipFrame
 
-
-function Nauticus:GetButtonIconText()
-	return
-		self:IsAlarmSet() and ARTWORK_ALARM or self.icon,
-		self.tempTextCount > 0 and self.tempText or self.lowestNameTime
-end
 
 function Nauticus:IsRouteShown(i)
 	local addtrans = false
@@ -400,7 +393,9 @@ function Nauticus:MapIconButtonMouseExit(frame)
 end
 
 function Nauticus:UpdateDisplay()
-	dataobj.icon, dataobj.text = self:GetButtonIconText()
+	dataobj.icon = self:IsAlarmSet() and ARTWORK_ALARM or self.icon or ARTWORK_LOGO
+	dataobj.text = self.tempTextCount > 0 and self.tempText or self.lowestNameTime
+
 	if not iconTooltip then return; end
 
 	if iconTooltip == barTooltipFrame then
@@ -434,6 +429,7 @@ function dataobj:OnEnter()
 	tablet:Attach(point, self, rel, 0, 0)
 	tablet.db.scale = 1
 	tablet:Clear():SetParent(GetParentFrame())
+	tablet:SetFrameLevel(tablet:GetParent():GetFrameLevel() + 1)
 
 	tablet:AddLine("Nauticus")
 		:Font(GameTooltipHeaderText:GetFont())

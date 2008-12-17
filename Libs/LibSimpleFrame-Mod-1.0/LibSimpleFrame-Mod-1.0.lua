@@ -251,7 +251,7 @@ local function SetPosition(self)
 	return self
 end
 
-local lock_modifiers = {LALT = true, RALT = true,}
+--[[local lock_modifiers = {LALT = true, RALT = true,}
 local function modifier_watcher(this, event, modifier, pressed)
 	if lock_modifiers[modifier] then
 		if pressed == 1 then
@@ -260,12 +260,12 @@ local function modifier_watcher(this, event, modifier, pressed)
 			this.core:Lock()
 		end
 	end
-end
+end]]
 local function Lock(self, toggle)
 	if toggle == false then return self:Unlock() end
 	self.db.lock = true
-	self:SetScript("OnEvent", modifier_watcher)
-	self:RegisterEvent("MODIFIER_STATE_CHANGED")
+	--self:SetScript("OnEvent", modifier_watcher)
+	--self:RegisterEvent("MODIFIER_STATE_CHANGED")
 	self:RegisterForDrag(nil)
 	self:EnableMouse(false)
 	self:StopMovingOrSizing()
@@ -284,7 +284,7 @@ end
 local function Unlock(self, temp)
 	if not temp then
 		self.db.lock = false
-		self:UnregisterEvent("MODIFIER_STATE_CHANGED")
+		--self:UnregisterEvent("MODIFIER_STATE_CHANGED")
 	end
 	self:RegisterForDrag("LeftButton")
 	self:EnableMouse(true)
