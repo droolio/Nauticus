@@ -738,6 +738,8 @@ function Nauticus:InitialiseConfig()
 	liveData = self.liveData
 	zonings = self.zonings
 
+	CreateFrame("Frame", "NauticusMiniMapOverlay", Minimap)
+
 	local worldMapOverlay = CreateFrame("Frame", "NauticusWorldMapOverlay", WorldMapButton)
 	tinsert(WorldMapDisplayFrames, worldMapOverlay)
 
@@ -796,7 +798,7 @@ function Nauticus:InitialiseConfig()
 		texture_name = ARTWORK_PATH.."MapIcon_"..transport.ship_type
 		transport.texture_name = texture_name
 
-		frame = CreateFrame("Button", "NauticusMiniIcon"..t, Minimap)
+		frame = CreateFrame("Button", "NauticusMiniIcon"..t, NauticusMiniMapOverlay)
 		transport.minimap_icon = frame
 		frame:SetHeight(miniIconSize)
 		frame:SetWidth(miniIconSize)
