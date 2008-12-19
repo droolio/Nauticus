@@ -3,45 +3,61 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "esES")
 if not L then return; end
 
+-- addon description
+L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
+
+-- slash commands (no spaces!)
+L["icons"] = true
+L["minishow"] = true
+L["worldshow"] = true
+L["minisize"] = true
+L["worldsize"] = true
+L["faction"] = true
+L["minibutton"] = true
+L["autoselect"] = true
+L["filter"] = true
+L["alarm"] = true
+
 -- options
 L["Options"] = "Opciones"
--- TO DO:
-L["Icons"] = true
-L["Icon options."] = true
-L["Show icons"] = true
-L["Toggle on/off map icons."] = true
+L["General Settings"] = true
+L["Map Icons"] = true
+L["Options for displaying transports as icons on the Mini-Map and World Map."] = true
+L["Show on Mini-Map"] = true
+L["Toggle display of icons on the Mini-Map."] = true
+L["Show on World Map"] = true
+L["Toggle display of icons on the World Map."] = true
 L["Mini-Map icon size"] = true
 L["Change the size of the Mini-Map icons."] = true
 L["World Map icon size"] = true
 L["Change the size of the World Map icons."] = true
+L["Faction only"] = true
+L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = true
 L["Auto select transport"] = true
 L["Automatically select nearest transport when standing at platform."] = true
 L["Crew chat filter"] = true
-L["Toggle on/off chat filter for yelling crew spam."] = true
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = true
 L["Alarm delay"] = true
 L["Change the alarm delay (in seconds)."] = true
 
 -- miscellaneous
 L["Arrival"] = "Llegada"
 L["Departure"] = "Salida"
-L["Arr"] = "Lle" -- abbreviation for Arrival
-L["Dep"] = "Sal" -- abbreviation for Departure
 L["Select Transport"] = "Seleccionar Transporte"
 L["Select None"] = "Seleccionar Ninguno"
 L["No Transport Selected"] = "Ningun Transporte Seleccionado"
 L["Not Available"] = "No Disponible"
 L["N/A"] = "N/D" -- abbreviation for Not Available
 L["Nauticus Options"] = "Opciones de Nauticus"
--- TO DO:
 L["Alarm is now: "] = true
 L["ON"] = true
 L["OFF"] = true
 L["Daily: "] = true
 
-L["Show only transports for your faction"] = "Mostrar sólo transportes para su facción"
-L["Shows only neutral and transports specific to your faction."] = "Muestra sólo neutrales y transportes específicos para su facción."
-L["Show only transports in your current zone"] = "Mostrar sólo transportes en su zona actual "
-L["Shows only transports in your current zone."] = "Muestra sólo transportes en su zona actual."
+L["List friendly faction only"] = "Mostrar sólo transportes para su facción" -- re do?
+L["Shows only neutral transports and those of your faction."] = "Muestra sólo neutrales y transportes específicos para su facción." -- re do?
+L["List relevant to current zone only"] = "Mostrar sólo transportes en su zona actual " -- re do?
+L["Shows only transports relevant to your current zone."] = "Muestra sólo transportes en su zona actual." -- re do?
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Consejo: Click para rotar transporte. Alt-Click para crear alarma"
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "¡Hay una nueva versión de Nauticus disponible! Por favor, visite http://drool.me.uk/naut."
 L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Usted ha estado utilizando una versión antigua de Nauticus por más de 10 días, las comunicaciones salientes serán ahora deshabilitadas."
@@ -137,7 +153,7 @@ L["Moa'ki Harbor"] = "Puerto Moa'ki"
 L["Kamagua"] = "Kamagua"
 L["Westguard Keep"] = "Fortaleza de la Guardia Oeste"
 
--- abbreviations; TO DO:
+-- abbreviations
 L["Org"] = true -- Orgrimmar
 L["UC"]  = true -- Undercity
 L["Exo"] = true -- The Exodar

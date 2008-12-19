@@ -3,28 +3,46 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "deDE")
 if not L then return; end
 
+-- addon description
+L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
+
+-- slash commands (no spaces!)
+L["icons"] = true
+L["minishow"] = true
+L["worldshow"] = true
+L["minisize"] = true
+L["worldsize"] = true
+L["faction"] = true
+L["minibutton"] = true
+L["autoselect"] = true
+L["filter"] = true
+L["alarm"] = true
+
 -- options
 L["Options"] = "Optionen"
-L["Icons"] = "Icons"
-L["Icon options."] = "Icon Optionen."
-L["Show icons"] = "Zeige Icons"
-L["Toggle on/off map icons."] = "Kartenicons ein-/ausschalten."
+L["General Settings"] = true
+L["Map Icons"] = true
+L["Options for displaying transports as icons on the Mini-Map and World Map."] = true
+L["Show on Mini-Map"] = true
+L["Toggle display of icons on the Mini-Map."] = true
+L["Show on World Map"] = true
+L["Toggle display of icons on the World Map."] = true
 L["Mini-Map icon size"] = "Minikarte Icongröße"
 L["Change the size of the Mini-Map icons."] = "Ändert die Größe der Minikarte Icons."
 L["World Map icon size"] = "Weltkarte Icongröße"
 L["Change the size of the World Map icons."] = "Ändert die Größe der Weltkarte Icons."
+L["Faction only"] = true
+L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = true
 L["Auto select transport"] = "Automatische Transportauswahl"
 L["Automatically select nearest transport when standing at platform."] = "Automatisch den nächstgelegenen Transport auswählen, wenn man auf einer Plattform steht."
 L["Crew chat filter"] = "Crewgesprächfilter"
-L["Toggle on/off chat filter for yelling crew spam."] = "Ein-/Ausschalten des Filters für die Gespräche der Crew."
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Ein-/Ausschalten des Filters für die Gespräche der Crew." -- re do
 L["Alarm delay"] = "Alarm Zeit"
 L["Change the alarm delay (in seconds)."] = "Ändert die Zeit ab, wann der Alarm vor dem Abflug ertönen soll (in Sekunden)."
 
 -- miscellaneous
 L["Arrival"] = "Ankunft"
 L["Departure"] = "Abfahrt"
-L["Arr"] = "Arr" -- abbreviation for Arrival
-L["Dep"] = "Dep" -- abbreviation for Departure
 L["Select Transport"] = "Route auswählen"
 L["Select None"] = "Nichts auswählen"
 L["No Transport Selected"] = "Keine Route ausgewählt"
@@ -36,10 +54,10 @@ L["ON"] = "An"
 L["OFF"] = "Aus"
 L["Daily: "] = "Täglich: "
 
-L["Show only transports for your faction"] = "Zeige nur Transportmittel deiner Fraktion"
-L["Shows only neutral and transports specific to your faction."] = "Zeigt nur neutrale und Transportmittel deiner Fraktion."
-L["Show only transports in your current zone"] = "Zeige nur Transportmittel der momentanen Zone"
-L["Shows only transports in your current zone."] = "Zeigt nur Transportmittel der momentanen Zone."
+L["List friendly faction only"] = "Zeige nur Transportmittel deiner Fraktion" -- re do?
+L["Shows only neutral transports and those of your faction."] = "Zeigt nur neutrale und Transportmittel deiner Fraktion." -- re do?
+L["List relevant to current zone only"] = "Zeige nur Transportmittel der momentanen Zone" -- re do?
+L["Shows only transports relevant to your current zone."] = "Zeigt nur Transportmittel der momentanen Zone." -- re do?
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Hinweis: Klick - Reiseroute auswählen. Alt-Klick - Alarm aktivieren."
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Neue Versionen findest Du bei http://drool.me.uk/naut."
 L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Sie haben eine veraltete Version von Nauticus mehr als 10 Tage verwendet, ausgehende Kommunikation wird deaktiviert."
@@ -88,7 +106,7 @@ L["Walker of Waves"] = "Wellenreiter"
 L["Green Island"] = "Grüne Insel"
 L["The Kraken"] = "Die Kraken"
 L["Northspear"] = "Nordspeer"
-L["Captured Zeppelin"] = "Captured Zeppelin"
+L["Captured Zeppelin"] = true -- to do
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "Orgrimmar"

@@ -3,28 +3,46 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "zhTW")
 if not L then return; end
 
+-- addon description
+L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
+
+-- slash commands (no spaces!)
+L["icons"] = true
+L["minishow"] = true
+L["worldshow"] = true
+L["minisize"] = true
+L["worldsize"] = true
+L["faction"] = true
+L["minibutton"] = true
+L["autoselect"] = true
+L["filter"] = true
+L["alarm"] = true
+
 -- options
 L["Options"] = "選項"
-L["Icons"] = "圖示"
-L["Icon options."] = "圖示選項。"
-L["Show icons"] = "顯示圖示"
-L["Toggle on/off map icons."] = "開啟/關閉 地圖圖示。"
+L["General Settings"] = true
+L["Map Icons"] = true
+L["Options for displaying transports as icons on the Mini-Map and World Map."] = true
+L["Show on Mini-Map"] = true
+L["Toggle display of icons on the Mini-Map."] = true
+L["Show on World Map"] = true
+L["Toggle display of icons on the World Map."] = true
 L["Mini-Map icon size"] = "小地圖圖示大小"
 L["Change the size of the Mini-Map icons."] = "變更小地圖圖示的大小。"
 L["World Map icon size"] = "世界地圖圖示大小"
 L["Change the size of the World Map icons."] = "變更世界地圖圖示大小。"
+L["Faction only"] = true
+L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = true
 L["Auto select transport"] = "自動選擇傳輸點"
 L["Automatically select nearest transport when standing at platform."] = "當你站在月台時自動選擇距你最近的傳輸點"
 L["Crew chat filter"] = "過濾工作人員喊話"
-L["Toggle on/off chat filter for yelling crew spam."] = "開啟/關閉 過濾工作人員喊話訊息。"
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "開啟/關閉 過濾工作人員喊話訊息。" -- re do
 L["Alarm delay"] = "警示延遲"
 L["Change the alarm delay (in seconds)."] = "變更警示延遲（秒）"
 
 -- miscellaneous
 L["Arrival"] = "抵達"
 L["Departure"] = "出發"
-L["Arr"] = "抵達" -- abbreviation for Arrival
-L["Dep"] = "出發" -- abbreviation for Departure
 L["Select Transport"] = "選擇路線"
 L["Select None"] = "選擇-無"
 L["No Transport Selected"] = "沒有選擇路線"
@@ -36,10 +54,10 @@ L["ON"] = "啟用"
 L["OFF"] = "關閉"
 L["Daily: "] = "每日: "
 
-L["Show only transports for your faction"] = "只顯示玩家陣營可用的運輸點"
-L["Shows only neutral and transports specific to your faction."] = "只顯示中立以及玩家陣營可用的傳輸點"
-L["Show only transports in your current zone"] = "只顯示你目前區域可用的傳輸點"
-L["Shows only transports in your current zone."] = "只顯示你目前區域可用的傳輸點"
+L["List friendly faction only"] = "只顯示玩家陣營可用的運輸點" -- re do?
+L["Shows only neutral transports and those of your faction."] = "只顯示中立以及玩家陣營可用的傳輸點" -- re do?
+L["List relevant to current zone only"] = "只顯示你目前區域可用的傳輸點" -- re do?
+L["Shows only transports relevant to your current zone."] = "只顯示你目前區域可用的傳輸點" -- re do?
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "提示: 左鍵：運輸週期 Alt+左鍵：設定鬧鈴"
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "有新版的 Nauticus 釋出！ 請訪問 http://drool.me.uk/naut."
 L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "你已使用的是舊版的 Nauticus 超過 10 天了，同步訊息輸出現在將會關閉。"

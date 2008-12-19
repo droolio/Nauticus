@@ -109,7 +109,11 @@ local function AddLine(text, func, checked, value, tooltipTitle, tooltipText)
 	info.text = text; info.func = func
 	if value then info.value = value; end
 	if checked then info.checked = true; end
-	if tooltipTitle then info.tooltipTitle = tooltipTitle; end
+	if tooltipTitle == true then
+		info.tooltipTitle = text
+	elseif tooltipTitle then
+		info.tooltipTitle = tooltipTitle
+	end
 	if tooltipText then info.tooltipText = tooltipText; end
 	UIDropDownMenu_AddButton(info)
 end
@@ -123,33 +127,32 @@ end
 function Nauticus:TransportSelectInitialise(frame, level)
 
 	if level == 1 then
-
 		local info = UIDropDownMenu_CreateInfo()
 		info.text = "Nauticus"; info.isTitle = 1
 		UIDropDownMenu_AddButton(info)
 
 		AddLine(
-			L["Show only transports for your faction"], -- text
+			L["List friendly faction only"], -- text
 			function() -- func
 				Nauticus.db.profile.factionSpecific = not Nauticus.db.profile.factionSpecific
 				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 			end,
 			self.db.profile.factionSpecific, -- checked?
 			nil, -- value
-			L["Show only transports for your faction"], -- tooltipTitle
-			L["Shows only neutral and transports specific to your faction."] -- tooltipText
+			true, -- tooltipTitle
+			L["Shows only neutral transports and those of your faction."] -- tooltipText
 		)
 
 		AddLine(
-			L["Show only transports in your current zone"], -- text
+			L["List relevant to current zone only"], -- text
 			function() -- func
 				Nauticus.db.profile.zoneSpecific = not Nauticus.db.profile.zoneSpecific
 				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 			end,
 			self.db.profile.zoneSpecific, -- checked?
 			nil, -- value
-			L["Show only transports in your current zone"], -- tooltipTitle
-			L["Shows only transports in your current zone."] -- tooltipText
+			true, -- tooltipTitle
+			L["Shows only transports relevant to your current zone."] -- tooltipText
 		)
 
 		AddSeparator()
@@ -162,7 +165,7 @@ function Nauticus:TransportSelectInitialise(frame, level)
 			end,
 			self.activeTransit == -1, -- checked?
 			0, -- value
-			GREY..L["Select None"]
+			true -- tooltipTitle
 		)
 
 		local textdesc
@@ -191,7 +194,7 @@ function Nauticus:TransportSelectInitialise(frame, level)
 					end,
 					transports[i].label == self.activeTransit, -- checked?
 					i, -- value
-					textdesc
+					true -- tooltipTitle
 				)
 			end
 		end
@@ -202,7 +205,6 @@ function Nauticus:TransportSelectInitialise(frame, level)
 			L["Options"], -- text
 			function() InterfaceOptionsFrame_OpenToCategory(self.optionsFrame); end -- func
 		)
-
 	end
 
 end

@@ -77,8 +77,8 @@ local defaults = {
 local _options = {
 	showminimapicon = {
 		type = 'toggle',
-		name = "Show on Mini-Map",
-		desc = "Toggle the Mini-Map icons.",
+		name = L["Show on Mini-Map"],
+		desc = L["Toggle display of icons on the Mini-Map."],
 		order = 600,
 		get = function()
 			return Nauticus.db.profile.showMiniIcons
@@ -95,8 +95,8 @@ local _options = {
 	},
 	showworldmapicon = {
 		type = 'toggle',
-		name = "Show on World Map",
-		desc = "Toggle the World Map icons.",
+		name = L["Show on World Map"],
+		desc = L["Toggle display of icons on the World Map."],
 		order = 650,
 		get = function()
 			return Nauticus.db.profile.showWorldIcons
@@ -149,8 +149,8 @@ local _options = {
 	},
 	factiononly = {
 		type = 'toggle',
-		name = "Faction only",
-		desc = "Hide transports of opposite faction from the map, showing only neutral and those specific to your faction.",
+		name = L["Faction only"],
+		desc = L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."],
 		order = 675,
 		get = function()
 			return Nauticus.db.profile.factionOnlyIcons
@@ -176,7 +176,7 @@ local _options = {
 	filter = {
 		type = 'toggle',
 		name = L["Crew chat filter"],
-		desc = L["Toggle on/off chat filter for yelling crew spam."],
+		desc = L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."],
 		order = 200,
 		get = function()
 			return Nauticus.db.profile.filterChat
@@ -225,12 +225,12 @@ local options = { type = "group", args = {
 		args = {
 			nautdesc = {
 				type = 'description',
-				name = "Track the precise location and arrival & departure times of boats and zeppelins.",
+				name = L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."].."\n",
 				order = 1,
 			},
 			header1 = {
 				type = 'header',
-				name = "General Settings",
+				name = L["General Settings"],
 				order = 99,
 			},
 			minibutton = _options.minibutton,
@@ -239,7 +239,12 @@ local options = { type = "group", args = {
 			alarm = _options.alarm,
 			header2 = {
 				type = 'header',
-				name = "Map Icons",
+				name = L["Map Icons"],
+				order = 398,
+			},
+			iconsdesc = {
+				type = 'description',
+				name = L["Options for displaying transports as icons on the Mini-Map and World Map."].."\n",
 				order = 399,
 			},
 			iconminisize = _options.iconminisize,
@@ -251,23 +256,23 @@ local options = { type = "group", args = {
 	},
 } }
 local optionsSlash = { type = 'group', name = "Nauticus", args = {
-	icons = {
+	[ L["icons"] ] = {
 		type = 'group',
-		name = L["Icons"],
-		desc = L["Icon options."],
+		name = L["Map Icons"],
+		desc = L["Options for displaying transports as icons on the Mini-Map and World Map."],
 		order = 399,
 		args = {
-			minishow = _options.showminimapicon,
-			worldshow = _options.showworldmapicon,
-			minisize = _options.iconminisize,
-			worldsize = _options.iconworldsize,
-			faction = _options.factiononly,
+			[ L["minishow"] ] = _options.showminimapicon,
+			[ L["worldshow"] ] = _options.showworldmapicon,
+			[ L["minisize"] ] = _options.iconminisize,
+			[ L["worldsize"] ] = _options.iconworldsize,
+			[ L["faction"] ] = _options.factiononly,
 		},
 	},
-	minibutton = _options.minibutton,
-	autoselect = _options.autoselect,
-	filter = _options.filter,
-	alarm = _options.alarm,
+	[ L["minibutton"] ] = _options.minibutton,
+	[ L["autoselect"] ] = _options.autoselect,
+	[ L["filter"] ] = _options.filter,
+	[ L["alarm"] ] = _options.alarm,
 } }
 Nauticus.optionsSlash = optionsSlash
 

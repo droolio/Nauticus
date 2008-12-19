@@ -2,28 +2,46 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "enUS", true)
 if not L then return; end
 
+-- addon description
+L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
+
+-- slash commands (no spaces!)
+L["icons"] = true
+L["minishow"] = true
+L["worldshow"] = true
+L["minisize"] = true
+L["worldsize"] = true
+L["faction"] = true
+L["minibutton"] = true
+L["autoselect"] = true
+L["filter"] = true
+L["alarm"] = true
+
 -- options
 L["Options"] = true
-L["Icons"] = true
-L["Icon options."] = true
-L["Show icons"] = true
-L["Toggle on/off map icons."] = true
+L["General Settings"] = true
+L["Map Icons"] = true
+L["Options for displaying transports as icons on the Mini-Map and World Map."] = true
+L["Show on Mini-Map"] = true
+L["Toggle display of icons on the Mini-Map."] = true
+L["Show on World Map"] = true
+L["Toggle display of icons on the World Map."] = true
 L["Mini-Map icon size"] = true
 L["Change the size of the Mini-Map icons."] = true
 L["World Map icon size"] = true
 L["Change the size of the World Map icons."] = true
+L["Faction only"] = true
+L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = true
 L["Auto select transport"] = true
 L["Automatically select nearest transport when standing at platform."] = true
 L["Crew chat filter"] = true
-L["Toggle on/off chat filter for yelling crew spam."] = true
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = true
 L["Alarm delay"] = true
 L["Change the alarm delay (in seconds)."] = true
 
 -- miscellaneous
 L["Arrival"] = true
 L["Departure"] = true
-L["Arr"] = true -- abbreviation for Arrival
-L["Dep"] = true -- abbreviation for Departure
 L["Select Transport"] = true
 L["Select None"] = true
 L["No Transport Selected"] = true
@@ -35,10 +53,10 @@ L["ON"] = true
 L["OFF"] = true
 L["Daily: "] = true
 
-L["Show only transports for your faction"] = true
-L["Shows only neutral and transports specific to your faction."] = true
-L["Show only transports in your current zone"] = true
-L["Shows only transports in your current zone."] = true
+L["List friendly faction only"] = true
+L["Shows only neutral transports and those of your faction."] = true
+L["List relevant to current zone only"] = true
+L["Shows only transports relevant to your current zone."] = true
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = true
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = true
 L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = true
