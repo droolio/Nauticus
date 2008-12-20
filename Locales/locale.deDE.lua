@@ -39,6 +39,8 @@ L["Crew chat filter"] = "Crewgesprächfilter"
 L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Ein-/Ausschalten des Filters für die Gespräche der Crew." -- re do
 L["Alarm delay"] = "Alarm Zeit"
 L["Change the alarm delay (in seconds)."] = "Ändert die Zeit ab, wann der Alarm vor dem Abflug ertönen soll (in Sekunden)."
+L["Mini-Map button"] = true -- to do
+L["Toggle the Mini-Map button."] = true -- to do
 
 -- miscellaneous
 L["Arrival"] = "Ankunft"

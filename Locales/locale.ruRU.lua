@@ -4,9 +4,10 @@ local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "ruRU")
 if not L then return; end
 
 -- addon description
-L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
+L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = "Следит за прибытием и отправлением кораблей и дирижаблей в Азероте и показывает их на миникарте и карте мира."
 
 -- slash commands (no spaces!)
+-- no localisation needed
 L["icons"] = true
 L["minishow"] = true
 L["worldshow"] = true
@@ -20,25 +21,27 @@ L["alarm"] = true
 
 -- options
 L["Options"] = "Настройки"
-L["General Settings"] = true
-L["Map Icons"] = true
-L["Options for displaying transports as icons on the Mini-Map and World Map."] = true
-L["Show on Mini-Map"] = true
-L["Toggle display of icons on the Mini-Map."] = true
-L["Show on World Map"] = true
-L["Toggle display of icons on the World Map."] = true
+L["General Settings"] = "Основные настройки"
+L["Map Icons"] = "Отображение иконок"
+L["Options for displaying transports as icons on the Mini-Map and World Map."] = "Настройка отображения транспорта на миникарте и карте мира."
+L["Show on Mini-Map"] = "Показать на миникарте"
+L["Toggle display of icons on the Mini-Map."] = "Управляет отображением иконок на миникарте."
+L["Show on World Map"] = "Показать на карте мира"
+L["Toggle display of icons on the World Map."] = "Управляет отображением иконок на карте мира."
 L["Mini-Map icon size"] = "Размер иконок на миникарте"
 L["Change the size of the Mini-Map icons."] = "Изменение размера иконок на миникарте."
 L["World Map icon size"] = "Размер иконок на карте мира"
 L["Change the size of the World Map icons."] = "Изменение размера иконок на карте мира."
-L["Faction only"] = true
-L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = true
-L["Auto select transport"] = "Автоматически выбирать транспорт"
-L["Automatically select nearest transport when standing at platform."] = "Автоматически выбирать ближайший к платформе транспорт."
-L["Crew chat filter"] = "Чат фильтр речи экипажа"
-L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Включить/выключить отображение речи экипажа на транспорте." -- re do
+L["Faction only"] = "Своя фракция"
+L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = "Скрывает отображение транспорта противоположной фракции с карты и показывает только нейтральный транспорт и твоей фракции."
+L["Auto select transport"] = "Автовыбор транспорта"
+L["Automatically select nearest transport when standing at platform."] = "Автоматически выбирать транспорт ближайший к платформе, на которой стоишь."
+L["Crew chat filter"] = "Фильтр речи экипажа"
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Управление фильтром убирающим речь экипажа корабля и крики Хозяина дирижабля из окна чата." -- re do
 L["Alarm delay"] = "Задержка напоминалки"
 L["Change the alarm delay (in seconds)."] = "Изменение задержки напоминалки (в секундах)."
+L["Mini-Map button"] = "Кнопка миникарты" -- to do
+L["Toggle the Mini-Map button."] = "Управление кнопкой миникарты"
 
 -- miscellaneous
 L["Arrival"] = "Прибытие"
@@ -54,14 +57,14 @@ L["ON"] = "Вкл."
 L["OFF"] = "Выкл."
 L["Daily: "] = "Ежедневно: "
 
-L["List friendly faction only"] = "Показывать транспорт только для своей фракции" -- re do?
-L["Shows only neutral transports and those of your faction."] = "Будет отображаться нейтральный транспорт и своей фракции." -- re do?
-L["List relevant to current zone only"] = "Показывать транспорт только для текущей зоны" -- re do?
-L["Shows only transports relevant to your current zone."] = "Будет отображаться транспорт только для текущей зоны." -- re do?
-L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Хинт: Левый клик для циклического переключения. Alt-клик для включения напоминалки"
-L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Доступна новая версия Nauticus! Обновление здесь http://drool.me.uk/naut."
-L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Вы использовали старую версию Nauticus более 10 дней, ваши данные больше не будут передаваться другим пользователям Nauticus"
-L["Thank you for upgrading."] = "Спасибо, за обновление."
+L["List friendly faction only"] = "Список только для дружественных фракций" -- re do?
+L["Shows only neutral transports and those of your faction."] = "Показывать только нейтральный транспорт и своей фракции." -- re do?
+L["List relevant to current zone only"] = "Список релевантный текущей зоне" -- re do?
+L["Shows only transports relevant to your current zone."] = "Показывать только транспорт релевантный текущей зоне." -- re do?
+L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Хинт: Левый клик мыши для циклического переключения транспорта. Alt-клик для установки напоминалки."
+L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Доступна новая версия Nauticus! Забрать можно здесь http://drool.me.uk/naut."
+L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Вы использовали старую версию Nauticus более 10 дней, Ваши данные больше не будут передаваться другим пользователям Nauticus"
+L["Thank you for upgrading."] = "Спасибо, что не поленились обновить Nauticus."
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:

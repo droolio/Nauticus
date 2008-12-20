@@ -202,8 +202,8 @@ local _options = {
 	},
 	minibutton = {
 		type = 'toggle',
-		name = "Mini-Map button",
-		desc = "Toggle the Mini-Map button.",
+		name = L["Mini-Map button"],
+		desc = L["Toggle the Mini-Map button."],
 		order = 100,
 		get = function()
 			return not Nauticus.db.profile.minimap.hide

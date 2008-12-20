@@ -39,6 +39,8 @@ L["Crew chat filter"] = "过滤工作人员喊话"
 L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "开启/关闭 过滤工作人员喊话讯息。" -- re do
 L["Alarm delay"] = "警示延迟"
 L["Change the alarm delay (in seconds)."] = "变更警示延迟（秒）"
+L["Mini-Map button"] = true -- to do
+L["Toggle the Mini-Map button."] = true -- to do
 
 -- miscellaneous
 L["Arrival"] = "到达"

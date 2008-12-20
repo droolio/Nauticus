@@ -38,6 +38,8 @@ L["Crew chat filter"] = true
 L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = true
 L["Alarm delay"] = true
 L["Change the alarm delay (in seconds)."] = true
+L["Mini-Map button"] = true
+L["Toggle the Mini-Map button."] = true
 
 -- miscellaneous
 L["Arrival"] = true
