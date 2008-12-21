@@ -13,14 +13,10 @@ local DEFAULT_CHANNEL = "NauticSync" -- do not change!
 local DATA_VERSION = 303 -- route calibration versioning
 
 local Nauticus = Nauticus
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
-local rtts, transports = Nauticus.rtts, Nauticus.transports
-
-local GetLag
-
-local request
+local transports = Nauticus.transports
+local GetLag, request
 local requestVersion = false
 
 
@@ -58,7 +54,6 @@ function Nauticus:DoRequest(wait)
 end
 
 function Nauticus:BroadcastTransportData()
-
 	local since, boots, swaps
 	local lag = GetLag()
 	local trans_str = ""
@@ -66,7 +61,7 @@ function Nauticus:BroadcastTransportData()
 
 	for transit in pairs(requestList) do
 		since, boots, swaps = self:GetKnownCycle(transit)
-		trans_str = trans_str..self.lookupIndex[transit]
+		trans_str = trans_str..self:GetTransportID(transit)
 
 		if since ~= nil then
 			trans_str = trans_str..":"..math.floor((since+lag)*1000.0+.5)
@@ -95,7 +90,6 @@ function Nauticus:BroadcastTransportData()
 	else
 		self:DebugMessage("nothing to tell")
 	end
-
 end
 
 function Nauticus:SendMessage(msg)
@@ -292,7 +286,7 @@ function Nauticus:IsBetter(transit, since, boots, swaps)
 					return false, true -- no set, respond
 				else
 					-- age difference; positive = better, negative = worse
-					local ageDiff = math.floor((ourSince - since) / rtts[transit] + .5)
+					local ageDiff = math.floor((ourSince - since) / self.rtts[transit] + .5)
 					local SET, RESPOND = true, true
 
 					--  0 = maybe better for us but response pointless

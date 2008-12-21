@@ -35,16 +35,17 @@ local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
 	min_height = 20,
 } )
 
-local rtts, platforms, transports = Nauticus.rtts, Nauticus.platforms, Nauticus.transports
+local transports = Nauticus.transports
 local iconTooltip, barTooltipFrame
 
 
-function Nauticus:IsRouteShown(i)
+function Nauticus:IsTransportListed(transport)
 	local addtrans = false
+	transport = self:GetTransport(transport)
 
 	if self.db.profile.factionSpecific then
-		if transports[i].faction == UnitFactionGroup("player") or
-			transports[i].faction == "Neutral" then
+		if transport.faction == UnitFactionGroup("player") or
+			transport.faction == "Neutral" then
 
 			addtrans = true
 		end
@@ -53,7 +54,7 @@ function Nauticus:IsRouteShown(i)
 	end
 
 	if addtrans and self.db.profile.zoneSpecific then
-		if not string.find(string.lower(transports[i].name),
+		if not string.find(string.lower(transport.name),
 			string.lower(GetRealZoneText())) then
 
 			addtrans = false
@@ -63,45 +64,33 @@ function Nauticus:IsRouteShown(i)
 	return addtrans
 end
 
-function Nauticus:Button_OnClick()
+function Nauticus:NextTransportInList()
+	local isNotEmpty, isFound, addtrans, first
 
-	if IsAltKeyDown() then
-		if self:HasKnownCycle(self.activeTransit) then
-			self:ToggleAlarm()
-			self.tempText = "Alarm "..(self:IsAlarmSet() and RED..L["ON"] or GREEN..L["OFF"])
-			self.tempTextCount = 2
-			self:UpdateDisplay()
-		end
+	for i = 1, #(transports), 1 do
+		addtrans = self:IsTransportListed(i)
+		isNotEmpty = isNotEmpty or addtrans
+		if not first and addtrans then first = i; end
 
-	else
-		local isNotEmpty, isFound, addtrans, first
-
-		for i = 1, #(transports), 1 do
-			addtrans = self:IsRouteShown(i)
-			isNotEmpty = isNotEmpty or addtrans
-			if not first and addtrans then first = i; end
-
-			if not isFound then
-				if transports[i].label == self.activeTransit then
-					isFound = true
-				end
-			else
-				if addtrans then
-					addtrans = i
-					break
-				end
+		if not isFound then
+			if transports[i].label == self.activeTransit then
+				isFound = true
+			end
+		else
+			if addtrans then
+				addtrans = i
+				break
 			end
 		end
-
-		if not isNotEmpty then
-			addtrans = 0
-		elseif type(addtrans) ~= "number" then
-			addtrans = first
-		end
-
-		self:SetTransport(addtrans)
 	end
 
+	if not isNotEmpty then
+		addtrans = 0
+	elseif type(addtrans) ~= "number" then
+		addtrans = first
+	end
+
+	return addtrans
 end
 
 local function AddLine(text, func, checked, value, tooltipTitle, tooltipText)
@@ -171,7 +160,7 @@ function Nauticus:TransportSelectInitialise(frame, level)
 		local textdesc
 
 		for i = 1, #(transports), 1 do
-			if self:IsRouteShown(i) then
+			if self:IsTransportListed(i) then
 				textdesc = transports[i].name
 
 				if self:HasKnownCycle(transports[i].label) then
@@ -209,29 +198,21 @@ function Nauticus:TransportSelectInitialise(frame, level)
 
 end
 
-function Nauticus:SetTransport(id)
-	self.activeTransit = transports[id].label
-	self.db.char.activeTransit = self.activeTransit
-
-	if self:HasKnownCycle(self.activeTransit) then
-		self.tempText = GREEN..transports[id].short_name
-		self.tempTextCount = 2
-	else
-		self.tempTextCount = 0
+function Nauticus:SetTransport(transport)
+	if transport then
+		self.activeTransit = self:GetTransportName(transport)
+		self.db.char.activeTransit = self.activeTransit
 	end
 
-	self:TransportSelectSetNone()
-end
-
-function Nauticus:TransportSelectSetNone()
 	local has = self:HasKnownCycle(self.activeTransit)
 
-	if has == nil then
-		self.lowestNameTime = "--"
-		self.icon = ARTWORK_LOGO
-	elseif has == false then
-		self.lowestNameTime = L["N/A"]
-		self.icon = ARTWORK_LOGO
+	if has then
+		self.tempText = GREEN..self:GetTransport(self.activeTransit).short_name
+		self.tempTextCount = 3
+	else
+		self.lowestNameTime = (has == false) and L["N/A"] or "--"
+		self.tempTextCount = 0
+		self.icon = nil
 	end
 
 	self:UpdateDisplay()
@@ -246,18 +227,18 @@ function Nauticus:ShowTooltip(transit)
 		local liveData = self.liveData[transit]
 		local cycle, platform = liveData.cycle, liveData.index
 
-		tablet:AddLine(transports[self.lookupIndex[transit]].vessel_name)
+		tablet:AddLine(self:GetTransport(transit).vessel_name)
 			:Color(0.25, 0.75, 1, 1)
 			:Font(GameFontHighlightLarge:GetFont())
 			.left:SetJustifyH('CENTER')
 
-		for index, data in pairs(platforms[transit]) do
+		for index, data in pairs(self.platforms[transit]) do
 			tablet:AddLine(data.name)
 				:Color(1, 1, 1, 1)
 
 			if data.index == platform then
 				-- we're at a platform and waiting to depart
-				plat_time = self:CalcTripCycleTimeByIndex(transit, platform) - cycle
+				plat_time = self:GetCycleByIndex(transit, platform) - cycle
 
 				if plat_time > 30 then
 					r,g,b = 1,1,0
@@ -267,10 +248,10 @@ function Nauticus:ShowTooltip(transit)
 
 				depOrArr = L["Departure"]
 			else
-				plat_time = self:CalcTripCycleTimeByIndex(transit, data.index-1) - cycle
+				plat_time = self:GetCycleByIndex(transit, data.index-1) - cycle
 
 				if plat_time < 0 then
-					plat_time = plat_time + rtts[transit]
+					plat_time = plat_time + self.rtts[transit]
 				end
 
 				r,g,b = 0,1,0
@@ -299,12 +280,12 @@ function Nauticus:ShowTooltip(transit)
 		end
 
 	elseif has == false then
-		tablet:AddLine(transports[self.lookupIndex[transit]].vessel_name)
+		tablet:AddLine(self:GetTransport(transit).vessel_name)
 			:Color(0.25, 0.75, 1, 1)
 			:Font(GameFontHighlightLarge:GetFont())
 			.left:SetJustifyH('CENTER')
 
-		for index, data in pairs(platforms[transit]) do
+		for index, data in pairs(self.platforms[transit]) do
 			tablet:AddLine(data.name)
 				:Color(1, 1, 1, 1)
 
@@ -454,7 +435,17 @@ end
 function dataobj:OnClick(button)
 	if button == "LeftButton" then
 		if IsMenuOpen() then CloseDropDownMenus(); end
-		Nauticus:Button_OnClick()
+
+		if IsAltKeyDown() then
+			if Nauticus:HasKnownCycle(Nauticus.activeTransit) then
+				Nauticus:ToggleAlarm()
+				Nauticus.tempText = "Alarm "..(Nauticus:IsAlarmSet() and RED..L["ON"] or GREEN..L["OFF"])
+				Nauticus.tempTextCount = 3
+				Nauticus:UpdateDisplay()
+			end
+		else
+			Nauticus:SetTransport(Nauticus:NextTransportInList())
+		end
 	elseif button == "RightButton" then
 		iconTooltip = nil
 		tablet:Hide()

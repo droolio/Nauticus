@@ -45,7 +45,7 @@ local alarmSet = false
 local alarmDinged = false
 local alarmCountdown = 0
 
-local rtts, platforms, triggers, transports, transitData, zonings
+local transports, transitData, triggers, zonings
 local GetTexCoord, formattedTimeCache
 local filterChat, autoSelect, showMiniIcons, worldIconSize, factionOnlyIcons
 
@@ -334,7 +334,7 @@ function Nauticus:OnInitialize()
 	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Nauticus", nil, nil, "GUI")
 	ldbicon:Register("Nauticus", self.dataobj, self.db.profile.minimap)
 
-	rtts, platforms, transports = self.rtts, self.platforms, self.transports
+	transports = self.transports
 
 	local frame = CreateFrame("Frame", "Naut_TransportSelectFrame", nil, "UIDropDownMenuTemplate")
 	UIDropDownMenu_Initialize(frame, function(frame, level) Nauticus:TransportSelectInitialise(frame, level); end, "MENU")
@@ -361,7 +361,7 @@ function Nauticus:OnEnable()
 	self.currentZone = GetRealZoneText()
 	self.currentZoneTransports = self.transitZones[self.currentZone]
 	--self:DebugMessage("enabled: "..self.currentZone)
-	self:TransportSelectSetNone()
+	self:SetTransport()
 end
 
 function Nauticus:OnDisable()
@@ -376,57 +376,65 @@ local isDrawing
 function Nauticus:DrawMapIcons()
 	if isDrawing then return; end; isDrawing = true
 
-	local transport, transit, liveData, cycle, platform, offsets, currentX, currentY, angle,
+	local transit_name, liveData, cycle, index, offsets, x, y, angle, transit_data, fraction,
 		isZoning, isZoneInteresting, isFactionInteresting, buttonMini, buttonWorld
 
-	local isWorldMapVisible = Astrolabe.WorldMapVisible
+	for _, transport in pairs(transports) do
+		transit_name = transport.label
 
-	for t = 1, #(transports), 1 do
-		transport = transports[t]
-		transit = transport.label
+		if self:HasKnownCycle(transit_name) then
+			transit_data = transitData[transit_name]
+			liveData = self.liveData[transit_name]
+			cycle = math.fmod(self:GetKnownCycle(transit_name), self.rtts[transit_name])
+			offsets = transit_data.offset
+			index = liveData.index
 
-		if self:HasKnownCycle(transit) then
-			liveData = self.liveData[transit]
-			cycle = math.fmod(self:GetKnownCycle(transit), rtts[transit])
+			if index > #(offsets) or (index > 1 and offsets[index-1] > cycle) then
+				index = 1
+			end
 
-			offsets = transitData[transit].offset
-			platform = liveData.index
-
-			if platform > #(offsets) or
-				(platform > 1 and offsets[platform-1] > cycle) then
-					platform = 1; end
-
-			for i = platform, #(offsets) do
+			for i = index, #(offsets) do
 				if offsets[i] > cycle then
-					platform = i
+					index = i
 					break
 				end
 			end
 
-			liveData.cycle, liveData.index = cycle, platform
+			liveData.cycle, liveData.index = cycle, index
 
 			if showMiniIcons or showWorldIcons then
-				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit]
+				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit_name]
 				isFactionInteresting = not factionOnlyIcons or transport.faction == UnitFactionGroup("player") or transport.faction == "Neutral"
 				buttonMini, buttonWorld = transport.minimap_icon, transport.worldmap_icon
 
-				if isZoneInteresting or isWorldMapVisible then
-					currentX, currentY, angle, isZoning = self:CalcTripPosition(transit, cycle, platform)
+				if isZoneInteresting or Astrolabe.WorldMapVisible then
+					if index == 1 then
+						x, y, angle, isZoning =
+							transit_data.x[index], transit_data.y[index], transit_data.dir[index], false
+					else
+						fraction = (cycle - transit_data.offset[index-1]) / transit_data.dt[index]
 
-					if currentX and currentY then
-						if isWorldMapVisible and showWorldIcons and isFactionInteresting then
+						x, y, angle, isZoning =
+							transit_data.x[index-1] + transit_data.dx[index] * fraction,
+							transit_data.y[index-1] + transit_data.dy[index] * fraction,
+							transit_data.dir[index-1] + transit_data.d_dir[index] * fraction,
+							zonings[transit_name][index] == true
+					end
+
+					if x and y then
+						if Astrolabe.WorldMapVisible and showWorldIcons and isFactionInteresting then
 							if isZoning ~= transport.status then
 								transport.worldmap_texture:SetTexture(isZoning and ARTWORK_ZONING or transport.texture_name)
 								transport.status = isZoning
 							end
-							Astrolabe:PlaceIconOnWorldMap(WorldMapButton, buttonWorld, 0, 0, currentX, currentY)
+							Astrolabe:PlaceIconOnWorldMap(WorldMapButton, buttonWorld, 0, 0, x, y)
 							transport.worldmap_texture:SetTexCoord(GetTexCoord(angle))
 						elseif buttonWorld:IsVisible() then
-							Astrolabe:RemoveIconFromMinimap(buttonWorld)
+							buttonWorld:Hide()
 						end
 
 						if isZoneInteresting and showMiniIcons and isFactionInteresting then
-							Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, currentX, currentY)
+							Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, x, y)
 							transport.minimap_texture:SetTexCoord(GetTexCoord(angle-math.deg(MiniMapCompassRing:GetFacing())))
 							buttonMini:SetAlpha(Astrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
 						elseif buttonMini:IsVisible() then
@@ -434,7 +442,7 @@ function Nauticus:DrawMapIcons()
 						end
 					end
 				elseif buttonMini:IsVisible() then
-					buttonMini:Hide()
+					Astrolabe:RemoveIconFromMinimap(buttonMini)
 				end
 			end
 		end
@@ -445,8 +453,6 @@ end
 
 function Nauticus:Clock_OnUpdate()
 
-	local transit, liveData, cycle, platform
-
 	if alarmDinged then
 		alarmCountdown = alarmCountdown - 1
 
@@ -456,18 +462,18 @@ function Nauticus:Clock_OnUpdate()
 		end
 	end
 
-	if self:HasKnownCycle(self.activeTransit) then
-		transit = self.activeTransit
-		liveData = self.liveData[transit]
-		cycle, platform = liveData.cycle, liveData.index
+	local transit = self.activeTransit
 
+	if self:HasKnownCycle(transit) then
+		local liveData = self.liveData[transit]
+		local cycle, index = liveData.cycle, liveData.index
 		local lowestTime = 500
 		local plat_time, formatted_time, depOrArr, colour
 
-		for index, data in pairs(platforms[transit]) do
-			if data.index == platform then
+		for _, data in pairs(self.platforms[transit]) do
+			if data.index == index then
 				-- we're at a platform and waiting to depart
-				plat_time = self:CalcTripCycleTimeByIndex(transit, platform) - cycle
+				plat_time = self:GetCycleByIndex(transit, index) - cycle
 
 				if alarmSet and not alarmDinged and plat_time < alarmOffset then
 					alarmDinged = true
@@ -475,7 +481,7 @@ function Nauticus:Clock_OnUpdate()
 					PlaySoundFile("Sound\\Spells\\PVPFlagTakenHorde.wav")
 				end
 
-				if plat_time > 30 then
+				if 30 < plat_time then
 					colour = YELLOW
 					self.icon = ARTWORK_DOCKED
 				else
@@ -490,10 +496,10 @@ function Nauticus:Clock_OnUpdate()
 				self.lowestNameTime = data.ebv.." "..colour..formatted_time
 
 			else
-				plat_time = self:CalcTripCycleTimeByIndex(transit, data.index-1) - cycle
+				plat_time = self:GetCycleByIndex(transit, data.index-1) - cycle
 
-				if plat_time < 0 then
-					plat_time = plat_time + rtts[transit]
+				if 0 > plat_time then
+					plat_time = plat_time + self.rtts[transit]
 				end
 
 				colour = GREEN
@@ -570,13 +576,13 @@ function Nauticus:CheckTriggers_OnUpdate()
 		--check X/Y coords against all platforms in current zone
 		for transit in pairs(self.currentZoneTransports) do
 			if transit ~= self.activeTransit then
-				for i, data in pairs(platforms[transit]) do
+				for i, data in pairs(self.platforms[transit]) do
 					-- within 25 game yards of platform coords?
 					if 25.0 > Astrolabe:ComputeDistance(0, 0, x, y,
 						0, 0, transitData[transit].x[data.index], transitData[transit].y[data.index]) then
 
 						self:DebugMessage("near: "..transit)
-						self:SetTransport(self.lookupIndex[transit])
+						self:SetTransport(transit)
 						return
 					end
 				end
@@ -594,15 +600,15 @@ function Nauticus:SetKnownTime(transit, index, x, y, set)
 
 	--self:DebugMessage("extrapolate: "..extrapolate)
 
-	local sum_time = self:CalcTripCycleTimeByIndex(transit, index) + extrapolate
+	local sum_time = self:GetCycleByIndex(transit, index) + extrapolate
 
 	--@debug@
 	if self.debug then
 		if self:HasKnownCycle(transit) then
 			local old_time = self:GetKnownCycle(transit)
-			local oldCycle = math.fmod(old_time, rtts[transit])
+			local oldCycle = math.fmod(old_time, self.rtts[transit])
 			local diff = oldCycle-sum_time
-			local drift = format("%0.6f", diff / ((old_time-sum_time) / rtts[transit]))
+			local drift = format("%0.6f", diff / ((old_time-sum_time) / self.rtts[transit]))
 			self.db.global.knownCycles[transit].drift = drift
 			self:DebugMessage(transit..", cycle time: "..sum_time
 				.." ; old: "..format("%0.3f", oldCycle)
@@ -623,24 +629,8 @@ function Nauticus:SetKnownTime(transit, index, x, y, set)
 	end
 end
 
-function Nauticus:CalcTripCycleTimeByIndex(transit, index)
-	if index == 0 then return 0 end
+function Nauticus:GetCycleByIndex(transit, index)
 	return transitData[transit].offset[index]
-end
-
-function Nauticus:CalcTripPosition(transit, cycle, index)
-	local transitData = transitData[transit]
-
-	if index == 1 then
-		return transitData.x[index], transitData.y[index], transitData.dir[index], false -- -1
-	else
-		local fraction = (cycle - transitData.offset[index-1]) / transitData.dt[index]
-
-		return transitData.x[index-1] + transitData.dx[index] * fraction,
-			transitData.y[index-1] + transitData.dy[index] * fraction,
-			transitData.dir[index-1] + transitData.d_dir[index] * fraction,
-			zonings[transit][index] == true
-	end
 end
 
 -- initialise saved variables and data
@@ -671,7 +661,6 @@ function Nauticus:InitialiseConfig()
 				DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..RED..
 					L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."])
 			end
-
 		else
 			self.db.global.newerVersion = nil
 			self.db.global.newerVerAge = nil
@@ -684,7 +673,7 @@ function Nauticus:InitialiseConfig()
 	filterChat = self.db.profile.filterChat
 
 	self.activeTransit = self.db.char.activeTransit
-	if self.activeTransit ~= -1 and not self.lookupIndex[self.activeTransit] then
+	if self.activeTransit ~= -1 and not self:GetTransportID(self.activeTransit) then
 		self.activeTransit = -1
 		self.db.char.activeTransit = -1
 	end
@@ -729,19 +718,17 @@ function Nauticus:InitialiseConfig()
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
-	local j, oldX, oldY, oldOffset, oldDir, transport, transit, transit_data, liveData,
+	local j, oldX, oldY, oldOffset, oldDir, transport, transit, transit_data,
 		texture_name, frame, texture
 
 	local miniIconSize = self.db.profile.miniIconSize * ICON_DEFAULT_SIZE
 	local worldIconSize = self.db.profile.worldIconSize * ICON_DEFAULT_SIZE
 
-	self.transitData = {}
-	self.liveData = {}
-	self.zonings = {}
+	local liveData = {}
+	self.liveData = liveData
+	transitData = {}
+	zonings = {}
 	triggers = {}
-	transitData = self.transitData
-	liveData = self.liveData
-	zonings = self.zonings
 
 	CreateFrame("Frame", "NauticusMiniMapOverlay", Minimap)
 
@@ -780,7 +767,7 @@ function Nauticus:InitialiseConfig()
 				local comment = strsub(args[6], 1, 4)
 				if comment == "plat" then
 					local index = tonumber(strsub(args[6], 5))
-					platforms[transit][index].index = i
+					self.platforms[transit][index].index = i
 				elseif comment == "trig" then
 					local index = tonumber(strsub(args[6], 5)) == 0 and -i or i
 					tinsert(triggers[transit], index)
@@ -796,7 +783,8 @@ function Nauticus:InitialiseConfig()
 				transit_data.dir[i]
 		end
 
-		transit_data.offset[#(packedData[transit])] = rtts[transit]
+		transit_data.offset[0] = 0
+		transit_data.offset[#(packedData[transit])] = self.rtts[transit]
 
 		liveData[transit] = { cycle = 0, index = 1, }
 
@@ -815,6 +803,7 @@ function Nauticus:InitialiseConfig()
 		frame:SetScript("OnEnter", function() Nauticus:MapIconButtonMouseEnter(this) end)
 		frame:SetScript("OnLeave", function() Nauticus:MapIconButtonMouseExit(this) end)
 		frame:SetID(t)
+		frame:Hide()
 
 		frame = CreateFrame("Button", nil, worldMapOverlay)
 		transport.worldmap_icon = frame
@@ -900,6 +889,33 @@ function Nauticus:HasKnownCycle(transport)
 	if transport ~= -1 then
 		return knownCycle ~= nil and knownCycle.since ~= nil
 	end
+end
+
+function Nauticus:GetTransport(t)
+	if type(t) == "string" then
+		return transports[ self.lookupIndex[t] ]
+	elseif type(t) == "number" then
+		return transports[t]
+	end
+	return t
+end
+
+function Nauticus:GetTransportName(t)
+	if type(t) == "number" then
+		return transports[t].label
+	elseif type(t) == "table" then
+		return t.label
+	end
+	return t
+end
+
+function Nauticus:GetTransportID(t)
+	if type(t) == "string" then
+		return self.lookupIndex[t]
+	elseif type(t) == "table" then
+		return self.lookupIndex[t.label]
+	end
+	return t
 end
 
 -- extract key/value from message
