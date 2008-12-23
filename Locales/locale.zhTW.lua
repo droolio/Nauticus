@@ -4,7 +4,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "zhTW")
 if not L then return; end
 
 -- addon description
-L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
+L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = "追蹤環繞艾澤拉斯的飛艇及船隻正確抵達及離開的時間，並即時顯示在世界地圖與小地圖上。"
 
 -- slash commands (no spaces!)
 L["icons"] = true
@@ -20,27 +20,27 @@ L["alarm"] = true
 
 -- options
 L["Options"] = "選項"
-L["General Settings"] = true
-L["Map Icons"] = true
-L["Options for displaying transports as icons on the Mini-Map and World Map."] = true
-L["Show on Mini-Map"] = true
-L["Toggle display of icons on the Mini-Map."] = true
-L["Show on World Map"] = true
-L["Toggle display of icons on the World Map."] = true
+L["General Settings"] = "一般設定"
+L["Map Icons"] = "地圖圖示"
+L["Options for displaying transports as icons on the Mini-Map and World Map."] = "此選項會在小地圖以及世界地圖上顯示運輸船的圖示。"
+L["Show on Mini-Map"] = "顯示於小地圖"
+L["Toggle display of icons on the Mini-Map."] = "在小地圖上顯示運輸船的圖示。"
+L["Show on World Map"] = "顯示於世界地圖"
+L["Toggle display of icons on the World Map."] = "在世界地圖上顯示運輸船的圖示。"
 L["Mini-Map icon size"] = "小地圖圖示大小"
 L["Change the size of the Mini-Map icons."] = "變更小地圖圖示的大小。"
 L["World Map icon size"] = "世界地圖圖示大小"
 L["Change the size of the World Map icons."] = "變更世界地圖圖示大小。"
-L["Faction only"] = true
-L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = true
-L["Auto select transport"] = "自動選擇傳輸點"
-L["Automatically select nearest transport when standing at platform."] = "當你站在月台時自動選擇距你最近的傳輸點"
+L["Faction only"] = "陣營限定"
+L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = "在地圖上隱藏敵對陣營的運輸船，僅顯示中立與我方陣營的船隻。"
+L["Auto select transport"] = "自動選擇運輸船"
+L["Automatically select nearest transport when standing at platform."] = "當你站在月台時自動選擇距你最近的運輸船"
 L["Crew chat filter"] = "過濾工作人員喊話"
-L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "開啟/關閉 過濾工作人員喊話訊息。" -- re do
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "開啟/關閉 移除對話視窗內船員以及船主的喊話訊息。" 
 L["Alarm delay"] = "警示延遲"
 L["Change the alarm delay (in seconds)."] = "變更警示延遲（秒）"
-L["Mini-Map button"] = true -- to do
-L["Toggle the Mini-Map button."] = true -- to do
+L["Mini-Map button"] = "小地圖按鈕"
+L["Toggle the Mini-Map button."] = "開啟小地圖按鈕。"
 
 -- miscellaneous
 L["Arrival"] = "抵達"
@@ -56,13 +56,13 @@ L["ON"] = "啟用"
 L["OFF"] = "關閉"
 L["Daily: "] = "每日: "
 
-L["List friendly faction only"] = "只顯示玩家陣營可用的運輸點" -- re do?
-L["Shows only neutral transports and those of your faction."] = "只顯示中立以及玩家陣營可用的傳輸點" -- re do?
-L["List relevant to current zone only"] = "只顯示你目前區域可用的傳輸點" -- re do?
-L["Shows only transports relevant to your current zone."] = "只顯示你目前區域可用的傳輸點" -- re do?
+L["List friendly faction only"] = "僅顯示友方陣營"
+L["Shows only neutral transports and those of your faction."] = "僅顯示中立及我方陣營的傳輸船。"
+L["List relevant to current zone only"] = "僅顯示目前區域"
+L["Shows only transports relevant to your current zone."] = "只顯示你目前區域的傳輸船"
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "提示: 左鍵：運輸週期 Alt+左鍵：設定鬧鈴"
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "有新版的 Nauticus 釋出！ 請訪問 http://drool.me.uk/naut."
-L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "你已使用的是舊版的 Nauticus 超過 10 天了，同步訊息輸出現在將會關閉。"
+L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "你已使用舊版的 Nauticus 超過 10 天了，同步訊息輸出現在將會關閉。"
 L["Thank you for upgrading."] = "感謝你更新版本。"
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)

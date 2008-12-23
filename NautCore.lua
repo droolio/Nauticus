@@ -373,7 +373,7 @@ end
 
 local isDrawing
 
-function Nauticus:DrawMapIcons()
+function Nauticus:DrawMapIcons(worldOnly)
 	if isDrawing then return; end; isDrawing = true
 
 	local transit_name, liveData, cycle, index, offsets, x, y, angle, transit_data, fraction,
@@ -403,7 +403,7 @@ function Nauticus:DrawMapIcons()
 			liveData.cycle, liveData.index = cycle, index
 
 			if showMiniIcons or showWorldIcons then
-				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit_name]
+				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit_name] and not worldOnly
 				isFactionInteresting = not factionOnlyIcons or transport.faction == UnitFactionGroup("player") or transport.faction == "Neutral"
 				buttonMini, buttonWorld = transport.minimap_icon, transport.worldmap_icon
 
@@ -850,7 +850,7 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 end
 
 function Nauticus:WORLD_MAP_UPDATE()
-	self:DrawMapIcons()
+	self:DrawMapIcons(true)
 end
 
 function Nauticus:ToggleAlarm()
