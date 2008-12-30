@@ -2,15 +2,11 @@
 -- declare colour codes for console messages
 local RED     = "|cffff0000"
 local GREEN   = "|cff00ff00"
-local BLUE    = "|cff0000ff"
-local MAGENTA = "|cffff00ff"
 local YELLOW  = "|cffffff00"
-local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
-local ORANGE  = "|cffffba00"
+local GREY    = "|cffbababa"
 
 -- constants
-local DEFAULT_CHANNEL = "NauticSync" -- do not change!
 local ARTWORK_PATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
 local ARTWORK_ZONING = ARTWORK_PATH.."MapIcon_Zoning"
 local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
@@ -31,9 +27,7 @@ Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
-
 Nauticus.requestList = {}
-
 Nauticus.debug = false
 
 -- local variables
@@ -45,8 +39,10 @@ local alarmSet = false
 local alarmDinged = false
 local alarmCountdown = 0
 
-local transports, transitData, triggers, zonings
-local GetTexCoord, formattedTimeCache
+local transports
+local transitData = {}
+local triggers = {}
+local zonings = {}
 local filterChat, autoSelect, showMiniIcons, worldIconSize, factionOnlyIcons
 
 local defaults = {
@@ -276,55 +272,46 @@ local optionsSlash = { type = 'group', name = "Nauticus", args = {
 } }
 Nauticus.optionsSlash = optionsSlash
 
+do
+	local FILTER_NPC = {
+	-- org2uc:
+	[ L["Frezza"] ] = true,
+	[ L["Zapetta"] ] = true,
+	[ L["Sky-Captain Cloudkicker"] ] = true,
+	[ L["Chief Officer Coppernut"] ] = true,
+	[ L["Navigator Fairweather"] ] = true,
+	-- uc2gg:
+	[ L["Hin Denburg"] ] = true,
+	[ L["Navigator Hatch"] ] = true,
+	[ L["Chief Officer Hammerflange"] ] = true,
+	[ L["Sky-Captain Cableclamp"] ] = true,
+	-- org2gg:
+	[ L["Snurk Bucksquick"] ] = true,
+	-- mh2ther:
+	[ L["Captain \"Stash\" Torgoley"] ] = true,
+	[ L["First Mate Kowalski"] ] = true,
+	[ L["Navigator Mehran"] ] = true,
+	-- uc2ven:
+	[ L["Meefi Farthrottle"] ] = true,
+	[ L["Drenk Spannerspark"] ] = true,
+	-- war2org:
+	[ L["Greeb Ramrocket"] ] = true,
+	[ L["Nargo Screwbore"] ] = true,
+	-- wg2wg:
+	[ L["Harrowmeiser"] ] = true,
+	}
 
-local FILTER_NPC = {
--- org2uc:
-[ L["Frezza"] ] = true,
-[ L["Zapetta"] ] = true,
-[ L["Sky-Captain Cloudkicker"] ] = true,
-[ L["Chief Officer Coppernut"] ] = true,
-[ L["Navigator Fairweather"] ] = true,
--- uc2gg:
-[ L["Hin Denburg"] ] = true,
-[ L["Navigator Hatch"] ] = true,
-[ L["Chief Officer Hammerflange"] ] = true,
-[ L["Sky-Captain Cableclamp"] ] = true,
--- org2gg:
-[ L["Snurk Bucksquick"] ] = true,
--- mh2ther:
-[ L["Captain \"Stash\" Torgoley"] ] = true,
-[ L["First Mate Kowalski"] ] = true,
-[ L["Navigator Mehran"] ] = true,
--- uc2ven:
-[ L["Meefi Farthrottle"] ] = true,
-[ L["Drenk Spannerspark"] ] = true,
--- war2org:
-[ L["Greeb Ramrocket"] ] = true,
-[ L["Nargo Screwbore"] ] = true,
--- wg2wg:
-[ L["Harrowmeiser"] ] = true,
-}
-
-local function ChatFilter_DataChannel(msg)
-	if strlower(arg9) == strlower(DEFAULT_CHANNEL) and not Nauticus.debug then
-		return true -- silence
+	local function ChatFilter_CrewChat(msg)
+		if filterChat and FILTER_NPC[arg2] then
+			--Nauticus:DebugMessage(arg2..": "..arg1)
+			return true -- silence
+		end
 	end
+
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", ChatFilter_CrewChat)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", ChatFilter_CrewChat)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_EMOTE", ChatFilter_CrewChat)
 end
-
-ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", ChatFilter_DataChannel)
-
-local function ChatFilter_CrewChat(msg)
-	if not filterChat then
-		return false
-	elseif FILTER_NPC[arg2] then
-		--Nauticus:DebugMessage(arg2.." yells: "..arg1)
-		return true -- silence
-	end
-end
-
-ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_SAY", ChatFilter_CrewChat)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_YELL", ChatFilter_CrewChat)
-ChatFrame_AddMessageEventFilter("CHAT_MSG_MONSTER_EMOTE", ChatFilter_CrewChat)
 
 function Nauticus:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("Nauticus3DB", defaults)
@@ -333,8 +320,6 @@ function Nauticus:OnInitialize()
 	options.args.NauticusSlashCommand = optionsSlash
 	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Nauticus", nil, nil, "GUI")
 	ldbicon:Register("Nauticus", self.dataobj, self.db.profile.minimap)
-
-	transports = self.transports
 
 	local frame = CreateFrame("Frame", "Naut_TransportSelectFrame", nil, "UIDropDownMenuTemplate")
 	UIDropDownMenu_Initialize(frame, function(frame, level) Nauticus:TransportSelectInitialise(frame, level); end, "MENU")
@@ -364,11 +349,18 @@ function Nauticus:OnEnable()
 	self:SetTransport()
 end
 
-function Nauticus:OnDisable()
-	for t = 1, #(transports), 1 do
-		Astrolabe:RemoveIconFromMinimap(transports[t].minimap_icon)
-		transports[t].worldmap_icon:Hide()
-	end
+local texCoordCache = { LLx = {}, LLy = {}, URx = {}, URy = {}, }
+
+local function GetTexCoord(degrees)
+	degrees = math.floor(degrees+.5)
+	while degrees < 0 do degrees = degrees + 360; end
+	while degrees > 360 do degrees = degrees - 360; end
+
+	local LLx, LLy, URx, URy =
+		texCoordCache.LLx[degrees], texCoordCache.LLy[degrees],
+		texCoordCache.URx[degrees], texCoordCache.URy[degrees]
+
+	return URy, LLx, LLx, LLy, URx, URy, LLy, URx
 end
 
 local isDrawing
@@ -452,7 +444,6 @@ function Nauticus:DrawMapIcons(worldOnly)
 end
 
 function Nauticus:Clock_OnUpdate()
-
 	if alarmDinged then
 		alarmCountdown = alarmCountdown - 1
 
@@ -468,7 +459,7 @@ function Nauticus:Clock_OnUpdate()
 		local liveData = self.liveData[transit]
 		local cycle, index = liveData.cycle, liveData.index
 		local lowestTime = 500
-		local plat_time, formatted_time, depOrArr, colour
+		local plat_time, depOrArr, colour
 
 		for _, data in pairs(self.platforms[transit]) do
 			if data.index == index then
@@ -490,11 +481,8 @@ function Nauticus:Clock_OnUpdate()
 				end
 
 				depOrArr = L["Departure"]
-				formatted_time = formattedTimeCache[floor(plat_time)]
-
 				lowestTime = -500
-				self.lowestNameTime = data.ebv.." "..colour..formatted_time
-
+				self.lowestNameTime = data.ebv.." "..colour..self:GetFormattedTime(plat_time)
 			else
 				plat_time = self:GetCycleByIndex(transit, data.index-1) - cycle
 
@@ -504,11 +492,10 @@ function Nauticus:Clock_OnUpdate()
 
 				colour = GREEN
 				depOrArr = L["Arrival"]
-				formatted_time = formattedTimeCache[floor(plat_time)]
 
 				if plat_time < lowestTime then
 					lowestTime = plat_time
-					self.lowestNameTime = data.ebv.." "..GREEN..formatted_time
+					self.lowestNameTime = data.ebv.." "..GREEN..self:GetFormattedTime(plat_time)
 					self.icon = ARTWORK_IN_TRANSIT
 				end
 			end
@@ -520,7 +507,6 @@ function Nauticus:Clock_OnUpdate()
 	end
 
 	self:UpdateDisplay()
-
 end
 
 local c, z, x, y, dist, post, last_trig, keep_time
@@ -528,7 +514,6 @@ local c, z, x, y, dist, post, last_trig, keep_time
 function Nauticus:CheckTriggers_OnUpdate()
 	-- remember if we've already triggered a set of coords within the last 30 secs
 	if last_trig and GetTime() > 30.0 + last_trig then last_trig = nil; end
-
 	if not self.currentZoneTransports or self.currentZoneTransports.virtual then return; end
 
 	c, z, x, y = Astrolabe:GetCurrentPlayerPosition()
@@ -547,7 +532,6 @@ function Nauticus:CheckTriggers_OnUpdate()
 		for transit in pairs(self.currentZoneTransports) do
 			for i, index in pairs(triggers[transit]) do
 				post = 0 > index; if post then index = -index; end
-
 				-- within 20 game yards of trigger coords?
 				if 20.0 > Astrolabe:ComputeDistance(0, 0, x, y,
 					0, 0, transitData[transit].x[index], transitData[transit].y[index]) then
@@ -571,7 +555,6 @@ function Nauticus:CheckTriggers_OnUpdate()
 				end
 			end
 		end
-
 	elseif autoSelect and 0 == dist and not IsSwimming() then
 		--check X/Y coords against all platforms in current zone
 		for transit in pairs(self.currentZoneTransports) do
@@ -599,7 +582,6 @@ function Nauticus:SetKnownTime(transit, index, x, y, set)
 		Astrolabe:ComputeDistance(0, 0, transitData.x[index], transitData.y[index], 0, 0, ix, iy) )
 
 	--self:DebugMessage("extrapolate: "..extrapolate)
-
 	local sum_time = self:GetCycleByIndex(transit, index) + extrapolate
 
 	--@debug@
@@ -635,7 +617,6 @@ end
 
 -- initialise saved variables and data
 function Nauticus:InitialiseConfig()
-
 	--self:DebugMessage("init config...")
 	self.debug = self.db.global.debug
 
@@ -715,6 +696,10 @@ function Nauticus:InitialiseConfig()
 	self.db.global.uptime = now
 	self.db.global.timestamp = the_time
 
+	local worldMapOverlay = CreateFrame("Frame", "NauticusWorldMapOverlay", WorldMapButton)
+	tinsert(WorldMapDisplayFrames, worldMapOverlay)
+	CreateFrame("Frame", "NauticusMiniMapOverlay", Minimap)
+
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
@@ -726,14 +711,7 @@ function Nauticus:InitialiseConfig()
 
 	local liveData = {}
 	self.liveData = liveData
-	transitData = {}
-	zonings = {}
-	triggers = {}
-
-	CreateFrame("Frame", "NauticusMiniMapOverlay", Minimap)
-
-	local worldMapOverlay = CreateFrame("Frame", "NauticusWorldMapOverlay", WorldMapButton)
-	tinsert(WorldMapDisplayFrames, worldMapOverlay)
+	transports = self.transports
 
 	for t = 1, #(transports), 1 do
 		oldX, oldY, oldOffset, oldDir = 0, 0, 0, 0
@@ -800,8 +778,8 @@ function Nauticus:InitialiseConfig()
 		transport.minimap_texture = texture
 		texture:SetTexture(texture_name)
 		texture:SetAllPoints(frame)
-		frame:SetScript("OnEnter", function() Nauticus:MapIconButtonMouseEnter(this) end)
-		frame:SetScript("OnLeave", function() Nauticus:MapIconButtonMouseExit(this) end)
+		frame:SetScript("OnEnter", function() Nauticus:MapIcon_OnEnter(this) end)
+		frame:SetScript("OnLeave", function() Nauticus:MapIcon_OnLeave(this) end)
 		frame:SetID(t)
 		frame:Hide()
 
@@ -814,13 +792,12 @@ function Nauticus:InitialiseConfig()
 		transport.worldmap_texture = texture
 		texture:SetTexture(texture_name)
 		texture:SetAllPoints(frame)
-		frame:SetScript("OnEnter", function() Nauticus:MapIconButtonMouseEnter(this) end)
-		frame:SetScript("OnLeave", function() Nauticus:MapIconButtonMouseExit(this) end)
+		frame:SetScript("OnEnter", function() Nauticus:MapIcon_OnEnter(this) end)
+		frame:SetScript("OnLeave", function() Nauticus:MapIcon_OnLeave(this) end)
 		frame:SetID(t)
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)
-
 end
 
 function Nauticus:PLAYER_ENTERING_WORLD()
@@ -918,6 +895,100 @@ function Nauticus:GetTransportID(t)
 	return t
 end
 
+local formattedTimeCache = {}
+
+-- build cache of formatted times
+do
+	for i = 0, 59 do
+		formattedTimeCache[i] = format("%ds", i)
+	end
+	for i = 60, MAX_FORMATTED_TIME do
+		formattedTimeCache[i] = format("%dm %02ds", i/60, math.fmod(i, 60))
+	end
+end
+
+function Nauticus:GetFormattedTime(t)
+	return formattedTimeCache[floor(t)]
+end
+
+function Nauticus:IsTransportListed(transport)
+	local addtrans = false
+	transport = self:GetTransport(transport)
+
+	if self.db.profile.factionSpecific then
+		if transport.faction == UnitFactionGroup("player") or
+			transport.faction == "Neutral" then
+
+			addtrans = true
+		end
+	else
+		addtrans = true
+	end
+
+	if addtrans and self.db.profile.zoneSpecific then
+		if not string.find(string.lower(transport.name),
+			string.lower(GetRealZoneText())) then
+
+			addtrans = false
+		end
+	end
+
+	return addtrans
+end
+
+function Nauticus:NextTransportInList()
+	local isNotEmpty, isFound, addtrans, first
+
+	for i = 1, #(transports), 1 do
+		addtrans = self:IsTransportListed(i)
+		isNotEmpty = isNotEmpty or addtrans
+		if not first and addtrans then first = i; end
+
+		if not isFound then
+			if transports[i].label == self.activeTransit then
+				isFound = true
+			end
+		else
+			if addtrans then
+				addtrans = i
+				break
+			end
+		end
+	end
+
+	if not isNotEmpty then
+		addtrans = 0
+	elseif type(addtrans) ~= "number" then
+		addtrans = first
+	end
+
+	return addtrans
+end
+
+function Nauticus:SetTransport(transport)
+	if transport then
+		if transport == 0 then
+			self.activeTransit = -1
+		else
+			self.activeTransit = self:GetTransportName(transport)
+		end
+		self.db.char.activeTransit = self.activeTransit
+	end
+
+	local has = self:HasKnownCycle(self.activeTransit)
+
+	if has then
+		self.tempText = GREEN..self:GetTransport(self.activeTransit).short_name
+		self.tempTextCount = 3
+	else
+		self.lowestNameTime = (has == false) and L["N/A"] or "--"
+		self.tempTextCount = 0
+		self.icon = nil
+	end
+
+	self:UpdateDisplay()
+end
+
 -- extract key/value from message
 function Nauticus:GetArgs(message, separator)
 	local args = {}
@@ -942,54 +1013,24 @@ function Nauticus:DebugMessage(msg)
 	end
 end
 
-local texCoordCache = { LLx = {}, LLy = {}, URx = {}, URy = {}, }
-
-function GetTexCoord(degrees)
-	degrees = math.floor(degrees+.5)
-	while degrees < 0 do degrees = degrees + 360; end
-	while degrees > 360 do degrees = degrees - 360; end
-
-	local LLx, LLy, URx, URy =
-		texCoordCache.LLx[degrees], texCoordCache.LLy[degrees],
-		texCoordCache.URx[degrees], texCoordCache.URy[degrees]
-
-	return URy, LLx, LLx, LLy, URx, URy, LLy, URx
-end
-
 -- build cache of all angles
 do
 	local cosa, sina, A, B, C, D, E, F, det, BFsubCE, AFaddCD
-
 	for i = 0, 360 do
 		cosa, sina = cos(i), sin(i)
-
 		-- translate texture to centre, rotate it, put it back
 		-- T(x1,y1).R(angle).T(-x1,-y1)
 		A, B, C, D, E, F =
 			cosa,	-sina,	0.5*(1-cosa)+0.5*sina,
 			sina,	cosa,	0.5*(1-cosa)-0.5*sina
 
-		det = A*E - B*D
-		BFsubCE = B*F - C*E
+		det     =  A*E - B*D
+		BFsubCE =  B*F - C*E
 		AFaddCD = -A*F + C*D
 
-		texCoordCache.LLx[i], texCoordCache.LLy[i],
-		texCoordCache.URx[i], texCoordCache.URy[i] =
-			(-B + BFsubCE) / det, (A + AFaddCD) / det,
-			(E + BFsubCE) / det, (-D + AFaddCD) / det
-	end
-end
-
--- build cache of formatted times
-do
-	formattedTimeCache = {}
-	Nauticus.formattedTimeCache = formattedTimeCache
-
-	for i = 0, 59 do
-		formattedTimeCache[i] = format("%ds", i)
-	end
-
-	for i = 60, MAX_FORMATTED_TIME do
-		formattedTimeCache[i] = format("%dm %02ds", i/60, math.fmod(i, 60))
+		texCoordCache.LLx[i] = (-B + BFsubCE) / det
+		texCoordCache.LLy[i] = ( A + AFaddCD) / det
+		texCoordCache.URx[i] = ( E + BFsubCE) / det
+		texCoordCache.URy[i] = (-D + AFaddCD) / det
 	end
 end

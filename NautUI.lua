@@ -2,12 +2,8 @@
 -- declare colour codes for console messages
 local RED     = "|cffff0000"
 local GREEN   = "|cff00ff00"
-local BLUE    = "|cff0000ff"
-local MAGENTA = "|cffff00ff"
 local YELLOW  = "|cffffff00"
-local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
-local ORANGE  = "|cffffba00"
 local GREY    = "|cffbababa"
 
 -- constants
@@ -38,60 +34,6 @@ local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
 local transports = Nauticus.transports
 local iconTooltip, barTooltipFrame
 
-
-function Nauticus:IsTransportListed(transport)
-	local addtrans = false
-	transport = self:GetTransport(transport)
-
-	if self.db.profile.factionSpecific then
-		if transport.faction == UnitFactionGroup("player") or
-			transport.faction == "Neutral" then
-
-			addtrans = true
-		end
-	else
-		addtrans = true
-	end
-
-	if addtrans and self.db.profile.zoneSpecific then
-		if not string.find(string.lower(transport.name),
-			string.lower(GetRealZoneText())) then
-
-			addtrans = false
-		end
-	end
-
-	return addtrans
-end
-
-function Nauticus:NextTransportInList()
-	local isNotEmpty, isFound, addtrans, first
-
-	for i = 1, #(transports), 1 do
-		addtrans = self:IsTransportListed(i)
-		isNotEmpty = isNotEmpty or addtrans
-		if not first and addtrans then first = i; end
-
-		if not isFound then
-			if transports[i].label == self.activeTransit then
-				isFound = true
-			end
-		else
-			if addtrans then
-				addtrans = i
-				break
-			end
-		end
-	end
-
-	if not isNotEmpty then
-		addtrans = 0
-	elseif type(addtrans) ~= "number" then
-		addtrans = first
-	end
-
-	return addtrans
-end
 
 local function AddLine(text, func, checked, value, tooltipTitle, tooltipText)
 	local info = UIDropDownMenu_CreateInfo()
@@ -198,49 +140,28 @@ function Nauticus:TransportSelectInitialise(frame, level)
 
 end
 
-function Nauticus:SetTransport(transport)
-	if transport then
-		self.activeTransit = self:GetTransportName(transport)
-		self.db.char.activeTransit = self.activeTransit
-	end
-
-	local has = self:HasKnownCycle(self.activeTransit)
-
-	if has then
-		self.tempText = GREEN..self:GetTransport(self.activeTransit).short_name
-		self.tempTextCount = 3
-	else
-		self.lowestNameTime = (has == false) and L["N/A"] or "--"
-		self.tempTextCount = 0
-		self.icon = nil
-	end
-
-	self:UpdateDisplay()
-end
-
 function Nauticus:ShowTooltip(transit)
-
 	local has = self:HasKnownCycle(transit)
 
 	if has then
-		local plat_time, formatted_time, depOrArr, r,g,b
+		local plat_time, depOrArr, r,g,b
 		local liveData = self.liveData[transit]
-		local cycle, platform = liveData.cycle, liveData.index
+		local cycle, index = liveData.cycle, liveData.index
 
 		tablet:AddLine(self:GetTransport(transit).vessel_name)
 			:Color(0.25, 0.75, 1, 1)
 			:Font(GameFontHighlightLarge:GetFont())
 			.left:SetJustifyH('CENTER')
 
-		for index, data in pairs(self.platforms[transit]) do
+		for _, data in pairs(self.platforms[transit]) do
 			tablet:AddLine(data.name)
 				:Color(1, 1, 1, 1)
 
-			if data.index == platform then
+			if data.index == index then
 				-- we're at a platform and waiting to depart
-				plat_time = self:GetCycleByIndex(transit, platform) - cycle
+				plat_time = self:GetCycleByIndex(transit, index) - cycle
 
-				if plat_time > 30 then
+				if 30 < plat_time then
 					r,g,b = 1,1,0
 				else
 					r,g,b = 1,0,0
@@ -250,7 +171,7 @@ function Nauticus:ShowTooltip(transit)
 			else
 				plat_time = self:GetCycleByIndex(transit, data.index-1) - cycle
 
-				if plat_time < 0 then
+				if 0 > plat_time then
 					plat_time = plat_time + self.rtts[transit]
 				end
 
@@ -258,12 +179,9 @@ function Nauticus:ShowTooltip(transit)
 				depOrArr = L["Arrival"]
 			end
 
-			formatted_time = self.formattedTimeCache[floor(plat_time)]
-
-			tablet:AddLine(depOrArr..":", formatted_time, false, 10)
+			tablet:AddLine(depOrArr..":", self:GetFormattedTime(plat_time), false, 10)
 				:Color(1, 0.82, 0, 1, r, g, b, 1)
 				:Font(nil, nil, nil, NUMBER_FONT, 14, nil)
-
 		end
 
 		if (self.debug and not IsShiftKeyDown()) or (not self.debug and IsShiftKeyDown()) then
@@ -278,35 +196,30 @@ function Nauticus:ShowTooltip(transit)
 			tablet:AddLine("Boots, Swaps:", boots..", "..swaps, false, 10)
 				:Font(nil, nil, nil, NUMBER_FONT, 14, nil)
 		end
-
 	elseif has == false then
 		tablet:AddLine(self:GetTransport(transit).vessel_name)
 			:Color(0.25, 0.75, 1, 1)
 			:Font(GameFontHighlightLarge:GetFont())
 			.left:SetJustifyH('CENTER')
 
-		for index, data in pairs(self.platforms[transit]) do
+		for _, data in pairs(self.platforms[transit]) do
 			tablet:AddLine(data.name)
 				:Color(1, 1, 1, 1)
 
 			tablet:AddLine(L["Not Available"])
 				.left:SetJustifyH('CENTER')
 		end
-
 	elseif has == nil then
 		tablet:AddLine(L["No Transport Selected"])
 			:Color(1, 0.25, 0, 1)
 			:Font(GameFontHighlightLarge:GetFont())
 			.left:SetJustifyH('CENTER')
-
 	end
-
 end
 
 local function GetMapIconAnchor()
 	local x, y = GetCursorPosition()
 	local cx, cy = GetScreenWidth() / 2, GetScreenHeight() / 2
-
 	if x > cx then
 		if y < cy then return "BOTTOMRIGHT", "TOPLEFT"
 		else return "TOPRIGHT", "BOTTOMLEFT"; end
@@ -320,7 +233,6 @@ local function GetBarAnchor(frame)
 	local x, y = frame:GetCenter()
 	if not x or not y then return "TOPLEFT", "BOTTOMLEFT"; end
 	local cx, cy = UIParent:GetWidth() / 3, UIParent:GetHeight() / 2
-
 	if x < cx then
 		if y < cy then return "BOTTOMLEFT", "TOPLEFT"
 		else return "TOPLEFT", "BOTTOMLEFT"; end
@@ -344,7 +256,7 @@ local function GetParentFrame()
 	return nil
 end
 
-function Nauticus:MapIconButtonMouseEnter(frame)
+function Nauticus:MapIcon_OnEnter(frame)
 	local id = frame:GetID()
 	local transit = self.transports[id].label
 	local point, rel = GetMapIconAnchor()
@@ -370,7 +282,7 @@ function Nauticus:MapIconButtonMouseEnter(frame)
 	tablet:SetPosition():Size():Show()
 end
 
-function Nauticus:MapIconButtonMouseExit(frame)
+function Nauticus:MapIcon_OnLeave(frame)
 	tablet:Hide()
 	iconTooltip = nil
 end
@@ -384,7 +296,7 @@ function Nauticus:UpdateDisplay()
 	if iconTooltip == barTooltipFrame then
 		dataobj.OnEnter(iconTooltip)
 	else
-		self:MapIconButtonMouseEnter(iconTooltip)
+		self:MapIcon_OnEnter(iconTooltip)
 	end
 end
 

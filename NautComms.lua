@@ -2,12 +2,9 @@
 -- declare colour codes for console messages
 local RED     = "|cffff0000"
 local GREEN   = "|cff00ff00"
-local BLUE    = "|cff0000ff"
-local MAGENTA = "|cffff00ff"
 local YELLOW  = "|cffffff00"
-local CYAN    = "|cff00ffff"
 local WHITE   = "|cffffffff"
-local ORANGE  = "|cffffba00"
+local GREY    = "|cffbababa"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
 local DATA_VERSION = 303 -- route calibration versioning
@@ -15,8 +12,7 @@ local DATA_VERSION = 303 -- route calibration versioning
 local Nauticus = Nauticus
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
-local transports = Nauticus.transports
-local GetLag, request
+local request
 local requestVersion = false
 
 
@@ -53,13 +49,17 @@ function Nauticus:DoRequest(wait)
 	end
 end
 
+local function GetLag()
+	local _,_,lag = GetNetStats()
+	return lag / 1000.0
+end
+
 function Nauticus:BroadcastTransportData()
 	local since, boots, swaps
 	local lag = GetLag()
 	local trans_str = ""
-	local requestList = self.requestList
 
-	for transit in pairs(requestList) do
+	for transit in pairs(self.requestList) do
 		since, boots, swaps = self:GetKnownCycle(transit)
 		trans_str = trans_str..self:GetTransportID(transit)
 
@@ -80,7 +80,7 @@ function Nauticus:BroadcastTransportData()
 		end
 
 		trans_str = trans_str..","
-		requestList[transit] = nil
+		self.requestList[transit] = nil
 	end
 
 	if trans_str ~= "" then
@@ -124,13 +124,11 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndNam
 		local newZone = select(3, string.find(channel, "^.+ %- (.+)$"))
 
 		if newZone and self.transitZones[newZone] then
+			--self:DebugMessage("channel: "..newZone)
 			-- special case; don't acknowledge zone change when brushing Durotar zone on Booty Bay <-> Ratchet route
-			if not (self.currentZone == L["The Barrens"] and newZone == L["Durotar"]) then
-				self.currentZone = newZone
-				self.currentZoneTransports = self.transitZones[newZone]
-			end
-
-			--self:DebugMessage("channel: "..self.currentZone)
+			if self.currentZone == L["The Barrens"] and newZone == L["Durotar"] then return; end
+			self.currentZone = newZone
+			self.currentZoneTransports = self.transitZones[newZone]
 		end
 	end
 end
@@ -138,7 +136,6 @@ end
 function Nauticus:CHAT_MSG_CHANNEL(eventName, msg, sender, _, numAndName, _, _, _, _, channel)
 	if sender ~= UnitName("player") and strlower(channel) == strlower(DEFAULT_CHANNEL) then
 		local Args = self:GetArgs(msg, " ")
-
 		--self:DebugMessage("sender: "..sender.." ; cmd: "..Args[1])
 
 		if Args[1] == "VER" then -- version, num
@@ -159,7 +156,6 @@ function Nauticus:ReceiveMessage_version(clientversion, sender)
 		elseif clientversion > self.db.global.newerVersion then
 			self.db.global.newerVersion = clientversion
 		end
-
 	elseif clientversion < self.versionNum then
 		requestVersion = true
 		self:DoRequest(5 + math.random() * 15)
@@ -181,7 +177,6 @@ function Nauticus:ReceiveMessage_known(version, transports, sender)
 
 	local lag = GetLag()
 	local set, respond, since, boots, swaps
-	local requestList = self.requestList
 
 	for transit, values in pairs(transports) do
 		since, boots, swaps = values.since, values.boots, values.swaps
@@ -240,12 +235,12 @@ function Nauticus:ReceiveMessage_known(version, transports, sender)
 				self:SetKnownCycle(transit, since, boots, swaps)
 			end
 
-			requestList[transit] = respond
+			self.requestList[transit] = respond
 		end
 	end
 
 	-- if we don't need to send back any data, cancel our scheduler immediately
-	if next(requestList) then
+	if next(self.requestList) then
 		self:DoRequest(5 + math.random() * 15)
 	elseif not requestVersion then
 		self:DebugMessage("received: known; no more to send")
@@ -257,7 +252,6 @@ end
 -- returns a, b
 -- where a is if we should set our data to theirs (true or false) and b is how we should respond with ours (true or nil)
 function Nauticus:IsBetter(transit, since, boots, swaps)
-
 	local ourSince, ourBoots, ourSwaps = self:GetKnownCycle(transit)
 
 	if since == nil then
@@ -266,11 +260,9 @@ function Nauticus:IsBetter(transit, since, boots, swaps)
 		else
 			return false, true -- no set, respond
 		end
-
 	else
 		if ourSince == nil then
 			return true -- set, no response
-
 		elseif 0 <= since then
 			if boots < ourBoots then
 				return true -- set, no response
@@ -306,16 +298,16 @@ function Nauticus:IsBetter(transit, since, boots, swaps)
 			end
 		end
 	end
-
 end
 
 function Nauticus:StringToKnown(transports)
+	local Args_tmp, transit, since, swaps, boots
 	local Args = self:GetArgs(transports, ",")
 	local trans_tab = {}
 
 	for t = 1, #(Args), 1 do
-		local Args_tmp = self:GetArgs(Args[t], ":")
-		local transit, since, swaps, boots = tonumber(Args_tmp[1]), Args_tmp[2], Args_tmp[3], Args_tmp[4]
+		Args_tmp = self:GetArgs(Args[t], ":")
+		transit, since, swaps, boots = tonumber(Args_tmp[1]), Args_tmp[2], Args_tmp[3], Args_tmp[4]
 
 		if self.transports[transit] then
 			transit = self.transports[transit].label
@@ -352,7 +344,7 @@ function Nauticus:UpdateChannel(wait)
 		--self:DebugMessage("distribution change")
 		self:CancelRequest()
 
-		for index, data in pairs(transports) do
+		for index, data in pairs(self.transports) do
 			if data.label ~= -1 then
 				self.requestList[data.label] = true
 			end
@@ -364,7 +356,12 @@ function Nauticus:UpdateChannel(wait)
 	end
 end
 
-function GetLag()
-	local _,_,lag = GetNetStats()
-	return lag / 1000.0
+do
+	local function ChatFilter_DataChannel(msg)
+		if strlower(arg9) == strlower(DEFAULT_CHANNEL) and not Nauticus.debug then
+			return true -- silence
+		end
+	end
+
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", ChatFilter_DataChannel)
 end

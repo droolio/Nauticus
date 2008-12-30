@@ -7,12 +7,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
 Nauticus.transports = {
 
-[0] = {
-ship_type = -1,
-name = L["Select None"],
-label = -1,
-faction = -1,
-},
 [1] = {
 vessel_name = L["The Thundercaller"],
 ship_type = "Zeppelin",
