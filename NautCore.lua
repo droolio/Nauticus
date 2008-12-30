@@ -350,17 +350,17 @@ function Nauticus:OnEnable()
 end
 
 local texCoordCache = { LLx = {}, LLy = {}, URx = {}, URy = {}, }
+local LLx, LLy, URx, URy
+local floor = math.floor
+local deg = math.deg
 
-local function GetTexCoord(degrees)
-	degrees = math.floor(degrees+.5)
-	while degrees < 0 do degrees = degrees + 360; end
-	while degrees > 360 do degrees = degrees - 360; end
-
-	local LLx, LLy, URx, URy =
-		texCoordCache.LLx[degrees], texCoordCache.LLy[degrees],
-		texCoordCache.URx[degrees], texCoordCache.URy[degrees]
-
-	return URy, LLx, LLx, LLy, URx, URy, LLy, URx
+local function RotateTexture(t, a)
+	a = floor(a+.5)
+	while   0 > a do a = a + 360; end
+	while 360 < a do a = a - 360; end
+	LLx, LLy = texCoordCache.LLx[a], texCoordCache.LLy[a]
+	URx, URy = texCoordCache.URx[a], texCoordCache.URy[a]
+	t:SetTexCoord(URy, LLx, LLx, LLy, URx, URy, LLy, URx)
 end
 
 local isDrawing
@@ -416,18 +416,18 @@ function Nauticus:DrawMapIcons(worldOnly)
 					if x and y then
 						if Astrolabe.WorldMapVisible and showWorldIcons and isFactionInteresting then
 							if isZoning ~= transport.status then
-								transport.worldmap_texture:SetTexture(isZoning and ARTWORK_ZONING or transport.texture_name)
+								buttonWorld.texture:SetTexture(isZoning and ARTWORK_ZONING or transport.texture_name)
 								transport.status = isZoning
 							end
 							Astrolabe:PlaceIconOnWorldMap(WorldMapButton, buttonWorld, 0, 0, x, y)
-							transport.worldmap_texture:SetTexCoord(GetTexCoord(angle))
+							RotateTexture(buttonWorld.texture, angle)
 						elseif buttonWorld:IsVisible() then
 							buttonWorld:Hide()
 						end
 
 						if isZoneInteresting and showMiniIcons and isFactionInteresting then
 							Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, x, y)
-							transport.minimap_texture:SetTexCoord(GetTexCoord(angle-math.deg(MiniMapCompassRing:GetFacing())))
+							RotateTexture(buttonMini.texture, angle - deg(MiniMapCompassRing:GetFacing()))
 							buttonMini:SetAlpha(Astrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
 						elseif buttonMini:IsVisible() then
 							Astrolabe:RemoveIconFromMinimap(buttonMini)
@@ -775,7 +775,6 @@ function Nauticus:InitialiseConfig()
 		frame:SetWidth(miniIconSize)
 		texture = frame:CreateTexture(nil, "ARTWORK")
 		frame.texture = texture
-		transport.minimap_texture = texture
 		texture:SetTexture(texture_name)
 		texture:SetAllPoints(frame)
 		frame:SetScript("OnEnter", function() Nauticus:MapIcon_OnEnter(this) end)
@@ -789,7 +788,6 @@ function Nauticus:InitialiseConfig()
 		frame:SetWidth(worldIconSize)
 		texture = frame:CreateTexture(nil, "ARTWORK")
 		frame.texture = texture
-		transport.worldmap_texture = texture
 		texture:SetTexture(texture_name)
 		texture:SetAllPoints(frame)
 		frame:SetScript("OnEnter", function() Nauticus:MapIcon_OnEnter(this) end)
