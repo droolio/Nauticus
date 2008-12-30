@@ -7,6 +7,7 @@ local WHITE   = "|cffffffff"
 local GREY    = "|cffbababa"
 
 -- constants
+local NONE = -1
 local ARTWORK_PATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
 local ARTWORK_ZONING = ARTWORK_PATH.."MapIcon_Zoning"
 local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
@@ -23,7 +24,6 @@ local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
 Nauticus.versionNum = 303 -- for comparison
-Nauticus.activeTransit = -1
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
@@ -65,7 +65,7 @@ local defaults = {
 		debug = false,
 	},
 	char = {
-		activeTransit = -1,
+		activeTransit = NONE,
 		autoSelect = true,
 	},
 }
@@ -368,16 +368,14 @@ local isDrawing
 function Nauticus:DrawMapIcons(worldOnly)
 	if isDrawing then return; end; isDrawing = true
 
-	local transit_name, liveData, cycle, index, offsets, x, y, angle, transit_data, fraction,
+	local liveData, cycle, index, offsets, x, y, angle, transit_data, fraction,
 		isZoning, isZoneInteresting, isFactionInteresting, buttonMini, buttonWorld
 
-	for _, transport in pairs(transports) do
-		transit_name = transport.label
-
-		if self:HasKnownCycle(transit_name) then
-			transit_data = transitData[transit_name]
-			liveData = self.liveData[transit_name]
-			cycle = math.fmod(self:GetKnownCycle(transit_name), self.rtts[transit_name])
+	for id, transport in pairs(transports) do
+		if self:HasKnownCycle(id) then
+			transit_data = transitData[id]
+			liveData = self.liveData[id]
+			cycle = math.fmod(self:GetKnownCycle(id), self.rtts[id])
 			offsets = transit_data.offset
 			index = liveData.index
 
@@ -395,7 +393,7 @@ function Nauticus:DrawMapIcons(worldOnly)
 			liveData.cycle, liveData.index = cycle, index
 
 			if showMiniIcons or showWorldIcons then
-				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[transit_name] and not worldOnly
+				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[id]
 				isFactionInteresting = not factionOnlyIcons or transport.faction == UnitFactionGroup("player") or transport.faction == "Neutral"
 				buttonMini, buttonWorld = transport.minimap_icon, transport.worldmap_icon
 
@@ -410,7 +408,7 @@ function Nauticus:DrawMapIcons(worldOnly)
 							transit_data.x[index-1] + transit_data.dx[index] * fraction,
 							transit_data.y[index-1] + transit_data.dy[index] * fraction,
 							transit_data.dir[index-1] + transit_data.d_dir[index] * fraction,
-							zonings[transit_name][index] == true
+							zonings[id][index] == true
 					end
 
 					if x and y then
@@ -426,9 +424,11 @@ function Nauticus:DrawMapIcons(worldOnly)
 						end
 
 						if isZoneInteresting and showMiniIcons and isFactionInteresting then
-							Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, x, y)
-							RotateTexture(buttonMini.texture, angle - deg(MiniMapCompassRing:GetFacing()))
-							buttonMini:SetAlpha(Astrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
+							if not worldOnly then
+								Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, x, y)
+								RotateTexture(buttonMini.texture, angle - deg(MiniMapCompassRing:GetFacing()))
+								buttonMini:SetAlpha(Astrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
+							end
 						elseif buttonMini:IsVisible() then
 							Astrolabe:RemoveIconFromMinimap(buttonMini)
 						end
@@ -618,6 +618,7 @@ end
 -- initialise saved variables and data
 function Nauticus:InitialiseConfig()
 	--self:DebugMessage("init config...")
+	transports = self.transports
 	self.debug = self.db.global.debug
 
 	if NauticusDB and NauticusDB.account and not self.db.global.uptime then
@@ -627,9 +628,20 @@ function Nauticus:InitialiseConfig()
 		NauticusDB = nil
 	end
 
+	do
+		-- convert legacy label names into their proper id's
+		local knownCycles = self.db.global.knownCycles
+		for name, id in pairs(self.lookupIndex) do
+			if knownCycles[name] then
+				self:DebugMessage("legacy: "..name)
+				knownCycles[id] = knownCycles[name]
+				knownCycles[name] = nil
+			end
+		end
+	end
+
 	if self.db.global.newerVersion then
 		--self:DebugMessage("new version: "..self.db.global.newerVersion.." vs our "..self.versionNum)
-
 		if self.db.global.newerVersion > self.versionNum then
 			DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..
 				L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."])
@@ -652,16 +664,15 @@ function Nauticus:InitialiseConfig()
 	alarmOffset = self.db.profile.alarmOffset
 	autoSelect = self.db.char.autoSelect
 	filterChat = self.db.profile.filterChat
-
-	self.activeTransit = self.db.char.activeTransit
-	if self.activeTransit ~= -1 and not self:GetTransportID(self.activeTransit) then
-		self.activeTransit = -1
-		self.db.char.activeTransit = -1
-	end
-
 	showMiniIcons = self.db.profile.showMiniIcons
 	showWorldIcons = self.db.profile.showWorldIcons
 	factionOnlyIcons = self.db.profile.factionOnlyIcons
+
+	self.activeTransit = self.db.char.activeTransit
+	if self.activeTransit ~= NONE and not transports[self.activeTransit] then
+		self.activeTransit = NONE
+		self.db.char.activeTransit = NONE
+	end
 
 	local now = GetTime()
 	local the_time = time()
@@ -672,7 +683,7 @@ function Nauticus:InitialiseConfig()
 		self:DebugMessage(format("boot drift: %0.3f", drift))
 
 		-- if more than 3 mins drift, that means reboot occured. we need to adjust ms timers
-		if math.abs(drift) > 180 then
+		if 180 < math.abs(drift) then
 			local since
 			-- adjust all available transport times by drift
 			for transport, data in pairs(self.db.global.knownCycles) do
@@ -703,32 +714,26 @@ function Nauticus:InitialiseConfig()
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
-	local j, oldX, oldY, oldOffset, oldDir, transport, transit, transit_data,
-		texture_name, frame, texture
-
+	local j, oldX, oldY, oldOffset, oldDir, transit_data, texture_name, frame, texture
 	local miniIconSize = self.db.profile.miniIconSize * ICON_DEFAULT_SIZE
 	local worldIconSize = self.db.profile.worldIconSize * ICON_DEFAULT_SIZE
-
 	local liveData = {}
 	self.liveData = liveData
-	transports = self.transports
 
-	for t = 1, #(transports), 1 do
+	for id, data in pairs(transports) do
 		oldX, oldY, oldOffset, oldDir = 0, 0, 0, 0
 
-		transport = transports[t]
-		transit = transport.label
-		transitData[transit] = { ['x'] = {}, ['y'] = {}, ['offset'] = {},
+		transitData[id] = { ['x'] = {}, ['y'] = {}, ['offset'] = {},
 			['dx'] = {}, ['dy'] = {}, ['dt'] = {}, ['dir'] = {}, ['d_dir'] = {}, }
 
-		zonings[transit] = {}
-		triggers[transit] = {}
-		transit_data = transitData[transit]
+		zonings[id] = {}
+		triggers[id] = {}
+		transit_data = transitData[id]
 
-		for i = 1, #(packedData[transit]) do
+		for i = 1, #(packedData[id]) do
 			j = 0; args[6] = nil
 			-- search for seperators in the string and return the separated data
-			for value in string.gmatch(packedData[transit][i], "[^:]+") do
+			for value in string.gmatch(packedData[id][i], "[^:]+") do
 				j = j + 1; args[j] = value
 			end
 
@@ -745,12 +750,12 @@ function Nauticus:InitialiseConfig()
 				local comment = strsub(args[6], 1, 4)
 				if comment == "plat" then
 					local index = tonumber(strsub(args[6], 5))
-					self.platforms[transit][index].index = i
+					self.platforms[id][index].index = i
 				elseif comment == "trig" then
 					local index = tonumber(strsub(args[6], 5)) == 0 and -i or i
-					tinsert(triggers[transit], index)
+					tinsert(triggers[id], index)
 				elseif comment == "zone" then
-					zonings[transit][i] = true
+					zonings[id][i] = true
 				end
 			end
 
@@ -762,15 +767,15 @@ function Nauticus:InitialiseConfig()
 		end
 
 		transit_data.offset[0] = 0
-		transit_data.offset[#(packedData[transit])] = self.rtts[transit]
+		transit_data.offset[#(packedData[id])] = self.rtts[id]
 
-		liveData[transit] = { cycle = 0, index = 1, }
+		liveData[id] = { cycle = 0, index = 1, }
 
-		texture_name = ARTWORK_PATH.."MapIcon_"..transport.ship_type
-		transport.texture_name = texture_name
+		texture_name = ARTWORK_PATH.."MapIcon_"..data.ship_type
+		data.texture_name = texture_name
 
-		frame = CreateFrame("Button", "NauticusMiniIcon"..t, NauticusMiniMapOverlay)
-		transport.minimap_icon = frame
+		frame = CreateFrame("Button", "NauticusMiniIcon"..id, NauticusMiniMapOverlay)
+		data.minimap_icon = frame
 		frame:SetHeight(miniIconSize)
 		frame:SetWidth(miniIconSize)
 		texture = frame:CreateTexture(nil, "ARTWORK")
@@ -779,11 +784,11 @@ function Nauticus:InitialiseConfig()
 		texture:SetAllPoints(frame)
 		frame:SetScript("OnEnter", function() Nauticus:MapIcon_OnEnter(this) end)
 		frame:SetScript("OnLeave", function() Nauticus:MapIcon_OnLeave(this) end)
-		frame:SetID(t)
+		frame:SetID(id)
 		frame:Hide()
 
 		frame = CreateFrame("Button", nil, worldMapOverlay)
-		transport.worldmap_icon = frame
+		data.worldmap_icon = frame
 		frame:SetHeight(worldIconSize)
 		frame:SetWidth(worldIconSize)
 		texture = frame:CreateTexture(nil, "ARTWORK")
@@ -792,7 +797,7 @@ function Nauticus:InitialiseConfig()
 		texture:SetAllPoints(frame)
 		frame:SetScript("OnEnter", function() Nauticus:MapIcon_OnEnter(this) end)
 		frame:SetScript("OnLeave", function() Nauticus:MapIcon_OnLeave(this) end)
-		frame:SetID(t)
+		frame:SetID(id)
 	end
 
 	self.packedData = nil -- free some memory (too many indexes to recycle)
@@ -861,36 +866,9 @@ end
 
 function Nauticus:HasKnownCycle(transport)
 	local knownCycle = self.db.global.knownCycles[transport]
-	if transport ~= -1 then
+	if transport ~= NONE then
 		return knownCycle ~= nil and knownCycle.since ~= nil
 	end
-end
-
-function Nauticus:GetTransport(t)
-	if type(t) == "string" then
-		return transports[ self.lookupIndex[t] ]
-	elseif type(t) == "number" then
-		return transports[t]
-	end
-	return t
-end
-
-function Nauticus:GetTransportName(t)
-	if type(t) == "number" then
-		return transports[t].label
-	elseif type(t) == "table" then
-		return t.label
-	end
-	return t
-end
-
-function Nauticus:GetTransportID(t)
-	if type(t) == "string" then
-		return self.lookupIndex[t]
-	elseif type(t) == "table" then
-		return self.lookupIndex[t.label]
-	end
-	return t
 end
 
 local formattedTimeCache = {}
@@ -911,7 +889,7 @@ end
 
 function Nauticus:IsTransportListed(transport)
 	local addtrans = false
-	transport = self:GetTransport(transport)
+	transport = transports[transport]
 
 	if self.db.profile.factionSpecific then
 		if transport.faction == UnitFactionGroup("player") or
@@ -943,7 +921,7 @@ function Nauticus:NextTransportInList()
 		if not first and addtrans then first = i; end
 
 		if not isFound then
-			if transports[i].label == self.activeTransit then
+			if self.activeTransit == i then
 				isFound = true
 			end
 		else
@@ -965,18 +943,14 @@ end
 
 function Nauticus:SetTransport(transport)
 	if transport then
-		if transport == 0 then
-			self.activeTransit = -1
-		else
-			self.activeTransit = self:GetTransportName(transport)
-		end
+		self.activeTransit = transport
 		self.db.char.activeTransit = self.activeTransit
 	end
 
 	local has = self:HasKnownCycle(self.activeTransit)
 
 	if has then
-		self.tempText = GREEN..self:GetTransport(self.activeTransit).short_name
+		self.tempText = GREEN..transports[self.activeTransit].short_name
 		self.tempTextCount = 3
 	else
 		self.lowestNameTime = (has == false) and L["N/A"] or "--"

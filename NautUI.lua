@@ -7,6 +7,7 @@ local WHITE   = "|cffffffff"
 local GREY    = "|cffbababa"
 
 -- constants
+local NONE = -1
 local ARTWORK_PATH = "Interface\\AddOns\\Nauticus\\Artwork\\"
 local ARTWORK_LOGO = ARTWORK_PATH.."NauticusLogo"
 local ARTWORK_ALARM = "Interface\\Icons\\INV_Misc_PocketWatch_02"
@@ -94,21 +95,21 @@ function Nauticus:TransportSelectInitialise(frame, level)
 				Nauticus:SetTransport(this.value)
 				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 			end,
-			self.activeTransit == -1, -- checked?
-			0, -- value
+			self.activeTransit == NONE, -- checked?
+			NONE, -- value
 			true -- tooltipTitle
 		)
 
 		local textdesc
 
-		for i = 1, #(transports), 1 do
-			if self:IsTransportListed(i) then
-				textdesc = transports[i].name
+		for id = 1, #(transports), 1 do
+			if self:IsTransportListed(id) then
+				textdesc = transports[id].name
 
-				if self:HasKnownCycle(transports[i].label) then
-					if transports[i].faction == UnitFactionGroup("player") then
+				if self:HasKnownCycle(id) then
+					if transports[id].faction == UnitFactionGroup("player") then
 						textdesc = GREEN..textdesc
-					elseif transports[i].faction == "Neutral" then
+					elseif transports[id].faction == "Neutral" then
 						textdesc = YELLOW..textdesc
 					else
 						textdesc = RED..textdesc
@@ -123,8 +124,8 @@ function Nauticus:TransportSelectInitialise(frame, level)
 						Nauticus:SetTransport(this.value)
 						ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 					end,
-					transports[i].label == self.activeTransit, -- checked?
-					i, -- value
+					self.activeTransit == id, -- checked?
+					id, -- value
 					true -- tooltipTitle
 				)
 			end
@@ -148,7 +149,7 @@ function Nauticus:ShowTooltip(transit)
 		local liveData = self.liveData[transit]
 		local cycle, index = liveData.cycle, liveData.index
 
-		tablet:AddLine(self:GetTransport(transit).vessel_name)
+		tablet:AddLine(transports[transit].vessel_name)
 			:Color(0.25, 0.75, 1, 1)
 			:Font(GameFontHighlightLarge:GetFont())
 			.left:SetJustifyH('CENTER')
@@ -197,7 +198,7 @@ function Nauticus:ShowTooltip(transit)
 				:Font(nil, nil, nil, NUMBER_FONT, 14, nil)
 		end
 	elseif has == false then
-		tablet:AddLine(self:GetTransport(transit).vessel_name)
+		tablet:AddLine(transports[transit].vessel_name)
 			:Color(0.25, 0.75, 1, 1)
 			:Font(GameFontHighlightLarge:GetFont())
 			.left:SetJustifyH('CENTER')
@@ -257,8 +258,7 @@ local function GetParentFrame()
 end
 
 function Nauticus:MapIcon_OnEnter(frame)
-	local id = frame:GetID()
-	local transit = self.transports[id].label
+	local transit = frame:GetID()
 	local point, rel = GetMapIconAnchor()
 
 	tablet:Attach(point, frame, rel, 0, 0)
@@ -267,14 +267,14 @@ function Nauticus:MapIcon_OnEnter(frame)
 
 	self:ShowTooltip(transit)
 
-	for t = 1, #(transports), 1 do
-		if transit ~= transports[t].label and (MouseIsOver(transports[t].worldmap_icon) or
-			(transports[t].minimap_icon:IsVisible() and MouseIsOver(transports[t].minimap_icon)))
+	for id, data in pairs(transports) do
+		if transit ~= id and (MouseIsOver(data.worldmap_icon) or
+			(data.minimap_icon:IsVisible() and MouseIsOver(data.minimap_icon)))
 		then
 			tablet:AddLine("•") -- ascii 149
 				:Color(0.5, 0.5, 0, 1)
 				.left:SetJustifyH('CENTER')
-			self:ShowTooltip(transports[t].label)
+			self:ShowTooltip(id)
 		end
 	end
 

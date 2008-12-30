@@ -32,7 +32,7 @@ function Nauticus:DoRequest(wait)
 		return
 	end
 
-	if next(self.requestList) ~= nil then
+	if next(self.requestList) then
 		self:BroadcastTransportData()
 
 		if requestVersion then
@@ -61,7 +61,7 @@ function Nauticus:BroadcastTransportData()
 
 	for transit in pairs(self.requestList) do
 		since, boots, swaps = self:GetKnownCycle(transit)
-		trans_str = trans_str..self:GetTransportID(transit)
+		trans_str = trans_str..transit
 
 		if since ~= nil then
 			trans_str = trans_str..":"..math.floor((since+lag)*1000.0+.5)
@@ -310,8 +310,6 @@ function Nauticus:StringToKnown(transports)
 		transit, since, swaps, boots = tonumber(Args_tmp[1]), Args_tmp[2], Args_tmp[3], Args_tmp[4]
 
 		if self.transports[transit] then
-			transit = self.transports[transit].label
-
 			if since ~= nil then
 				trans_tab[transit] = {
 					['since'] = tonumber(since),
@@ -344,10 +342,8 @@ function Nauticus:UpdateChannel(wait)
 		--self:DebugMessage("distribution change")
 		self:CancelRequest()
 
-		for index, data in pairs(self.transports) do
-			if data.label ~= -1 then
-				self.requestList[data.label] = true
-			end
+		for id in pairs(self.transports) do
+			self.requestList[id] = true
 		end
 
 		requestVersion = true
