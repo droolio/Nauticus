@@ -13,6 +13,7 @@ local Nauticus = Nauticus
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
 
 local request
+local requestList = {}
 local requestVersion = false
 
 
@@ -32,7 +33,7 @@ function Nauticus:DoRequest(wait)
 		return
 	end
 
-	if next(self.requestList) then
+	if next(requestList) then
 		self:BroadcastTransportData()
 
 		if requestVersion then
@@ -42,10 +43,8 @@ function Nauticus:DoRequest(wait)
 	end
 
 	if requestVersion then
-		local versionNum = self.versionNum
-
 		requestVersion = false
-		self:SendMessage("VER "..versionNum)
+		self:SendMessage("VER "..self.versionNum)
 	end
 end
 
@@ -59,7 +58,7 @@ function Nauticus:BroadcastTransportData()
 	local lag = GetLag()
 	local trans_str = ""
 
-	for transit in pairs(self.requestList) do
+	for transit in pairs(requestList) do
 		since, boots, swaps = self:GetKnownCycle(transit)
 		trans_str = trans_str..transit
 
@@ -80,7 +79,7 @@ function Nauticus:BroadcastTransportData()
 		end
 
 		trans_str = trans_str..","
-		self.requestList[transit] = nil
+		requestList[transit] = nil
 	end
 
 	if trans_str ~= "" then
@@ -90,6 +89,10 @@ function Nauticus:BroadcastTransportData()
 	else
 		self:DebugMessage("nothing to tell")
 	end
+end
+
+function Nauticus:RequestTransport(t)
+	requestList[t] = true
 end
 
 function Nauticus:SendMessage(msg)
@@ -165,14 +168,13 @@ function Nauticus:ReceiveMessage_version(clientversion, sender)
 	requestVersion = false
 
 	-- if we don't need to send back any data, cancel our scheduler immediately
-	if not next(self.requestList) then
+	if not next(requestList) then
 		self:DebugMessage("received: version; no more to send")
 		self:CancelRequest()
 	end
 end
 
 function Nauticus:ReceiveMessage_known(version, transports, sender)
-
 	if version ~= DATA_VERSION then return; end
 
 	local lag = GetLag()
@@ -191,62 +193,43 @@ function Nauticus:ReceiveMessage_known(version, transports, sender)
 
 		--@debug@
 		if self.debug then
-			local debugColour
 			local ourSince, ourBoots, ourSwaps = self:GetKnownCycle(transit)
-
-			if set ~= nil then
-				if set then
-					debugColour = GREEN
-				elseif respond then
-					debugColour = YELLOW
-				else
-					debugColour = WHITE
-				end
-			else
+			local debugColour
+			if set == nil then
 				debugColour = RED
-			end
-
-			if ourSince ~= nil then
-				ourSince = math.floor(ourSince*1000.0)/1000.0
-
-				if since ~= nil then
-					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
-						since.."|r (boots: "..boots..", swaps: "..swaps..") vs our "..
-						ourSince.." (boots: "..ourBoots..", swaps: "..ourSwaps..") ; diff: "..
-						math.floor((ourSince-since)*1000.0)/1000.0)
-				else
-					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
-						"nil|r vs our "..ourSince.." (boots: "..ourBoots..", swaps: "..ourSwaps..")")
-				end
+			elseif set then
+				debugColour = GREEN
+			elseif respond then
+				debugColour = YELLOW
 			else
-				if since ~= nil then
-					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
-						since.."|r (boots: "..boots..", swaps: "..swaps..") vs our nil")
-				else
-					self:DebugMessage(sender.." knows "..transit.." "..debugColour..
-						"nil|r vs our nil")
-				end
+				debugColour = GREY
 			end
+			local output = sender.." knows "..transit.." "..debugColour..
+				(since and since.."|r (b:"..boots..",s:"..swaps..")" or "nil|r").." vs our "..
+				(ourSince and format("%0.3f", ourSince).." (b:"..ourBoots..",s:"..ourSwaps..")" or "nil")
+			if ourSince and since then
+				output = output.." ; diff: "..format("%0.3f", ourSince-since)..
+					" ; cycles: "..format("%0.6f", (ourSince-since) / self.rtts[transit])
+			end
+			self:DebugMessage(output)
 		end
 		--@end-debug@
 
-		if set ~= nil then
+		if set ~= nil then -- true or false...
 			if set then
 				self:SetKnownCycle(transit, since, boots, swaps)
 			end
-
-			self.requestList[transit] = respond
+			requestList[transit] = respond
 		end
 	end
 
 	-- if we don't need to send back any data, cancel our scheduler immediately
-	if next(self.requestList) then
+	if next(requestList) then
 		self:DoRequest(5 + math.random() * 15)
 	elseif not requestVersion then
 		self:DebugMessage("received: known; no more to send")
 		self:CancelRequest()
 	end
-
 end
 
 -- returns a, b
@@ -310,7 +293,7 @@ function Nauticus:StringToKnown(transports)
 		transit, since, swaps, boots = tonumber(Args_tmp[1]), Args_tmp[2], Args_tmp[3], Args_tmp[4]
 
 		if self.transports[transit] then
-			if since ~= nil then
+			if since then
 				trans_tab[transit] = {
 					['since'] = tonumber(since),
 					['boots'] = boots and tonumber(boots) or 0,
@@ -343,7 +326,7 @@ function Nauticus:UpdateChannel(wait)
 		self:CancelRequest()
 
 		for id in pairs(self.transports) do
-			self.requestList[id] = true
+			requestList[id] = true
 		end
 
 		requestVersion = true

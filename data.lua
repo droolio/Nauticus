@@ -115,7 +115,7 @@ faction = "Alliance",
 [16] = {
 vessel_name = L["Captured Zeppelin"],
 ship_type = "Zeppelin",
-name = L["Daily: "]..L["Westguard Keep"],
+name = L["Westguard Keep"].." ∞",
 short_name = L["WGK"],
 faction = "Alliance",
 },

@@ -1,6 +1,7 @@
 ﻿
 -- Spanish localisation by StiviS
-local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "esES")
+local AceLocale = LibStub:GetLibrary("AceLocale-3.0")
+local L = AceLocale:NewLocale("Nauticus", "esES") or AceLocale:NewLocale("Nauticus", "esMX")
 if not L then return; end
 
 -- addon description
@@ -54,7 +55,6 @@ L["Nauticus Options"] = "Opciones de Nauticus"
 L["Alarm is now: "] = true
 L["ON"] = true
 L["OFF"] = true
-L["Daily: "] = true
 
 L["List friendly faction only"] = "Mostrar sólo transportes para su facción" -- re do?
 L["Shows only neutral transports and those of your faction."] = "Muestra sólo neutrales y transportes específicos para su facción." -- re do?

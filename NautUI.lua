@@ -15,25 +15,8 @@ local NUMBER_FONT = "Fonts\\ARIALN.TTF"
 
 local Nauticus = Nauticus
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
-local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
-local dataobj = ldb:NewDataObject("Nauticus", { type = "data source", text = "Nauticus", icon = ARTWORK_LOGO } )
-Nauticus.dataobj = dataobj
-
-local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
-	position = { point = "CENTER", x = 0, y = 0 },
-	lock = true,
-	scale = 1,
-	strata = "TOOLTIP",
-	fade = 1,
-	opacity = 1,
-	width = 150,
-	border = { 1, 1, 1, 1 },
-	background = { 0, 0, 0, 1 },
-	min_height = 20,
-} )
 
 local transports = Nauticus.transports
-local iconTooltip, barTooltipFrame
 
 
 local function AddLine(text, func, checked, value, tooltipTitle, tooltipText)
@@ -60,7 +43,7 @@ function Nauticus:TransportSelectInitialise(frame, level)
 
 	if level == 1 then
 		local info = UIDropDownMenu_CreateInfo()
-		info.text = "Nauticus"; info.isTitle = 1
+		info.text = self.title; info.isTitle = 1
 		UIDropDownMenu_AddButton(info)
 
 		AddLine(
@@ -140,6 +123,31 @@ function Nauticus:TransportSelectInitialise(frame, level)
 	end
 
 end
+
+local function IsMenuOpen()
+	return DropDownList1:IsShown() and
+		UIDROPDOWNMENU_OPEN_MENU == Naut_TransportSelectFrame:GetName()
+end
+
+function Nauticus:RefreshMenu()
+	if IsMenuOpen() then
+		CloseDropDownMenus()
+		ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
+	end
+end
+
+local tablet = LibStub("LibSimpleFrame-Mod-1.0"):New("Nauticus", {
+	position = { point = "CENTER", x = 0, y = 0 },
+	lock = true,
+	scale = 1,
+	strata = "TOOLTIP",
+	fade = 1,
+	opacity = 1,
+	width = 150,
+	border = { 1, 1, 1, 1 },
+	background = { 0, 0, 0, 1 },
+	min_height = 20,
+} )
 
 function Nauticus:ShowTooltip(transit)
 	local has = self:HasKnownCycle(transit)
@@ -257,6 +265,8 @@ local function GetParentFrame()
 	return nil
 end
 
+local iconTooltip
+
 function Nauticus:MapIcon_OnEnter(frame)
 	local transit = frame:GetID()
 	local point, rel = GetMapIconAnchor()
@@ -287,9 +297,16 @@ function Nauticus:MapIcon_OnLeave(frame)
 	iconTooltip = nil
 end
 
+-- LDB stuff...
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+local dataobj = ldb:NewDataObject("Nauticus", { type = "data source", text = "Nauticus", icon = ARTWORK_LOGO } )
+Nauticus.dataobj = dataobj
+
+local barTooltipFrame
+
 function Nauticus:UpdateDisplay()
 	dataobj.icon = self:IsAlarmSet() and ARTWORK_ALARM or self.icon or ARTWORK_LOGO
-	dataobj.text = self.tempTextCount > 0 and self.tempText or self.lowestNameTime
+	dataobj.text = (0 < self.tempTextCount) and self.tempText or self.lowestNameTime
 
 	if not iconTooltip then return; end
 
@@ -300,19 +317,6 @@ function Nauticus:UpdateDisplay()
 	end
 end
 
-local function IsMenuOpen()
-	return DropDownList1:IsShown() and
-		UIDROPDOWNMENU_OPEN_MENU == Naut_TransportSelectFrame:GetName()
-end
-
-function Nauticus:RefreshMenu()
-	if IsMenuOpen() then
-		CloseDropDownMenus()
-		ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
-	end
-end
-
--- LDB stuff...
 function dataobj:OnEnter()
 	if IsMenuOpen() then return; end
 
@@ -326,7 +330,7 @@ function dataobj:OnEnter()
 	tablet:Clear():SetParent(GetParentFrame())
 	tablet:SetFrameLevel(tablet:GetParent():GetFrameLevel() + 1)
 
-	tablet:AddLine("Nauticus")
+	tablet:AddLine(Nauticus.title)
 		:Font(GameTooltipHeaderText:GetFont())
 		.left:SetJustifyH('CENTER')
 
@@ -347,7 +351,6 @@ end
 function dataobj:OnClick(button)
 	if button == "LeftButton" then
 		if IsMenuOpen() then CloseDropDownMenus(); end
-
 		if IsAltKeyDown() then
 			if Nauticus:HasKnownCycle(Nauticus.activeTransit) then
 				Nauticus:ToggleAlarm()
@@ -369,11 +372,13 @@ end
 
 -- Titan stuff...
 -- don't go any further if Titan isn't loaded
-if not IsAddOnLoaded("Titan") then Nauticus:DebugMessage("no titan"); return; end
+if not IsAddOnLoaded("Titan") then return; end
 
--- hook menu close
-local orig_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu
-function TitanUtils_CloseRightClickMenu(...)
-	if IsMenuOpen() then CloseDropDownMenus(); end
-	return orig_TitanUtils_CloseRightClickMenu(...)
+-- hook menu close (so we can close our dropdown sooner when clicking Titan bar)
+do
+	local orig_TitanUtils_CloseRightClickMenu = TitanUtils_CloseRightClickMenu
+	function TitanUtils_CloseRightClickMenu(...)
+		if IsMenuOpen() then CloseDropDownMenus(); end
+		return orig_TitanUtils_CloseRightClickMenu(...)
+	end
 end

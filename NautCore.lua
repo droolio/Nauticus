@@ -27,7 +27,6 @@ Nauticus.versionNum = 303 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
-Nauticus.requestList = {}
 Nauticus.debug = false
 
 -- local variables
@@ -83,8 +82,8 @@ local _options = {
 			Nauticus.db.profile.showMiniIcons = val
 			showMiniIcons = val
 			if not val then
-				for t = 1, #(transports), 1 do
-					Astrolabe:RemoveIconFromMinimap(transports[t].minimap_icon)
+				for _, t in pairs(transports) do
+					Astrolabe:RemoveIconFromMinimap(t.minimap_icon)
 				end
 			end
 		end,
@@ -101,8 +100,8 @@ local _options = {
 			Nauticus.db.profile.showWorldIcons = val
 			showWorldIcons = val
 			if not val then
-				for t = 1, #(transports), 1 do
-					transports[t].worldmap_icon:Hide()
+				for _, t in pairs(transports) do
+					t.worldmap_icon:Hide()
 				end
 			end
 		end,
@@ -116,11 +115,11 @@ local _options = {
 			return Nauticus.db.profile.miniIconSize
 		end,
 		set = function(info, val)
-			for t = 1, #(transports), 1 do
-				transports[t].minimap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
-				transports[t].minimap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
-			end
 			Nauticus.db.profile.miniIconSize = val
+			for _, t in pairs(transports) do
+				t.minimap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
+				t.minimap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
+			end
 		end,
 		isPercent = true,
 		min = .5, max = 2, step = .01,
@@ -134,11 +133,11 @@ local _options = {
 			return Nauticus.db.profile.worldIconSize
 		end,
 		set = function(info, val)
-			for t = 1, #(transports), 1 do
-				transports[t].worldmap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
-				transports[t].worldmap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
-			end
 			Nauticus.db.profile.worldIconSize = val
+			for _, t in pairs(transports) do
+				t.worldmap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
+				t.worldmap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
+			end
 		end,
 		isPercent = true,
 		min = .5, max = 2, step = .01,
@@ -191,8 +190,8 @@ local _options = {
 			return Nauticus.db.profile.alarmOffset
 		end,
 		set = function(info, val)
-			alarmOffset = val
 			Nauticus.db.profile.alarmOffset = val
+			alarmOffset = val
 		end,
 		min = 0, max = 90, step = 5,
 	},
@@ -393,8 +392,8 @@ function Nauticus:DrawMapIcons(worldOnly)
 			liveData.cycle, liveData.index = cycle, index
 
 			if showMiniIcons or showWorldIcons then
-				isZoneInteresting = self.currentZoneTransports ~= nil and self.currentZoneTransports[id]
-				isFactionInteresting = not factionOnlyIcons or transport.faction == UnitFactionGroup("player") or transport.faction == "Neutral"
+				isZoneInteresting = (self.currentZoneTransports) and self.currentZoneTransports[id]
+				isFactionInteresting = (not factionOnlyIcons) or transport.faction == UnitFactionGroup("player") or transport.faction == "Neutral"
 				buttonMini, buttonWorld = transport.minimap_icon, transport.worldmap_icon
 
 				if isZoneInteresting or Astrolabe.WorldMapVisible then
@@ -458,8 +457,8 @@ function Nauticus:Clock_OnUpdate()
 	if self:HasKnownCycle(transit) then
 		local liveData = self.liveData[transit]
 		local cycle, index = liveData.cycle, liveData.index
-		local lowestTime = 500
-		local plat_time, depOrArr, colour
+		local lowestTime = math.huge
+		local plat_time, colour
 
 		for _, data in pairs(self.platforms[transit]) do
 			if data.index == index then
@@ -480,8 +479,7 @@ function Nauticus:Clock_OnUpdate()
 					self.icon = ARTWORK_DEPARTING
 				end
 
-				depOrArr = L["Departure"]
-				lowestTime = -500
+				lowestTime = -math.huge
 				self.lowestNameTime = data.ebv.." "..colour..self:GetFormattedTime(plat_time)
 			else
 				plat_time = self:GetCycleByIndex(transit, data.index-1) - cycle
@@ -489,9 +487,6 @@ function Nauticus:Clock_OnUpdate()
 				if 0 > plat_time then
 					plat_time = plat_time + self.rtts[transit]
 				end
-
-				colour = GREEN
-				depOrArr = L["Arrival"]
 
 				if plat_time < lowestTime then
 					lowestTime = plat_time
@@ -527,10 +522,9 @@ function Nauticus:CheckTriggers_OnUpdate()
 	-- have we moved by at least 6.16 game yards since the last check? this equates to >~110% movement speed
 	if 6.16 < dist then
 		if IsFlying() or IsSwimming() or UnitOnTaxi("player") then return; end
-
 		--check X/Y coords against all triggers for all transports in current zone
 		for transit in pairs(self.currentZoneTransports) do
-			for i, index in pairs(triggers[transit]) do
+			for _, index in pairs(triggers[transit]) do
 				post = 0 > index; if post then index = -index; end
 				-- within 20 game yards of trigger coords?
 				if 20.0 > Astrolabe:ComputeDistance(0, 0, x, y,
@@ -539,7 +533,7 @@ function Nauticus:CheckTriggers_OnUpdate()
 					if post then
 						if last_trig and keep_time then
 							self:SetKnownCycle(transit, GetTime() - last_trig + keep_time, 0, 0)
-							self.requestList[transit] = true
+							self:RequestTransport(transit)
 							self:DoRequest(10 + math.random() * 10)
 							keep_time = nil
 							last_trig = GetTime()
@@ -550,7 +544,6 @@ function Nauticus:CheckTriggers_OnUpdate()
 							last_trig = GetTime()
 						end
 					end
-
 					return
 				end
 			end
@@ -559,7 +552,7 @@ function Nauticus:CheckTriggers_OnUpdate()
 		--check X/Y coords against all platforms in current zone
 		for transit in pairs(self.currentZoneTransports) do
 			if transit ~= self.activeTransit then
-				for i, data in pairs(self.platforms[transit]) do
+				for _, data in pairs(self.platforms[transit]) do
 					-- within 25 game yards of platform coords?
 					if 25.0 > Astrolabe:ComputeDistance(0, 0, x, y,
 						0, 0, transitData[transit].x[data.index], transitData[transit].y[data.index]) then
@@ -604,7 +597,7 @@ function Nauticus:SetKnownTime(transit, index, x, y, set)
 
 	if set then
 		self:SetKnownCycle(transit, sum_time, 0, 0)
-		self.requestList[transit] = true
+		self:RequestTransport(transit)
 		self:DoRequest(10 + math.random() * 10)
 	else
 		keep_time = sum_time
@@ -621,6 +614,16 @@ function Nauticus:InitialiseConfig()
 	transports = self.transports
 	self.debug = self.db.global.debug
 
+	do
+		--[===[@non-debug@
+		local version = "@project-version@"
+		--@end-non-debug@]===]
+		local title = "Nauticus"
+		if version then title = title.." "..version; end
+		self.title = title
+	end
+
+	-- copy legacy db from ace2 versions...
 	if NauticusDB and NauticusDB.account and not self.db.global.uptime then
 		self.db.global.uptime = NauticusDB.account.uptime
 		self.db.global.timestamp = NauticusDB.account.timestamp
@@ -629,7 +632,7 @@ function Nauticus:InitialiseConfig()
 	end
 
 	do
-		-- convert legacy label names into their proper id's
+		-- convert legacy label names into their proper id's...
 		local knownCycles = self.db.global.knownCycles
 		for name, id in pairs(self.lookupIndex) do
 			if knownCycles[name] then
@@ -669,6 +672,7 @@ function Nauticus:InitialiseConfig()
 	factionOnlyIcons = self.db.profile.factionOnlyIcons
 
 	self.activeTransit = self.db.char.activeTransit
+	-- make sure our saved active transport is still valid...
 	if self.activeTransit ~= NONE and not transports[self.activeTransit] then
 		self.activeTransit = NONE
 		self.db.char.activeTransit = NONE
@@ -676,12 +680,10 @@ function Nauticus:InitialiseConfig()
 
 	local now = GetTime()
 	local the_time = time()
-
 	if self.db.global.uptime then
 		-- calculate potential drift time in ms between sessions
 		local drift = (the_time - now) - (self.db.global.timestamp - self.db.global.uptime)
 		self:DebugMessage(format("boot drift: %0.3f", drift))
-
 		-- if more than 3 mins drift, that means reboot occured. we need to adjust ms timers
 		if 180 < math.abs(drift) then
 			local since
@@ -698,11 +700,9 @@ function Nauticus:InitialiseConfig()
 					end
 				end
 			end
-
 			self:DebugMessage("reboot must have occured")
 		end
 	end
-
 	-- record uptime and 'when' (relative to local system clock) this was made
 	self.db.global.uptime = now
 	self.db.global.timestamp = the_time
@@ -759,11 +759,9 @@ function Nauticus:InitialiseConfig()
 				end
 			end
 
-			oldX, oldY, oldOffset, oldDir =
-				transit_data.x[i],
-				transit_data.y[i],
-				transit_data.offset[i],
-				transit_data.dir[i]
+			oldX, oldY = transit_data.x[i], transit_data.y[i]
+			oldOffset = transit_data.offset[i]
+			oldDir = transit_data.dir[i]
 		end
 
 		transit_data.offset[0] = 0
@@ -890,7 +888,6 @@ end
 function Nauticus:IsTransportListed(transport)
 	local addtrans = false
 	transport = transports[transport]
-
 	if self.db.profile.factionSpecific then
 		if transport.faction == UnitFactionGroup("player") or
 			transport.faction == "Neutral" then
@@ -900,7 +897,6 @@ function Nauticus:IsTransportListed(transport)
 	else
 		addtrans = true
 	end
-
 	if addtrans and self.db.profile.zoneSpecific then
 		if not string.find(string.lower(transport.name),
 			string.lower(GetRealZoneText())) then
@@ -908,13 +904,11 @@ function Nauticus:IsTransportListed(transport)
 			addtrans = false
 		end
 	end
-
 	return addtrans
 end
 
 function Nauticus:NextTransportInList()
 	local isNotEmpty, isFound, addtrans, first
-
 	for i = 1, #(transports), 1 do
 		addtrans = self:IsTransportListed(i)
 		isNotEmpty = isNotEmpty or addtrans
@@ -931,13 +925,11 @@ function Nauticus:NextTransportInList()
 			end
 		end
 	end
-
 	if not isNotEmpty then
 		addtrans = 0
 	elseif type(addtrans) ~= "number" then
 		addtrans = first
 	end
-
 	return addtrans
 end
 
@@ -965,13 +957,11 @@ end
 function Nauticus:GetArgs(message, separator)
 	local args = {}
 	local i = 0
-
 	-- search for seperators in the string and return the separated data
 	for value in string.gmatch(message, "[^"..separator.."]+") do
 		i = i + 1
 		args[i] = value
 	end
-
 	return args
 end
 
@@ -1000,9 +990,7 @@ do
 		BFsubCE =  B*F - C*E
 		AFaddCD = -A*F + C*D
 
-		texCoordCache.LLx[i] = (-B + BFsubCE) / det
-		texCoordCache.LLy[i] = ( A + AFaddCD) / det
-		texCoordCache.URx[i] = ( E + BFsubCE) / det
-		texCoordCache.URy[i] = (-D + AFaddCD) / det
+		texCoordCache.LLx[i], texCoordCache.LLy[i] = (-B + BFsubCE) / det, ( A + AFaddCD) / det
+		texCoordCache.URx[i], texCoordCache.URy[i] = ( E + BFsubCE) / det, (-D + AFaddCD) / det
 	end
 end
