@@ -4,7 +4,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "deDE")
 if not L then return; end
 
 -- addon description
-L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
+L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = "Verfolgt die genaue Position sowie Ankunfts- und Abfahrtszeiten von Booten und Zeppelinen in Azeroth an und zeigt sie auf der Minikarte und der Weltkarte in Echtzeit an."
 
 -- slash commands (no spaces!)
 L["icons"] = true
@@ -20,27 +20,27 @@ L["alarm"] = true
 
 -- options
 L["Options"] = "Optionen"
-L["General Settings"] = true
-L["Map Icons"] = true
-L["Options for displaying transports as icons on the Mini-Map and World Map."] = true
-L["Show on Mini-Map"] = true
-L["Toggle display of icons on the Mini-Map."] = true
-L["Show on World Map"] = true
-L["Toggle display of icons on the World Map."] = true
+L["General Settings"] = "Allgemeine Einstellungen"
+L["Map Icons"] = "Kartenicons"
+L["Options for displaying transports as icons on the Mini-Map and World Map."] = "Optionen für die Darstellung der Transportmittel als Icons auf der Minikarte und der Weltkarte."
+L["Show on Mini-Map"] = "Zeige auf der Minikarte"
+L["Toggle display of icons on the Mini-Map."] = "Ein-/Ausschalten der Anzeige der Icons auf der Minikarte."
+L["Show on World Map"] = "Zeige auf der Weltkarte"
+L["Toggle display of icons on the World Map."] = "Ein-/Ausschalten der Anzeige der Icons auf der Weltkarte."
 L["Mini-Map icon size"] = "Minikarte Icongröße"
 L["Change the size of the Mini-Map icons."] = "Ändert die Größe der Minikarte Icons."
 L["World Map icon size"] = "Weltkarte Icongröße"
 L["Change the size of the World Map icons."] = "Ändert die Größe der Weltkarte Icons."
-L["Faction only"] = true
-L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = true
+L["Faction only"] = "Nur Fraktion"
+L["Hide transports of opposite faction from the map, showing only neutral and those of your faction."] = "Verstecke Transportmittel der gegnerischen Fraktion auf der Karte und zeige nur neutrale und die von Deiner Fraktion."
 L["Auto select transport"] = "Automatische Transportauswahl"
 L["Automatically select nearest transport when standing at platform."] = "Automatisch den nächstgelegenen Transport auswählen, wenn man auf einer Plattform steht."
 L["Crew chat filter"] = "Crewgesprächfilter"
-L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Ein-/Ausschalten des Filters für die Gespräche der Crew." -- re do
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Ein-/Ausschalten des Filters für die Gespräche der Crew." -- re do?
 L["Alarm delay"] = "Alarm Zeit"
 L["Change the alarm delay (in seconds)."] = "Ändert die Zeit ab, wann der Alarm vor dem Abflug ertönen soll (in Sekunden)."
-L["Mini-Map button"] = true -- to do
-L["Toggle the Mini-Map button."] = true -- to do
+L["Mini-Map button"] = "Minikarte Button"
+L["Toggle the Mini-Map button."] = "Ein-/Ausschalten des Minimap Button"
 
 -- miscellaneous
 L["Arrival"] = "Ankunft"
@@ -56,10 +56,10 @@ L["ON"] = "An"
 L["OFF"] = "Aus"
 L["Daily: "] = "Täglich: "
 
-L["List friendly faction only"] = "Zeige nur Transportmittel deiner Fraktion" -- re do?
-L["Shows only neutral transports and those of your faction."] = "Zeigt nur neutrale und Transportmittel deiner Fraktion." -- re do?
-L["List relevant to current zone only"] = "Zeige nur Transportmittel der momentanen Zone" -- re do?
-L["Shows only transports relevant to your current zone."] = "Zeigt nur Transportmittel der momentanen Zone." -- re do?
+L["List friendly faction only"] = "Zeige nur Transportmittel freundlicher Fraktionen"
+L["Shows only neutral transports and those of your faction."] = "Zeigt nur neutrale und Transportmittel deiner Fraktion." -- check?
+L["List relevant to current zone only"] = "Zeige nur Transportmittel der momentanen Zone" -- check?
+L["Shows only transports relevant to your current zone."] = "Zeigt nur Transportmittel der momentanen Zone." -- check?
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Hinweis: Klick - Reiseroute auswählen. Alt-Klick - Alarm aktivieren."
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Neue Versionen findest Du bei http://drool.me.uk/naut."
 L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Sie haben eine veraltete Version von Nauticus mehr als 10 Tage verwendet, ausgehende Kommunikation wird deaktiviert."

@@ -21,7 +21,7 @@ L["alarm"] = true
 -- options
 L["Options"] = true -- done
 L["General Settings"] = "Paramètres généraux"
-L["Map Icons"] = "Icones de la carte du monde"
+L["Map Icons"] = "Icônes de carte"
 L["Options for displaying transports as icons on the Mini-Map and World Map."] = "Afficher les transports en tant qu'icones sur la carte et la minicarte"
 L["Show on Mini-Map"] = "Afficher sur la minicarte"
 L["Toggle display of icons on the Mini-Map."] = "Afficher les icones sur la minicarte"
