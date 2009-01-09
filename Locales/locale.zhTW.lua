@@ -54,7 +54,6 @@ L["Nauticus Options"] = "Nauticus 選項"
 L["Alarm is now: "] = "警示現在"
 L["ON"] = "啟用"
 L["OFF"] = "關閉"
-L["Daily: "] = "每日: "
 
 L["List friendly faction only"] = "僅顯示友方陣營"
 L["Shows only neutral transports and those of your faction."] = "僅顯示中立及我方陣營的傳輸船。"

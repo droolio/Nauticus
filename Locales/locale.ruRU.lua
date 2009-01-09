@@ -55,7 +55,6 @@ L["Nauticus Options"] = "Настройки Nauticus"
 L["Alarm is now: "] = "Напоминалка: "
 L["ON"] = "Вкл."
 L["OFF"] = "Выкл."
-L["Daily: "] = "Ежедневно: "
 
 L["List friendly faction only"] = "Список только для дружественных фракций" -- re do?
 L["Shows only neutral transports and those of your faction."] = "Показывать только нейтральный транспорт и своей фракции." -- re do?

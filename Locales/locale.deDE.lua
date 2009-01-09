@@ -54,11 +54,10 @@ L["Nauticus Options"] = "Nauticus Optionen"
 L["Alarm is now: "] = "Der Alarm ist jetzt: "
 L["ON"] = "An"
 L["OFF"] = "Aus"
-L["Daily: "] = "Täglich: "
 
-L["List friendly faction only"] = "Zeige nur Transportmittel freundlicher Fraktionen"
+L["List friendly faction only"] = "Zeige nur Transportmittel freundlicher Fraktionen" -- re do?
 L["Shows only neutral transports and those of your faction."] = "Zeigt nur neutrale und Transportmittel deiner Fraktion." -- check?
-L["List relevant to current zone only"] = "Zeige nur Transportmittel der momentanen Zone" -- check?
+L["List relevant to current zone only"] = "Zeige nur Transportmittel der momentanen Zone" -- re do?
 L["Shows only transports relevant to your current zone."] = "Zeigt nur Transportmittel der momentanen Zone." -- check?
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Hinweis: Klick - Reiseroute auswählen. Alt-Klick - Alarm aktivieren."
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Neue Versionen findest Du bei http://drool.me.uk/naut."

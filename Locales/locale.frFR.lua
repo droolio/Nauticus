@@ -54,7 +54,6 @@ L["Nauticus Options"] = "Options de Nauticus"
 L["Alarm is now: "] = true -- to do?
 L["ON"] = true -- to do?
 L["OFF"] = true -- to do?
-L["Daily: "] = "Journ.: "
 
 L["List friendly faction only"] = "Ne montrer que les transports de votre faction" -- re do?
 L["Shows only neutral transports and those of your faction."] = "Ne montrer que les transports neutres et ceux de votre faction." -- re do?

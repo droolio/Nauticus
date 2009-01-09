@@ -53,7 +53,6 @@ L["Nauticus Options"] = true
 L["Alarm is now: "] = true
 L["ON"] = true
 L["OFF"] = true
-L["Daily: "] = true
 
 L["List friendly faction only"] =
 	"해당 진영의 이동수단만 표시" -- re do?
