@@ -23,7 +23,7 @@ local Astrolabe = DongleStub("Astrolabe-0.4")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionNum = 303 -- for comparison
+Nauticus.versionNum = 305 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
@@ -913,7 +913,6 @@ function Nauticus:NextTransportInList()
 		addtrans = self:IsTransportListed(i)
 		isNotEmpty = isNotEmpty or addtrans
 		if not first and addtrans then first = i; end
-
 		if not isFound then
 			if self.activeTransit == i then
 				isFound = true
