@@ -30,7 +30,6 @@ Nauticus.tempTextCount = 0
 Nauticus.debug = false
 
 -- local variables
-local oldx, oldy = 0, 0 -- old player coords
 local lastcheck_timeout = 30
 
 local alarmOffset
@@ -332,9 +331,6 @@ function Nauticus:OnEnable()
 	self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-	local c, z, x, y = Astrolabe:GetCurrentPlayerPosition()
-	if x then oldx, oldy = Astrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0); end
-
 	self:ScheduleRepeatingTimer("DrawMapIcons", 0.2) -- every 1/5th of a second
 	self:ScheduleRepeatingTimer("Clock_OnUpdate", 1) -- every second (clock tick)
 	self:ScheduleRepeatingTimer("CheckTriggers_OnUpdate", 0.8) -- every 4/5th of a second
@@ -505,19 +501,20 @@ function Nauticus:Clock_OnUpdate()
 end
 
 local c, z, x, y, dist, post, last_trig, keep_time
+local old_x, old_y -- old player coords
 
 function Nauticus:CheckTriggers_OnUpdate()
 	-- remember if we've already triggered a set of coords within the last 30 secs
 	if last_trig and GetTime() > 30.0 + last_trig then last_trig = nil; end
 	if not self.currentZoneTransports or self.currentZoneTransports.virtual then return; end
 
+	old_x, old_y = x, y
 	c, z, x, y = Astrolabe:GetCurrentPlayerPosition()
 	if not x then return; end
 	x, y = Astrolabe:TranslateWorldMapPosition(c, z, x, y, 0, 0)
-	if not x then return; end
+	if not x or not old_x then return; end
 
-	dist = Astrolabe:ComputeDistance(0, 0, x, y, 0, 0, oldx, oldy)
-	oldx, oldy = x, y
+	dist = Astrolabe:ComputeDistance(0, 0, x, y, 0, 0, old_x, old_y)
 
 	-- have we moved by at least 6.16 game yards since the last check? this equates to >~110% movement speed
 	if 6.16 < dist then
@@ -615,8 +612,9 @@ function Nauticus:InitialiseConfig()
 	self.debug = self.db.global.debug
 
 	do
+		local version
 		--[===[@non-debug@
-		local version = "@project-version@"
+		version = "@project-version@"
 		--@end-non-debug@]===]
 		local title = "Nauticus"
 		if version then
