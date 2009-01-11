@@ -8,6 +8,8 @@ local GREY    = "|cffbababa"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
 local DATA_VERSION = 303 -- route calibration versioning
+local CMD_VERSION = "VER"
+local CMD_KNOWN = "KWN"
 
 local Nauticus = Nauticus
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
@@ -36,15 +38,17 @@ function Nauticus:DoRequest(wait)
 	if next(requestList) then
 		self:BroadcastTransportData()
 
-		if requestVersion then
-			request = self:ScheduleTimer("DoRequest", 5)
+		if requestVersion or next(requestList) then
+			self:DoRequest(2.5)
 			return
 		end
 	end
 
 	if requestVersion then
 		requestVersion = false
-		self:SendMessage("VER "..self.versionNum)
+		local version = self.versionNum
+		if self.version then version = version.." "..self.version; end
+		self:SendMessage(CMD_VERSION.." "..version)
 	end
 end
 
@@ -80,12 +84,13 @@ function Nauticus:BroadcastTransportData()
 
 		trans_str = trans_str..","
 		requestList[transit] = nil
+		if 228 < strlen(trans_str) then break; end
 	end
 
 	if trans_str ~= "" then
-		trans_str = string.sub(trans_str, 1, -2) -- remove the last comma
-		self:SendMessage("KWN "..DATA_VERSION.." "..trans_str)
-		self:DebugMessage("tell our transports")
+		trans_str = strsub(trans_str, 1, -2) -- remove the last comma
+		self:SendMessage(CMD_KNOWN.." "..DATA_VERSION.." "..trans_str)
+		self:DebugMessage("tell our transports ; length: "..strlen(trans_str))
 	else
 		self:DebugMessage("nothing to tell")
 	end
@@ -106,7 +111,7 @@ local joinedChannel
 -- if we joined a channel
 function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndName, _, _, _, num, channel)
 	if noticeType == "YOU_JOINED" then
-		self:DebugMessage("joined: "..channel)
+		--self:DebugMessage("joined: "..channel)
 
 		if strlower(channel) ~= strlower(DEFAULT_CHANNEL) and
 			GetChannelName(DEFAULT_CHANNEL) == 0 then
@@ -114,7 +119,7 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndNam
 			if joinedChannel then self:CancelTimer(joinedChannel, true); end
 			joinedChannel = self:ScheduleTimer(function()
 				if GetChannelName(DEFAULT_CHANNEL) == 0 then
-					self:DebugMessage("joining: "..DEFAULT_CHANNEL)
+					--self:DebugMessage("joining: "..DEFAULT_CHANNEL)
 					JoinChannelByName(DEFAULT_CHANNEL)
 					self:UpdateChannel()
 					if self.debug then ListChannelByName(DEFAULT_CHANNEL); end
@@ -124,7 +129,7 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndNam
 	end
 
 	if noticeType == "YOU_JOINED" or noticeType == "YOU_CHANGED" then
-		local newZone = select(3, string.find(channel, "^.+ %- (.+)$"))
+		local newZone = select(3, strfind(channel, "^.+ %- (.+)$"))
 
 		if newZone and self.transitZones[newZone] then
 			--self:DebugMessage("channel: "..newZone)
@@ -138,19 +143,21 @@ end
 
 function Nauticus:CHAT_MSG_CHANNEL(eventName, msg, sender, _, numAndName, _, _, _, _, channel)
 	if sender ~= UnitName("player") and strlower(channel) == strlower(DEFAULT_CHANNEL) then
-		local Args = self:GetArgs(msg, " ")
-		--self:DebugMessage("sender: "..sender.." ; cmd: "..Args[1])
+		--self:DebugMessage("sender: "..sender.." ; length: "..strlen(msg))
+		if 254 <= strlen(msg) then return; end -- message too big, probably corrupted
 
-		if Args[1] == "VER" then -- version, num
-			self:ReceiveMessage_version(tonumber(Args[2]), sender)
-		elseif Args[1] == "KWN" then -- known, { transports }
-			self:ReceiveMessage_known(tonumber(Args[2]), self:StringToKnown(Args[3]), sender)
+		local args = self:GetArgs(msg, " ")
+
+		if args[1] == CMD_VERSION then -- version, num
+			self:ReceiveMessage_version(tonumber(args[2]), sender)
+		elseif args[1] == CMD_KNOWN then -- known, { transports }
+			self:ReceiveMessage_known(tonumber(args[2]), self:StringToKnown(args[3]), sender)
 		end
 	end
 end
 
 function Nauticus:ReceiveMessage_version(clientversion, sender)
-	self:DebugMessage(sender.." says: version "..clientversion)
+	--self:DebugMessage(sender.." says: version "..clientversion)
 
 	if clientversion > self.versionNum then
 		if not self.db.global.newerVersion then

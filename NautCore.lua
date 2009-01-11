@@ -619,7 +619,10 @@ function Nauticus:InitialiseConfig()
 		local version = "@project-version@"
 		--@end-non-debug@]===]
 		local title = "Nauticus"
-		if version then title = title.." "..version; end
+		if version then
+			self.version = version
+			title = title.." "..version
+		end
 		self.title = title
 	end
 
