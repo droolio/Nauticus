@@ -7,19 +7,19 @@ if not L then return; end
 L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
 
 -- slash commands (no spaces!)
-L["icons"] = true
-L["minishow"] = true
-L["worldshow"] = true
-L["minisize"] = true
-L["worldsize"] = true
-L["faction"] = true
-L["minibutton"] = true
-L["autoselect"] = true
-L["filter"] = true
-L["alarm"] = true
+L["icons"] = "icons"
+L["minishow"] = "minishow"
+L["worldshow"] = "worldshow"
+L["minisize"] = "minisize"
+L["worldsize"] = "worldsize"
+L["faction"] = "faction"
+L["minibutton"] = "minibutton"
+L["autoselect"] = "autoselect"
+L["filter"] = "filter"
+L["alarm"] = "alarm"
 
 -- options
-L["Options"] = true -- done
+L["Options"] = "Options"
 L["General Settings"] = "Paramètres généraux"
 L["Map Icons"] = "Icônes de carte"
 L["Options for displaying transports as icons on the Mini-Map and World Map."] = "Afficher les transports en tant qu'icones sur la carte et la minicarte"
@@ -51,9 +51,9 @@ L["No Transport Selected"] = "Aucun Transport"
 L["Not Available"] = "Non Disponible"
 L["N/A"] = "ND" -- abbreviation for Not Available
 L["Nauticus Options"] = "Options de Nauticus"
-L["Alarm is now: "] = true -- to do?
-L["ON"] = true -- to do?
-L["OFF"] = true -- to do?
+L["Alarm is now: "] = "L'alarme est maintenant"
+L["ON"] = "ACTIVÉE"
+L["OFF"] = "DÉSACTIVÉE"
 
 L["List friendly faction only"] = "Ne montrer que les transports de votre faction" -- re do?
 L["Shows only neutral transports and those of your faction."] = "Ne montrer que les transports neutres et ceux de votre faction." -- re do?

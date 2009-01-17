@@ -7,9 +7,9 @@ local WHITE   = "|cffffffff"
 local GREY    = "|cffbababa"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
-local DATA_VERSION = 303 -- route calibration versioning
+local DATA_VERSION = 4 -- route calibration versioning
 local CMD_VERSION = "VER"
-local CMD_KNOWN = "KWN"
+local CMD_KNOWN = "KWN3"
 
 local Nauticus = Nauticus
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
@@ -57,6 +57,52 @@ local function GetLag()
 	return lag / 1000.0
 end
 
+local crunch, uncrunch
+
+do
+	local map = -- excludes: space, comma, colon, s, S, %, tab (\009) ; invalid: nul (\000), line feed (\010), bar (\124), >\127
+		"0123456789ABCDEFGHIJKLMNOPQRTUVWXYZabcdefghijklmnopqrtuvwxyz!\"#$&'()*+-./;<=>?@[\\]^_`{}~"..
+		"\001\002\003\004\005\006\007\008\011\012"..
+		"\014\015\016\017\018\019\020\021\022\023\024\025\026\027\028\029\030\031\127"
+
+	local _base = strlen(map)
+	local digits = {}
+
+	function crunch(num)
+		--if true then return num; end
+		if 0 > num then error("negative number"); end -- shouldn't happen, but just in case
+		local s = ""
+		local remain
+		repeat
+			remain = num % _base -- faster than fmod
+			s = s..digits[remain]
+			num = (num-remain) / _base -- faster than floor
+		until 0 == num
+		return s
+	end
+
+	local chrmap = {}
+
+	function uncrunch(s)
+		--if true then return tonumber(s); end
+		local num = 0
+		local base = 1
+		for i = 1, strlen(s) do
+			num = num + chrmap[strbyte(s, i)] * base
+			base = base * _base -- faster than power (^)
+		end
+		return num
+	end
+
+	local c
+
+	for i = 1, _base do
+	   c = strbyte(map, i)
+	   chrmap[c] = i-1
+	   digits[i-1] = strchar(c)
+	end
+end
+
 function Nauticus:BroadcastTransportData()
 	local since, boots, swaps
 	local lag = GetLag()
@@ -64,13 +110,13 @@ function Nauticus:BroadcastTransportData()
 
 	for transit in pairs(requestList) do
 		since, boots, swaps = self:GetKnownCycle(transit)
-		trans_str = trans_str..transit
+		trans_str = trans_str..crunch(transit)
 
 		if since ~= nil then
-			trans_str = trans_str..":"..math.floor((since+lag)*1000.0+.5)
+			trans_str = trans_str..":"..crunch(math.floor((since+lag)*1000.0+.5))
 
 			if swaps ~= 1 then
-				trans_str = trans_str..":"..swaps
+				trans_str = trans_str..":"..crunch(swaps)
 			end
 
 			if boots ~= 0 then
@@ -78,18 +124,18 @@ function Nauticus:BroadcastTransportData()
 					trans_str = trans_str..":"
 				end
 
-				trans_str = trans_str..":"..boots
+				trans_str = trans_str..":"..crunch(boots)
 			end
 		end
 
 		trans_str = trans_str..","
 		requestList[transit] = nil
-		if 228 < strlen(trans_str) then break; end
+		if 235 < strlen(trans_str) then break; end
 	end
 
 	if trans_str ~= "" then
 		trans_str = strsub(trans_str, 1, -2) -- remove the last comma
-		self:SendMessage(CMD_KNOWN.." "..DATA_VERSION.." "..trans_str)
+		self:SendMessage(CMD_KNOWN.." "..crunch(DATA_VERSION).." "..trans_str)
 		self:DebugMessage("tell our transports ; length: "..strlen(trans_str))
 	else
 		self:DebugMessage("nothing to tell")
@@ -291,20 +337,20 @@ function Nauticus:IsBetter(transit, since, boots, swaps)
 end
 
 function Nauticus:StringToKnown(transports)
-	local Args_tmp, transit, since, swaps, boots
-	local Args = self:GetArgs(transports, ",")
+	local args_tmp, transit, since, swaps, boots
+	local args = self:GetArgs(transports, ",")
 	local trans_tab = {}
 
-	for t = 1, #(Args), 1 do
-		Args_tmp = self:GetArgs(Args[t], ":")
-		transit, since, swaps, boots = tonumber(Args_tmp[1]), Args_tmp[2], Args_tmp[3], Args_tmp[4]
+	for t = 1, #(args), 1 do
+		args_tmp = self:GetArgs(args[t], ":")
+		transit, since, swaps, boots = uncrunch(args_tmp[1]), args_tmp[2], args_tmp[3], args_tmp[4]
 
 		if self.transports[transit] then
 			if since then
 				trans_tab[transit] = {
-					['since'] = tonumber(since),
-					['boots'] = boots and tonumber(boots) or 0,
-					['swaps'] = swaps and tonumber(swaps) or 1,
+					['since'] = uncrunch(since),
+					['boots'] = boots and uncrunch(boots) or 0,
+					['swaps'] = swaps and uncrunch(swaps) or 1,
 				}
 			else
 				trans_tab[transit] = {}

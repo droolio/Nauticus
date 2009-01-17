@@ -7,17 +7,16 @@ if not L then return; end
 L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = "Следит за прибытием и отправлением кораблей и дирижаблей в Азероте и показывает их на миникарте и карте мира."
 
 -- slash commands (no spaces!)
--- no localisation needed
-L["icons"] = true
-L["minishow"] = true
-L["worldshow"] = true
-L["minisize"] = true
-L["worldsize"] = true
-L["faction"] = true
-L["minibutton"] = true
-L["autoselect"] = true
-L["filter"] = true
-L["alarm"] = true
+L["icons"] = "icons"
+L["minishow"] = "minishow"
+L["worldshow"] = "worldshow"
+L["minisize"] = "minisize"
+L["worldsize"] = "worldsize"
+L["faction"] = "faction"
+L["minibutton"] = "minibutton"
+L["autoselect"] = "autoselect"
+L["filter"] = "filter"
+L["alarm"] = "alarm"
 
 -- options
 L["Options"] = "Настройки"
@@ -37,10 +36,10 @@ L["Hide transports of opposite faction from the map, showing only neutral and th
 L["Auto select transport"] = "Автовыбор транспорта"
 L["Automatically select nearest transport when standing at platform."] = "Автоматически выбирать транспорт ближайший к платформе, на которой стоишь."
 L["Crew chat filter"] = "Фильтр речи экипажа"
-L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Управление фильтром убирающим речь экипажа корабля и крики Хозяина дирижабля из окна чата." -- re do
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Управление фильтром убирающим речь экипажа корабля и крики Хозяина дирижабля из окна чата."
 L["Alarm delay"] = "Задержка напоминалки"
 L["Change the alarm delay (in seconds)."] = "Изменение задержки напоминалки (в секундах)."
-L["Mini-Map button"] = "Кнопка миникарты" -- to do
+L["Mini-Map button"] = "Кнопка миникарты"
 L["Toggle the Mini-Map button."] = "Управление кнопкой миникарты"
 
 -- miscellaneous
@@ -56,10 +55,10 @@ L["Alarm is now: "] = "Напоминалка: "
 L["ON"] = "Вкл."
 L["OFF"] = "Выкл."
 
-L["List friendly faction only"] = "Список только для дружественных фракций" -- re do?
-L["Shows only neutral transports and those of your faction."] = "Показывать только нейтральный транспорт и своей фракции." -- re do?
-L["List relevant to current zone only"] = "Список релевантный текущей зоне" -- re do?
-L["Shows only transports relevant to your current zone."] = "Показывать только транспорт релевантный текущей зоне." -- re do?
+L["List friendly faction only"] = "Список только для дружественных фракций"
+L["Shows only neutral transports and those of your faction."] = "Показывать только нейтральный транспорт и своей фракции."
+L["List relevant to current zone only"] = "Список релевантный текущей зоне"
+L["Shows only transports relevant to your current zone."] = "Показывать только транспорт релевантный текущей зоне."
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Хинт: Левый клик мыши для циклического переключения транспорта. Alt-клик для установки напоминалки."
 L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "Доступна новая версия Nauticus! Забрать можно здесь http://drool.me.uk/naut."
 L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "Вы использовали старую версию Nauticus более 10 дней, Ваши данные больше не будут передаваться другим пользователям Nauticus"
@@ -108,7 +107,7 @@ L["Walker of Waves"] = "Идущая-по-волнам"
 L["Green Island"] = "Зеленый остров"
 L["The Kraken"] = "Кракен"
 L["Northspear"] = "Северное копье"
-L["Captured Zeppelin"] = "Захваченный дирижабль" -- check
+L["Captured Zeppelin"] = "Захваченный дирижабль"
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "Оргриммар"

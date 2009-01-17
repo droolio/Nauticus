@@ -7,16 +7,16 @@ if not L then return; end
 L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = "追蹤環繞艾澤拉斯的飛艇及船隻正確抵達及離開的時間，並即時顯示在世界地圖與小地圖上。"
 
 -- slash commands (no spaces!)
-L["icons"] = true
-L["minishow"] = true
-L["worldshow"] = true
-L["minisize"] = true
-L["worldsize"] = true
-L["faction"] = true
-L["minibutton"] = true
-L["autoselect"] = true
-L["filter"] = true
-L["alarm"] = true
+L["icons"] = "icons"
+L["minishow"] = "minishow"
+L["worldshow"] = "worldshow"
+L["minisize"] = "minisize"
+L["worldsize"] = "worldsize"
+L["faction"] = "faction"
+L["minibutton"] = "minibutton"
+L["autoselect"] = "autoselect"
+L["filter"] = "filter"
+L["alarm"] = "alarm"
 
 -- options
 L["Options"] = "選項"
