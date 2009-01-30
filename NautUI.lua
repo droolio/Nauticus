@@ -126,7 +126,7 @@ end
 
 local function IsMenuOpen()
 	return DropDownList1:IsShown() and
-		UIDROPDOWNMENU_OPEN_MENU == Naut_TransportSelectFrame:GetName()
+		UIDROPDOWNMENU_OPEN_MENU == Naut_TransportSelectFrame
 end
 
 function Nauticus:RefreshMenu()
@@ -226,6 +226,37 @@ function Nauticus:ShowTooltip(transit)
 	end
 end
 
+local iconTooltip, lastTip
+
+function Nauticus:HideTooltip(doHide)
+	if doHide then
+		tablet:Hide()
+		iconTooltip = nil
+	end
+
+	if self.update_available and self.update_available ~= true then
+		self.update_available = self.update_available + 1.0 - (GetTime()-lastTip)
+	end
+end
+
+local function AddNewVersionLine()
+	local line = "New version available! Visit www.drool.me.uk/naut"
+
+	if Nauticus.update_available == true then
+		tablet:AddLine(line, nil, true)
+			:Color(1, 0.1, 0.1, 1)
+	else
+		tablet:AddLine(line.." - ["..math.floor(Nauticus.update_available).."]", nil, true)
+			:Color(1, 0.82, 0, 1)
+			:Font(nil, 11, nil)
+
+		Nauticus.update_available = Nauticus.update_available - 1
+		if 0 > Nauticus.update_available then
+			Nauticus.update_available = nil
+		end
+	end
+end
+
 local function GetMapIconAnchor()
 	local x, y = GetCursorPosition()
 	local cx, cy = GetScreenWidth() / 2, GetScreenHeight() / 2
@@ -235,22 +266,6 @@ local function GetMapIconAnchor()
 	else
 		if y < cy then return "BOTTOMLEFT", "TOPRIGHT"
 		else return "TOPLEFT", "BOTTOMRIGHT"; end
-	end
-end
-
-local function GetBarAnchor(frame)
-	local x, y = frame:GetCenter()
-	if not x or not y then return "TOPLEFT", "BOTTOMLEFT"; end
-	local cx, cy = UIParent:GetWidth() / 3, UIParent:GetHeight() / 2
-	if x < cx then
-		if y < cy then return "BOTTOMLEFT", "TOPLEFT"
-		else return "TOPLEFT", "BOTTOMLEFT"; end
-	elseif x > 2 * cx then
-		if y < cy then return "BOTTOMRIGHT", "TOPRIGHT"
-		else return "TOPRIGHT", "BOTTOMRIGHT"; end
-	else
-		if y < cy then return "BOTTOM", "TOP"
-		else return "TOP", "BOTTOM"; end
 	end
 end
 
@@ -264,8 +279,6 @@ local function GetParentFrame()
 	end
 	return nil
 end
-
-local iconTooltip
 
 function Nauticus:MapIcon_OnEnter(frame)
 	local transit = frame:GetID()
@@ -288,13 +301,19 @@ function Nauticus:MapIcon_OnEnter(frame)
 		end
 	end
 
-	iconTooltip = frame
+	if self.update_available then
+		tablet:AddLine("")
+		AddNewVersionLine()
+	end
+
 	tablet:SetPosition():Size():Show()
+
+	iconTooltip = frame
+	lastTip = GetTime()
 end
 
 function Nauticus:MapIcon_OnLeave(frame)
-	tablet:Hide()
-	iconTooltip = nil
+	self:HideTooltip(true)
 end
 
 -- LDB stuff...
@@ -317,11 +336,24 @@ function Nauticus:UpdateDisplay()
 	end
 end
 
+local function GetBarAnchor(frame)
+	local x, y = frame:GetCenter()
+	if not x or not y then return "TOPLEFT", "BOTTOMLEFT"; end
+	local cx, cy = UIParent:GetWidth() / 3, UIParent:GetHeight() / 2
+	if x < cx then
+		if y < cy then return "BOTTOMLEFT", "TOPLEFT"
+		else return "TOPLEFT", "BOTTOMLEFT"; end
+	elseif x > 2 * cx then
+		if y < cy then return "BOTTOMRIGHT", "TOPRIGHT"
+		else return "TOPRIGHT", "BOTTOMRIGHT"; end
+	else
+		if y < cy then return "BOTTOM", "TOP"
+		else return "TOP", "BOTTOM"; end
+	end
+end
+
 function dataobj:OnEnter()
 	if IsMenuOpen() then return; end
-
-	iconTooltip = self
-	barTooltipFrame = self
 
 	local point, rel = GetBarAnchor(self)
 
@@ -337,15 +369,23 @@ function dataobj:OnEnter()
 	Nauticus:ShowTooltip(Nauticus.activeTransit)
 
 	tablet:AddLine("")
+
+	if Nauticus.update_available then
+		AddNewVersionLine()
+	end
+
 	tablet:AddLine(L["Hint: Click to cycle transport. Alt-Click to set up alarm"], nil, true)
 		:Color(0, 1, 0, 1)
 
 	tablet:SetPosition():Size():Show()
+
+	iconTooltip = self
+	lastTip = GetTime()
+	barTooltipFrame = self
 end
 
 function dataobj:OnLeave()
-	iconTooltip = nil
-	tablet:Hide()
+	Nauticus:HideTooltip(true)
 end
 
 function dataobj:OnClick(button)
@@ -356,14 +396,15 @@ function dataobj:OnClick(button)
 				Nauticus:ToggleAlarm()
 				Nauticus.tempText = "Alarm "..(Nauticus:IsAlarmSet() and RED..L["ON"] or GREEN..L["OFF"])
 				Nauticus.tempTextCount = 3
+				Nauticus:HideTooltip()
 				Nauticus:UpdateDisplay()
 			end
 		else
+			Nauticus:HideTooltip()
 			Nauticus:SetTransport(Nauticus:NextTransportInList())
 		end
 	elseif button == "RightButton" then
-		iconTooltip = nil
-		tablet:Hide()
+		Nauticus:HideTooltip(true)
 		local point, rel = GetBarAnchor(self)
 		UIDropDownMenu_SetAnchor(Naut_TransportSelectFrame, 0, 0, point, self, rel)
 		ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)

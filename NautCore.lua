@@ -319,8 +319,8 @@ function Nauticus:OnInitialize()
 	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("Nauticus", nil, nil, "GUI")
 	ldbicon:Register("Nauticus", self.dataobj, self.db.profile.minimap)
 
-	local frame = CreateFrame("Frame", "Naut_TransportSelectFrame", nil, "UIDropDownMenuTemplate")
-	UIDropDownMenu_Initialize(frame, function(frame, level) Nauticus:TransportSelectInitialise(frame, level); end, "MENU")
+	local f = CreateFrame("Frame", "Naut_TransportSelectFrame", nil, "UIDropDownMenuTemplate")
+	UIDropDownMenu_Initialize(f, function(frame, level) Nauticus:TransportSelectInitialise(frame, level); end, "MENU")
 
 	self:InitialiseConfig()
 end
@@ -647,21 +647,18 @@ function Nauticus:InitialiseConfig()
 	if self.db.global.newerVersion then
 		--self:DebugMessage("new version: "..self.db.global.newerVersion.." vs our "..self.versionNum)
 		if self.db.global.newerVersion > self.versionNum then
-			DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..WHITE..
-				L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."])
-
-			-- major update released and running old version longer than 10 days?
+			-- major update released and running old version longer than 7 days?
 			if math.floor(self.db.global.newerVersion/10) > math.floor(self.versionNum/10) and
-				864000.0 < (time() - self.db.global.newerVerAge) then
+				604800.0 < (time() - self.db.global.newerVerAge) then
 
 				self.comm_disable = true
-				DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..RED..
-					L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."])
+				self.update_available = true
+			else
+				self.update_available = 30
 			end
 		else
 			self.db.global.newerVersion = nil
 			self.db.global.newerVerAge = nil
-			DEFAULT_CHAT_FRAME:AddMessage(YELLOW.."Nauticus|r - "..L["Thank you for upgrading."])
 		end
 	end
 
