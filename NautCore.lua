@@ -55,7 +55,7 @@ local defaults = {
 		showWorldIcons = true,
 		factionOnlyIcons = false,
 		minimap = {
-			hide = true,
+			hide = false,
 		},
 	},
 	global = {
@@ -707,7 +707,6 @@ function Nauticus:InitialiseConfig()
 
 	local worldMapOverlay = CreateFrame("Frame", "NauticusWorldMapOverlay", WorldMapButton)
 	tinsert(WorldMapDisplayFrames, worldMapOverlay)
-	CreateFrame("Frame", "NauticusMiniMapOverlay", Minimap)
 
 	-- unpack transport data
 	local packedData = self.packedData
@@ -770,7 +769,7 @@ function Nauticus:InitialiseConfig()
 		texture_name = ARTWORK_PATH.."MapIcon_"..data.ship_type
 		data.texture_name = texture_name
 
-		frame = CreateFrame("Button", "NauticusMiniIcon"..id, NauticusMiniMapOverlay)
+		frame = CreateFrame("Button", "NauticusMiniIcon"..id, Minimap)
 		data.minimap_icon = frame
 		frame:SetHeight(miniIconSize)
 		frame:SetWidth(miniIconSize)
