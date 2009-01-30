@@ -240,7 +240,7 @@ function Nauticus:HideTooltip(doHide)
 end
 
 local function AddNewVersionLine()
-	local line = "New version available! Visit www.drool.me.uk/naut"
+	local line = L["New version available! Visit www.drool.me.uk/naut"]
 
 	if Nauticus.update_available == true then
 		tablet:AddLine(line, nil, true)

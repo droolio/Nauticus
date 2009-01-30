@@ -59,9 +59,7 @@ L["Shows only neutral transports and those of your faction."] = true
 L["List relevant to current zone only"] = true
 L["Shows only transports relevant to your current zone."] = true
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = true
-L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = true
-L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = true
-L["Thank you for upgrading."] = true
+L["New version available! Visit www.drool.me.uk/naut"] = true
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:

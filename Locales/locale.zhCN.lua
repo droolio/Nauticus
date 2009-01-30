@@ -60,9 +60,7 @@ L["Shows only neutral transports and those of your faction."] = "仅显示中立
 L["List relevant to current zone only"] = "仅显示目前区域"
 L["Shows only transports relevant to your current zone."] = "只显示你目前区域的传输船"
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "提示: 左键：传送周期 Alt+左键：设置报警"
-L["There is a new version of Nauticus available! Please visit http://drool.me.uk/naut."] = "有新版本 Nauticus 发布！ 请访问 http://drool.me.uk/naut."
-L["You have been using an old version of Nauticus for more than 10 days, outbound communications will now be disabled."] = "你已使用旧版的 Nauticus 超过 10 天了，同步信息输出现在将会关闭。"
-L["Thank you for upgrading."] = "感谢你更新版本。"
+L["New version available! Visit www.drool.me.uk/naut"] = true
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:
