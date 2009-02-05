@@ -4,6 +4,7 @@
 ## Version: @project-version@
 ## Notes: Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time
 ## Notes-deDE: Verfolgt die genaue Position sowie Ankunfts- und Abfahrtszeiten von Booten und Zeppelinen in Azeroth an und zeigt sie auf der Minikarte und der Weltkarte in Echtzeit an
+## Notes-frFR: Permet de suivre les arrivées et départs des bateaux et zeppelins sur Azeroth et de les afficher en temps réel sur la carte du monde et la minicarte
 ## Notes-ruRU: Следит за прибытием и отправлением кораблей и дирижаблей в Азероте и показывает их на миникарте и карте мира
 ## Notes-zhCN: 追踪环绕艾泽拉斯的飞艇及船只正确抵达及离开的时间，并实时显示在世界地图与小地图上
 ## Notes-zhTW: 追蹤環繞艾澤拉斯的飛艇及船隻正確抵達及離開的時間，並即時顯示在世界地圖與小地圖上

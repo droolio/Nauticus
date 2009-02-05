@@ -4,7 +4,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("Nauticus", "frFR")
 if not L then return; end
 
 -- addon description
-L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = true
+L["Tracks the precise arrival & departure schedules of boats and Zeppelins around Azeroth and displays them on the Mini-Map and World Map in real-time."] = "Permet de suivre les arrivées et départs des bateaux et zeppelins sur Azeroth et de les afficher en temps réel sur la carte du monde et la minicarte."
 
 -- slash commands (no spaces!)
 L["icons"] = "icons"
@@ -21,7 +21,7 @@ L["alarm"] = "alarm"
 -- options
 L["Options"] = "Options"
 L["General Settings"] = "Paramètres généraux"
-L["Map Icons"] = "Icônes de carte"
+L["Map Icons"] = "Icônes de la carte"
 L["Options for displaying transports as icons on the Mini-Map and World Map."] = "Afficher les transports en tant qu'icones sur la carte et la minicarte"
 L["Show on Mini-Map"] = "Afficher sur la minicarte"
 L["Toggle display of icons on the Mini-Map."] = "Afficher les icones sur la minicarte"
@@ -60,7 +60,7 @@ L["Shows only neutral transports and those of your faction."] = "Ne montrer que 
 L["List relevant to current zone only"] = "Ne montrer que les transports de la zone courante" -- re do?
 L["Shows only transports relevant to your current zone."] = "Ne montrer que les transports de la zone courante." -- re do?
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Astuce: Cliquez pour changer de transport. Alt-Clic pour créer une alarme"
-L["New version available! Visit www.drool.me.uk/naut"] = true
+L["New version available! Visit www.drool.me.uk/naut"] = "Nouvelle version disponible ! Visitez www.drool.me.uk/naut"
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:
