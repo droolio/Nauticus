@@ -7,7 +7,7 @@ local WHITE   = "|cffffffff"
 local GREY    = "|cffbababa"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
-local DATA_VERSION = 4 -- route calibration versioning
+local DATA_VERSION = 5 -- route calibration versioning
 local CMD_VERSION = "VER"
 local CMD_KNOWN = "KWN3"
 
@@ -187,12 +187,23 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndNam
 	end
 end
 
+-- extract key/value from message
+local function GetArgs(message, separator)
+	local args = { strsplit(separator, message) }
+	for t = 1, #(args), 1 do
+		if args[t] == "" then
+			args[t] = nil
+		end
+	end
+	return args
+end
+
 function Nauticus:CHAT_MSG_CHANNEL(eventName, msg, sender, _, numAndName, _, _, _, _, channel)
 	if sender ~= UnitName("player") and strlower(channel) == strlower(DEFAULT_CHANNEL) then
 		--self:DebugMessage("sender: "..sender.." ; length: "..strlen(msg))
 		if 254 <= strlen(msg) then return; end -- message too big, probably corrupted
 
-		local args = self:GetArgs(msg, " ")
+		local args = GetArgs(msg, " ")
 
 		if args[1] == CMD_VERSION then -- version, num
 			self:ReceiveMessage_version(tonumber(args[2]), sender)
@@ -338,15 +349,17 @@ end
 
 function Nauticus:StringToKnown(transports)
 	local args_tmp, transit, since, swaps, boots
-	local args = self:GetArgs(transports, ",")
+	local args = GetArgs(transports, ",")
 	local trans_tab = {}
 
 	for t = 1, #(args), 1 do
-		args_tmp = self:GetArgs(args[t], ":")
-		transit, since, swaps, boots = uncrunch(args_tmp[1]), args_tmp[2], args_tmp[3], args_tmp[4]
+		args_tmp = GetArgs(args[t], ":")
+		transit = uncrunch(args_tmp[1])
 
 		if self.transports[transit] then
+			since = args_tmp[2]
 			if since then
+				swaps, boots = args_tmp[3], args_tmp[4]
 				trans_tab[transit] = {
 					['since'] = uncrunch(since),
 					['boots'] = boots and uncrunch(boots) or 0,

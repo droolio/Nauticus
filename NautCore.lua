@@ -23,7 +23,7 @@ local Astrolabe = DongleStub("Astrolabe-0.4")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionNum = 308 -- for comparison
+Nauticus.versionNum = 309 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
@@ -922,7 +922,7 @@ function Nauticus:NextTransportInList()
 		end
 	end
 	if not isNotEmpty then
-		addtrans = 0
+		addtrans = NONE
 	elseif type(addtrans) ~= "number" then
 		addtrans = first
 	end
@@ -947,18 +947,6 @@ function Nauticus:SetTransport(transport)
 	end
 
 	self:UpdateDisplay()
-end
-
--- extract key/value from message
-function Nauticus:GetArgs(message, separator)
-	local args = {}
-	local i = 0
-	-- search for seperators in the string and return the separated data
-	for value in string.gmatch(message, "[^"..separator.."]+") do
-		i = i + 1
-		args[i] = value
-	end
-	return args
 end
 
 local lastDebug = GetTime()
