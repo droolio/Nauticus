@@ -21,7 +21,6 @@ local requestVersion = false
 
 function Nauticus:CancelRequest()
 	if request then
-		--self:DebugMessage("cancel request schedule")
 		self:CancelTimer(request, true)
 		request = nil
 	end
@@ -87,8 +86,14 @@ do
 		--if true then return tonumber(s); end
 		local num = 0
 		local base = 1
+		local c
 		for i = 1, strlen(s) do
-			num = num + chrmap[strbyte(s, i)] * base
+			c = chrmap[strbyte(s, i)]
+			if not c then
+				Nauticus:DebugMessage("FECK: "..s.." ; i: "..i.." ; strbyte: "..strbyte(s, i))
+				return
+			end
+			num = num + c * base
 			base = base * _base -- faster than power (^)
 		end
 		return num
@@ -101,6 +106,19 @@ do
 	   chrmap[c] = i-1
 	   digits[i-1] = strchar(c)
 	end
+end
+
+-- by Mikk; from http://www.wowwiki.com/StringHash
+local function StringHash(text)
+	local counter = 1
+	local len = strlen(text)
+	for i = 1, len, 3 do
+		counter = (counter * 8161) % 4294967279 +
+		 (strbyte(text, i) * 16776193) +
+		((strbyte(text, i+1) or (len-i+256)) * 8372226) +
+		((strbyte(text, i+2) or (len-i+256)) * 3932164)
+	end
+	return counter % 4294967291
 end
 
 function Nauticus:BroadcastTransportData()
@@ -130,17 +148,29 @@ function Nauticus:BroadcastTransportData()
 
 		trans_str = trans_str..","
 		requestList[transit] = nil
-		if 235 < strlen(trans_str) then break; end
+		if 229 < strlen(trans_str) then break; end
 	end
 
 	if trans_str ~= "" then
 		trans_str = strsub(trans_str, 1, -2) -- remove the last comma
-		self:SendMessage(CMD_KNOWN.." "..crunch(DATA_VERSION).." "..trans_str)
+		self:SendMessage(CMD_KNOWN.." "..crunch(DATA_VERSION).." "..trans_str.." "..crunch(StringHash(trans_str)))
 		self:DebugMessage("tell our transports ; length: "..strlen(trans_str))
 	else
 		self:DebugMessage("nothing to tell")
 	end
 end
+
+--@debug@
+function Nauticus:RequestAllTransports()
+	local trans_str = ""
+	for transit in ipairs(self.transports) do
+		trans_str = trans_str..crunch(transit)..","
+		requestList[transit] = nil
+	end
+	trans_str = strsub(trans_str, 1, -2) -- remove the last comma
+	self:SendMessage(CMD_KNOWN.." "..crunch(DATA_VERSION).." "..trans_str.." "..crunch(StringHash(trans_str)))
+end
+--@end-debug@
 
 function Nauticus:RequestTransport(t)
 	requestList[t] = true
@@ -356,19 +386,21 @@ function Nauticus:StringToKnown(transports)
 		args_tmp = GetArgs(args[t], ":")
 		transit = uncrunch(args_tmp[1])
 
-		if self.transports[transit] then
+		if transit and self.transports[transit] then
 			since = args_tmp[2]
 			if since then
-				swaps, boots = args_tmp[3], args_tmp[4]
-				trans_tab[transit] = {
-					['since'] = uncrunch(since),
-					['boots'] = boots and uncrunch(boots) or 0,
-					['swaps'] = swaps and uncrunch(swaps) or 1,
-				}
+				since, swaps, boots = uncrunch(since), args_tmp[3], args_tmp[4]
+				if since then
+					trans_tab[transit] = {
+						['since'] = since,
+						['boots'] = boots and uncrunch(boots) or 0,
+						['swaps'] = swaps and uncrunch(swaps) or 1,
+					}
+				end
 			else
 				trans_tab[transit] = {}
 			end
-		else
+		elseif transit then
 			self:DebugMessage("unknown transit: "..transit)
 		end
 	end
@@ -388,8 +420,13 @@ function Nauticus:UpdateChannel(wait)
 
 	if not inChannel then
 		inChannel = true
-		--self:DebugMessage("distribution change")
-		self:CancelRequest()
+
+		--@debug@
+		if self.debug then
+			self:ScheduleTimer("RequestAllTransports", 5)
+			return
+		end
+		--@end-debug@
 
 		for id in pairs(self.transports) do
 			requestList[id] = true
@@ -397,7 +434,6 @@ function Nauticus:UpdateChannel(wait)
 
 		requestVersion = true
 		self:DoRequest(5 + math.random() * 15)
-		--self:DebugMessage("distrib: "..DEFAULT_CHANNEL)
 	end
 end
 
