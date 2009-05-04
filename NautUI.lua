@@ -257,18 +257,6 @@ local function AddNewVersionLine()
 	end
 end
 
-local function GetMapIconAnchor()
-	local x, y = GetCursorPosition()
-	local cx, cy = GetScreenWidth() / 2, GetScreenHeight() / 2
-	if x > cx then
-		if y < cy then return "BOTTOMRIGHT", "TOPLEFT"
-		else return "TOPRIGHT", "BOTTOMLEFT"; end
-	else
-		if y < cy then return "BOTTOMLEFT", "TOPRIGHT"
-		else return "TOPLEFT", "BOTTOMRIGHT"; end
-	end
-end
-
 local function GetParentFrame()
 	if UIParent:IsShown() then
 		return UIParent
@@ -282,11 +270,8 @@ end
 
 function Nauticus:MapIcon_OnEnter(frame)
 	local transit = frame:GetID()
-	local point, rel = GetMapIconAnchor()
 
-	tablet:Attach(point, frame, rel, 0, 0)
-	tablet.db.scale = 0.85
-	tablet:Clear():SetParent(GetParentFrame())
+	tablet:Attach():Clear().db.scale = 0.85
 
 	self:ShowTooltip(transit)
 
@@ -357,10 +342,7 @@ function dataobj:OnEnter()
 
 	local point, rel = GetBarAnchor(self)
 
-	tablet:Attach(point, self, rel, 0, 0)
-	tablet.db.scale = 1
-	tablet:Clear():SetParent(GetParentFrame())
-	tablet:SetFrameLevel(tablet:GetParent():GetFrameLevel() + 1)
+	tablet:Attach(point, self, rel, 0, 0):Clear().db.scale = 1
 
 	tablet:AddLine(Nauticus.title)
 		:Font(GameTooltipHeaderText:GetFont())

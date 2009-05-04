@@ -68,6 +68,24 @@ local function button_mouseup()
 		call_handler("OnRightClick")
 	end
 end
+local getcpos, getscrw, getscrh = _G.GetCursorPosition, _G.GetScreenWidth, _G.GetScreenHeight
+local function onupdate()
+	local x, y = getcpos()
+	local cx, cy = getscrw() / 2, getscrh() / 2
+	local point
+	if x > cx then
+		if y < cy then point, x, y = "BOTTOMRIGHT", x-2, y+2
+		else point, x, y = "TOPRIGHT", x-2, y+2; end
+	else
+		if y < cy then point, x, y = "BOTTOMLEFT", x-2, y+2
+		else point, x, y = "TOPLEFT", x+18, y-18; end
+	end
+	local frame = this.core
+	local parent = frame:GetParent()
+	local scale = parent:GetScale() * frame:GetScale()
+	frame:ClearAllPoints()
+	frame:SetPoint(point, parent, "BOTTOMLEFT", x / scale, y / scale)
+end
 
 local function clear(t) for k,v in pairs(t) do t[k] = nil end end
 local function Reset(self)
@@ -211,7 +229,7 @@ local function Size(self)
 		end
 	end
 	self:SetWidth(width + 23)
-	if height < self.db.min_height then height = self.db.min_height end
+	if self.db.min_height and height < self.db.min_height then height = self.db.min_height end
 	self:SetHeight(height)
 	return self
 end
@@ -229,7 +247,6 @@ local function SavePosition(self)
 end
 
 local function SetPosition(self)
-	self:ClearAllPoints()
 	self:SetBackdropBorderColor(unpack(self.db.border))
 	self:SetBackdropColor(unpack(self.db.background))
 	self:SetScale(self.db.scale)
@@ -237,12 +254,15 @@ local function SetPosition(self)
 	self:SetAlpha(self.db.fade)
 	--self:SetWidth(self.db.width)
 	self:StopMovingOrSizing()
-	if self.attached then
-		self:SetPoint(unpack(self.attached))
-	else
-		local pos = self.db.position
-		local scale = self:GetEffectiveScale()
-		self:SetPoint(pos.point, UIParent, pos.relpoint, pos.x / scale, pos.y / scale)
+	if not self.at_cursor then
+		self:ClearAllPoints()
+		if self.attached then
+			self:SetPoint(unpack(self.attached))
+		else
+			local pos = self.db.position
+			local scale = self:GetEffectiveScale()
+			self:SetPoint(pos.point, UIParent, pos.relpoint, pos.x / scale, pos.y / scale)
+		end
 	end
 	for f in pairs(self.associates) do
 		f:SetScale(self.db.scale)
@@ -301,7 +321,24 @@ local function Unlock(self, temp)
 end
 
 local function Attach(self, point, frame, relpoint, x, y)
-	self.attached = {point, frame, relpoint, x, y}
+	local parent = UIParent
+	if not parent:IsShown() then
+		local f = GetUIPanel("fullscreen")
+		if f and f:IsShown() then
+			parent = f
+		end
+	end
+	self:SetParent(parent)
+	if point then
+		self.attached = {point, frame, relpoint, x, y}
+	else
+		self:SetScript("OnUpdate", onupdate)
+		self.at_cursor = true
+		self:SetScript("OnHide", function()
+			self:SetScript("OnUpdate", nil)
+			self.at_cursor = nil
+		end)
+	end
 	return self
 end
 
