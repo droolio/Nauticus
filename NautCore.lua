@@ -23,7 +23,7 @@ local Astrolabe = DongleStub("Astrolabe-0.4")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionNum = 310 -- for comparison
+Nauticus.versionNum = 313 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
