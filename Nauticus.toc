@@ -9,13 +9,14 @@
 ## Notes-zhCN: 追踪环绕艾泽拉斯的飞艇及船只正确抵达及离开的时间，并实时显示在世界地图与小地图上
 ## Notes-zhTW: 追蹤環繞艾澤拉斯的飛艇及船隻正確抵達及離開的時間，並即時顯示在世界地圖與小地圖上
 ## Notes-esES: Sigue con precisión los horarios de llegada y salida de barcos y zepelines en todo Azeroth y los muestra en el Mini-Mapa y Mapa del Mundo en tiempo real
-## OptionalDeps: Ace3, Titan
+## OptionalDeps: LibStub, CallbackHandler-1.0, Ace3, LibDBIcon-1.0, Titan
 ## eMail: droolio@gmail.com
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: Nauticus3DB, NauticusDB
 ## X-Revision: @project-revision@
 ## X-Date: @project-date-iso@
+## X-Embeds: LibStub, CallbackHandler-1.0, Ace3, LibDBIcon-1.0
 ## X-Category: Maps
 ## X-eMail: droolio@gmail.com
 ## X-Website: http://drool.me.uk/naut

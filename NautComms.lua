@@ -238,7 +238,7 @@ function Nauticus:CHAT_MSG_CHANNEL(eventName, msg, sender, _, numAndName, _, _, 
 		if args[1] == CMD_VERSION then -- version, num
 			self:ReceiveMessage_version(tonumber(args[2]), sender)
 		elseif args[1] == CMD_KNOWN then -- known, { transports }
-			self:ReceiveMessage_known(tonumber(args[2]), self:StringToKnown(args[3]), sender)
+			self:ReceiveMessage_known(tonumber(args[2]), args[3], args[4], sender)
 		end
 	end
 end
@@ -268,13 +268,23 @@ function Nauticus:ReceiveMessage_version(clientversion, sender)
 	end
 end
 
-function Nauticus:ReceiveMessage_known(version, transports, sender)
+function Nauticus:ReceiveMessage_known(version, transports, hash, sender)
 	if version ~= DATA_VERSION then return; end
 
 	local lag = GetLag()
 	local set, respond, since, boots, swaps
 
-	for transit, values in pairs(transports) do
+	--@debug@
+	if hash and self.debug then
+		local rehash = StringHash(transports)
+		hash = uncrunch(hash)
+		if hash ~= rehash then
+			self:DebugMessage("wrong hash: "..hash.." (supplied) vs "..rehash.." (computed)")
+		end
+	end
+	--@end-debug@
+
+	for transit, values in pairs(self:StringToKnown(transports)) do
 		since, boots, swaps = values.since, values.boots, values.swaps
 
 		if since ~= nil then
