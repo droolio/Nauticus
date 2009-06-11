@@ -23,7 +23,7 @@ local Astrolabe = DongleStub("Astrolabe-0.4")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionNum = 313 -- for comparison
+Nauticus.versionNum = 314 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
@@ -421,7 +421,7 @@ function Nauticus:DrawMapIcons(worldOnly)
 						if isZoneInteresting and showMiniIcons and isFactionInteresting then
 							if not worldOnly then
 								Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, x, y)
-								RotateTexture(buttonMini.texture, angle + deg(GetPlayerFacing()))
+								RotateTexture(buttonMini.texture, angle + (GetCVar("rotateMinimap") == "1" and deg(GetPlayerFacing()) or 0))
 								buttonMini:SetAlpha(Astrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
 							end
 						elseif buttonMini:IsVisible() then
