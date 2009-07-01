@@ -87,6 +87,11 @@ L["Greeb Ramrocket"] = true
 L["Nargo Screwbore"] = true
 -- wg2wg:
 L["Harrowmeiser"] = true
+-- tb2org:
+L["Krendle Bigpockets"] = true
+L["Zelli Hotnozzle"] = true
+L["Sky-Captain \"Dusty\" Blastnut"] = true
+L["Watcher Tolwe"] = true
 
 -- ship names
 L["The Thundercaller"] = true
@@ -105,12 +110,14 @@ L["Green Island"] = true
 L["The Kraken"] = true
 L["Northspear"] = true
 L["Captured Zeppelin"] = true
+L["The Zephyr"] = true
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = true
 L["Undercity"] = true
 L["The Exodar"] = true
 L["Stormwind City"] = true
+L["Thunder Bluff"] = true
 
 L["Durotar"] = true
 L["Tirisfal Glades"] = true
@@ -126,6 +133,7 @@ L["Westfall"] = true
 L["Borean Tundra"] = true
 L["Howling Fjord"] = true
 L["Dragonblight"] = true
+L["Mulgore"] = true
 
 L["The Veiled Sea"] = true
 L["Twisting Nether"] = true
@@ -156,6 +164,7 @@ L["Org"] = true -- Orgrimmar
 L["UC"]  = true -- Undercity
 L["Exo"] = true -- The Exodar
 L["SC"]  = true -- Stormwind City
+L["TB"]  = true -- Thunder Bluff
 
 L["GG"]  = true -- Grom'gol
 L["BB"]  = true -- Booty Bay

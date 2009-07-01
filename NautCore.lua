@@ -297,6 +297,11 @@ do
 	[ L["Nargo Screwbore"] ] = true,
 	-- wg2wg:
 	[ L["Harrowmeiser"] ] = true,
+	-- tb2org:
+	[ L["Krendle Bigpockets"] ] = true,
+	[ L["Zelli Hotnozzle"] ] = true,
+	[ L["Sky-Captain \"Dusty\" Blastnut"] ] = true,
+	[ L["Watcher Tolwe"] ] = true,
 	}
 
 	local function ChatFilter_CrewChat(msg)
@@ -518,7 +523,7 @@ function Nauticus:CheckTriggers_OnUpdate()
 
 	-- have we moved by at least 6.16 game yards since the last check? this equates to >~110% movement speed
 	if 6.16 < dist then
-		if IsFlying() or IsSwimming() or UnitOnTaxi("player") then return; end
+		if IsFlying() or IsSwimming() or UnitOnTaxi("player") or UnitInVehicle("player") then return; end
 		--check X/Y coords against all triggers for all transports in current zone
 		for transit in pairs(self.currentZoneTransports) do
 			for _, index in pairs(triggers[transit]) do
