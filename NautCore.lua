@@ -13,7 +13,7 @@ local ARTWORK_ZONING = ARTWORK_PATH.."MapIcon_Zoning"
 local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
 local ARTWORK_IN_TRANSIT = ARTWORK_PATH.."Transit"
 local ARTWORK_DOCKED = ARTWORK_PATH.."Docked"
-local MAX_FORMATTED_TIME = 444 -- the longest route minus 60
+local MAX_FORMATTED_TIME = 508 -- the longest route minus 60
 local ICON_DEFAULT_SIZE = 18
 
 Nauticus = LibStub("AceAddon-3.0"):NewAddon("Nauticus", "AceEvent-3.0", "AceTimer-3.0")
@@ -23,7 +23,7 @@ local Astrolabe = DongleStub("Astrolabe-0.4")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionNum = 314 -- for comparison
+Nauticus.versionNum = 320 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
@@ -627,26 +627,6 @@ function Nauticus:InitialiseConfig()
 			title = title.." "..version
 		end
 		self.title = title
-	end
-
-	-- copy legacy db from ace2 versions...
-	if NauticusDB and NauticusDB.account and not self.db.global.uptime then
-		self.db.global.uptime = NauticusDB.account.uptime
-		self.db.global.timestamp = NauticusDB.account.timestamp
-		self.db.global.knownCycles = NauticusDB.account.knownCycles
-		NauticusDB = nil
-	end
-
-	do
-		-- convert legacy label names into their proper id's...
-		local knownCycles = self.db.global.knownCycles
-		for name, id in pairs(self.lookupIndex) do
-			if knownCycles[name] then
-				self:DebugMessage("legacy: "..name)
-				knownCycles[id] = knownCycles[name]
-				knownCycles[name] = nil
-			end
-		end
 	end
 
 	if self.db.global.newerVersion then

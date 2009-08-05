@@ -119,27 +119,14 @@ name = L["Westguard Keep"].." ∞",
 short_name = L["WGK"],
 faction = "Alliance",
 },
+[17] = {
+vessel_name = L["The Zephyr"],
+ship_type = "Zeppelin",
+name = L["Thunder Bluff"]..ARROW..L["Durotar"],
+short_name = L["TB"]..ARROW..L["Org"],
+faction = "Horde",
+},
 
-}
-
--- reverse lookup table to find the transport id for legacy conversion
-Nauticus.lookupIndex = {
-['org2uc']  = 1,
-['org2gg']  = 2,
-['uc2gg']   = 3,
-['rat2bb']  = 4,
-['aub2sc']  = 5,
-['mh2ther'] = 6,
-['rtv2ds']  = 7,
-['fms2fer'] = 8,
-['exo2aub'] = 9,
-['war2org'] = 10,
-['ven2uc']  = 11,
-['unu2moa'] = 12,
-['kam2moa'] = 13,
-['sc2vk']   = 14,
-['vg2mh']   = 15,
-['wg2wg']   = 16,
 }
 
 -- accurate round trip times
@@ -160,13 +147,14 @@ Nauticus.rtts = {
 [12] = 445.228521,
 [13] = 502.363815,
 [16] = 484.220486,
+[17] = 566.778813,
 }
 
 Nauticus.transitZones = {
-[ L["Durotar"] ] = { [1] = true, [2] = true, [10] = true, },
+[ L["Durotar"] ] = { [1] = true, [2] = true, [10] = true, [17] = true, },
 [ L["Tirisfal Glades"] ] = { [1] = true, [3] = true, [11] = true, },
 [ L["Stranglethorn Vale"] ] = { [2] = true, [3] = true, [4] = true, },
-[ L["The Barrens"] ] = { [4] = true, [10] = true, },
+[ L["The Barrens"] ] = { [4] = true, [10] = true, [17] = true, },
 [ L["Wetlands"] ] = { [6] = true, [15] = true, },
 [ L["Azuremyst Isle"] ] = { [9] = true, },
 [ L["Darkshore"] ] = { [5] = true, [7] = true, [9] = true, },
@@ -174,14 +162,16 @@ Nauticus.transitZones = {
 [ L["Teldrassil"] ] = { [7] = true, },
 [ L["Feralas"] ] = { [8] = true, },
 [ L["Stormwind City"] ] = { [5] = true, [14] = true, },
+[ L["Thunder Bluff"] ] = { [17] = true, },
 [ L["Westfall"] ] = { [14] = true, },
 [ L["Borean Tundra"] ] = { [10] = true, [14] = true, [12] = true, },
 [ L["Howling Fjord"] ] = { [11] = true, [15] = true, [13] = true, [16] = true, },
 [ L["Dragonblight"] ] = { [12] = true, [13] = true, },
+[ L["Mulgore"] ] = { [17] = true, },
 [ L["The Veiled Sea"] ] = { [9] = true, }, -- special case
 [ L["Twisting Nether"] ] = { [9] = true, }, -- special case
 [ L["The Frozen Sea"] ] = { [12] = true, [13] = true, }, -- special case
-[ L["Orgrimmar"] ] = { [1] = true, [2] = true, [10] = true, virtual = true, }, -- extend to city
+[ L["Orgrimmar"] ] = { [1] = true, [2] = true, [10] = true, [17] = true, virtual = true, }, -- extend to city
 [ L["Undercity"] ] = { [1] = true, [3] = true, [11] = true, virtual = true, }, -- extend to city
 }
 
@@ -341,6 +331,16 @@ Nauticus.platforms = {
 	[1] = {
 		name = L["Westguard Keep"]..", "..L["Howling Fjord"],
 		ebv = L["WGK"],
+	},
+},
+[17] = {
+	[1] = {
+		name = L["Thunder Bluff"]..", "..L["Mulgore"],
+		ebv = L["TB"],
+	},
+	[2] = {
+		name = L["Orgrimmar"].." / "..L["Durotar"],
+		ebv = L["Org"],
 	},
 },
 
@@ -3661,38 +3661,7 @@ Nauticus.packedData = {
 " 0.00001702322021:-0.00002740500644:1.000: 12:-0.28", -- [183]
 " 0.00000652153977:-0.00001058658118:1.209:  0:-0.11", -- [184]
 },
-
-}
-
-if select(4, GetBuildInfo()) < 30200 then return; end
-
-Nauticus.transports[17] = {
-vessel_name = L["The Zephyr"],
-ship_type = "Zeppelin",
-name = L["Thunder Bluff"]..ARROW..L["Durotar"],
-short_name = L["TB"]..ARROW..L["Org"],
-faction = "Horde",
-}
-Nauticus.lookupIndex['tb2org']  = 17
-Nauticus.rtts[17] = 566.837-0.058772+0.000585
-
-Nauticus.transitZones[ L["Thunder Bluff"] ] = { [17] = true, }
-Nauticus.transitZones[ L["Mulgore"] ] = { [17] = true, }
-Nauticus.transitZones[ L["Durotar"] ][17] = true
-Nauticus.transitZones[ L["The Barrens"] ][17] = true
-Nauticus.transitZones[ L["Orgrimmar"] ][17] = true
-
-Nauticus.platforms[17] = {
-	[1] = {
-		name = L["Thunder Bluff"]..", "..L["Mulgore"],
-		ebv = L["TB"],
-	},
-	[2] = {
-		name = L["Orgrimmar"].." / "..L["Durotar"],
-		ebv = L["Org"],
-	},
-}
-Nauticus.packedData[17] = {
+[17] = {
 " 0.16994231970866: 0.61167243389556:60.00:  6:172.30:plat1", -- [1]
 " 0.00000653014313: 0.00006919873901:2.001: 29:-0.24", -- [2]
 " 0.00001839350390: 0.00018433690522:1.999: 55:-0.66", -- [3]
@@ -3919,4 +3888,6 @@ Nauticus.packedData[17] = {
 " 0.00002966642420: 0.00027621255072:2.000: 50: 1.45", -- [224]
 " 0.00001373094961: 0.00015079324566:2.001: 21: 0.99", -- [225]
 " 0.00000242273124: 0.00002910743156:1.606:  0: 0.21", -- [226]
+},
+
 }

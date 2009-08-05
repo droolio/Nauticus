@@ -36,7 +36,7 @@ L["Hide transports of opposite faction from the map, showing only neutral and th
 L["Auto select transport"] = "Automatische Transportauswahl"
 L["Automatically select nearest transport when standing at platform."] = "Automatisch den nächstgelegenen Transport auswählen, wenn man auf einer Plattform steht."
 L["Crew chat filter"] = "Crewgesprächfilter"
-L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Ein-/Ausschalten des Filters für die Gespräche der Crew." -- re do?
+L["Toggle the filter for removing ship crew talk and Zeppelin Master yells from the chat window."] = "Ein-/Ausschalten des Filters für die Gespräche der Schiffscrew und der Zeppelinmeister für das Chatfenster."
 L["Alarm delay"] = "Alarm Zeit"
 L["Change the alarm delay (in seconds)."] = "Ändert die Zeit ab, wann der Alarm vor dem Abflug ertönen soll (in Sekunden)."
 L["Mini-Map button"] = "Minikarte Button"
@@ -60,7 +60,7 @@ L["Shows only neutral transports and those of your faction."] = "Zeigt nur neutr
 L["List relevant to current zone only"] = "Zeige nur Transportmittel der momentanen Zone" -- re do?
 L["Shows only transports relevant to your current zone."] = "Zeigt nur Transportmittel der momentanen Zone." -- check?
 L["Hint: Click to cycle transport. Alt-Click to set up alarm"] = "Hinweis: Klick - Reiseroute auswählen. Alt-Klick - Alarm aktivieren."
-L["New version available! Visit www.drool.me.uk/naut"] = true
+L["New version available! Visit www.drool.me.uk/naut"] = "Neue Version verfügbar! Schau auf www.drool.me.uk/naut"
 
 -- list of ship crew npc's to filter from chat (*must* strictly match the in-game name)
 -- org2uc:
@@ -105,7 +105,7 @@ L["Walker of Waves"] = "Wellenreiter"
 L["Green Island"] = "Grüne Insel"
 L["The Kraken"] = "Die Kraken"
 L["Northspear"] = "Nordspeer"
-L["Captured Zeppelin"] = true -- to do
+L["Captured Zeppelin"] = "Eroberter Zeppelin"
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "Orgrimmar"
