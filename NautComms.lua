@@ -448,8 +448,8 @@ function Nauticus:UpdateChannel(wait)
 end
 
 do
-	local function ChatFilter_DataChannel(msg)
-		if strlower(arg9) == strlower(DEFAULT_CHANNEL) and not Nauticus.debug then
+	local function ChatFilter_DataChannel(self, event, ...)
+		if strlower(select(9, ...)) == strlower(DEFAULT_CHANNEL) and not Nauticus.debug then
 			return true -- silence
 		end
 	end

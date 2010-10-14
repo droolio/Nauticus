@@ -75,7 +75,7 @@ function Nauticus:TransportSelectInitialise(frame, level)
 		AddLine(
 			GREY..L["Select None"], -- text
 			function() -- func
-				Nauticus:SetTransport(this.value)
+				Nauticus:SetTransport(NONE)
 				ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 			end,
 			self.activeTransit == NONE, -- checked?
@@ -104,7 +104,7 @@ function Nauticus:TransportSelectInitialise(frame, level)
 				AddLine(
 					textdesc, -- text
 					function() -- func
-						Nauticus:SetTransport(this.value)
+						Nauticus:SetTransport(id)
 						ToggleDropDownMenu(1, nil, Naut_TransportSelectFrame)
 					end,
 					self.activeTransit == id, -- checked?

@@ -17,6 +17,10 @@ local MINOR_VERSION = 90000 + tonumber(("$Revision$"):match("%d+")) or 0
 local lib, oldMinor = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then return end
 
+local wipe = wipe
+local debugf = tekDebug and tekDebug:GetFrame("LibSimpleFrame-1.0")
+local function Debug(...) if debugf then debugf:AddMessage(string.join(", ", tostringall(...))) end end
+
 lib.registry = lib.registry or {}
 
 local backdrop = {
@@ -26,7 +30,7 @@ local backdrop = {
 	insets = {left = 5, right = 5, top = 5, bottom = 5},
 }
 
-local function call_handler(h)
+local function call_handler(this, h)
 	if this.handlers[h] == false then return end -- allows override of a root handler
 	local handler, value = (this.handlers[h] or this.core.handlers[h]), (this.handlerValues[h] or this.core.handlerValues[h])
 	if handler then return handler(this.core.id, value) end
@@ -35,7 +39,7 @@ local function fade(frame, t, start, stop)
 	local func = (start > stop) and UIFrameFadeOut or UIFrameFadeIn
 	return func(frame, t, start, stop)
 end
-local function dragstart()
+local function dragstart(this)
 	this.core:StartMoving()
 	for f in pairs(this.core.associates) do
 		if f:IsMovable() then
@@ -43,7 +47,7 @@ local function dragstart()
 		end
 	end
 end
-local function dragstop()
+local function dragstop(this)
 	this.core:StopMovingOrSizing()
 	this.core:SavePosition()
 	this.core:SetPosition()
@@ -51,25 +55,25 @@ local function dragstop()
 		f:StopMovingOrSizing()
 	end
 end
-local function button_enter()
+local function button_enter(this)
 	fade(this.core, this.core.db.fadeTime or 0.1, this.core:GetAlpha(), this.core.db.opacity)
-	call_handler("OnEnter")
+	call_handler(this, "OnEnter")
 end
-local function button_leave()
+local function button_leave(this)
 	fade(this.core, this.core.db.fadeTime or 0.1, this.core:GetAlpha(), this.core.db.fade)
-	call_handler("OnLeave")
+	call_handler(this, "OnLeave")
 end
-local function button_mouseup()
+local function button_mouseup(this, button)
 	if this.handlers.OnClick then
-		call_handler("OnClick")
-	elseif arg1 == "LeftButton" and this.handlers.OnLeftClick then
-		call_handler("OnLeftClick")
-	elseif arg1 == "RightButton" and this.handlers.OnRightClick then
-		call_handler("OnRightClick")
+		call_handler(this, "OnClick")
+	elseif button == "LeftButton" and this.handlers.OnLeftClick then
+		call_handler(this, "OnLeftClick")
+	elseif button == "RightButton" and this.handlers.OnRightClick then
+		call_handler(this,"OnRightClick")
 	end
 end
 local getcpos, getscrw, getscrh = _G.GetCursorPosition, _G.GetScreenWidth, _G.GetScreenHeight
-local function onupdate()
+local function onupdate(this)
 	local x, y = getcpos()
 	local cx, cy = getscrw() / 2, getscrh() / 2
 	local point
@@ -87,10 +91,9 @@ local function onupdate()
 	frame:SetPoint(point, parent, "BOTTOMLEFT", x / scale, y / scale)
 end
 
-local function clear(t) for k,v in pairs(t) do t[k] = nil end end
 local function Reset(self)
-	clear(self.handlers)
-	clear(self.handlerValues)
+	wipe(self.handlers)
+	wipe(self.handlerValues)
 	self:Font()
 	--self.left:SetFontObject(GameFontNormal)
 	self.left:SetWidth(0)
@@ -271,8 +274,20 @@ local function SetPosition(self)
 	return self
 end
 
---[[local lock_modifiers = {LALT = true, RALT = true,}
-local function modifier_watcher(this, event, modifier, pressed)
+--[[
+local function modifier_watcher(this, since_last)
+	this.modifier_timer = this.modifier_timer + since_last
+	if this.modifier_timer > 0.3 then
+		this.modifier_timer = 0
+		if IsAltKeyDown() then
+			this.core:Unlock(true)
+		else
+			this.core:Lock()
+		end
+	end
+end
+local lock_modifiers = {LALT = true, RALT = true,}
+local function modifier_event(this, event, modifier, pressed)
 	if lock_modifiers[modifier] then
 		if pressed == 1 then
 			this.core:Unlock(true)
@@ -284,8 +299,10 @@ end]]
 local function Lock(self, toggle)
 	if toggle == false then return self:Unlock() end
 	self.db.lock = true
-	--self:SetScript("OnEvent", modifier_watcher)
 	--self:RegisterEvent("MODIFIER_STATE_CHANGED")
+	--self:SetScript("OnEvent", modifier_event)
+	--self:SetScript("OnUpdate", nil)
+
 	self:RegisterForDrag(nil)
 	self:EnableMouse(false)
 	self:StopMovingOrSizing()
@@ -302,9 +319,14 @@ local function Lock(self, toggle)
 	return self
 end
 local function Unlock(self, temp)
-	if not temp then
+	if temp then
+		-- alt was pressed; this might be because of alt-tab, which screws up events, so check further:
+		--self.modifier_timer = 0
+		--self:SetScript("OnUpdate", modifier_watcher)
+	else
 		self.db.lock = false
 		--self:UnregisterEvent("MODIFIER_STATE_CHANGED")
+		--self:SetScript("OnUpdate", nil)
 	end
 	self:RegisterForDrag("LeftButton")
 	self:EnableMouse(true)

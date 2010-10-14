@@ -23,7 +23,7 @@ local Astrolabe = DongleStub("Astrolabe-0.4")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionNum = 320 -- for comparison
+Nauticus.versionNum = 400 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
@@ -304,7 +304,7 @@ do
 	[ L["Watcher Tolwe"] ] = true,
 	}
 
-	local function ChatFilter_CrewChat(msg)
+	local function ChatFilter_CrewChat(self, event, arg1, arg2)
 		if filterChat and FILTER_NPC[arg2] then
 			--Nauticus:DebugMessage(arg2..": "..arg1)
 			return true -- silence
@@ -762,8 +762,8 @@ function Nauticus:InitialiseConfig()
 		frame.texture = texture
 		texture:SetTexture(texture_name)
 		texture:SetAllPoints(frame)
-		frame:SetScript("OnEnter", function() Nauticus:MapIcon_OnEnter(this) end)
-		frame:SetScript("OnLeave", function() Nauticus:MapIcon_OnLeave(this) end)
+		frame:SetScript("OnEnter", function(self) Nauticus:MapIcon_OnEnter(self) end)
+		frame:SetScript("OnLeave", function(self) Nauticus:MapIcon_OnLeave(self) end)
 		frame:SetID(id)
 		frame:Hide()
 
@@ -775,8 +775,8 @@ function Nauticus:InitialiseConfig()
 		frame.texture = texture
 		texture:SetTexture(texture_name)
 		texture:SetAllPoints(frame)
-		frame:SetScript("OnEnter", function() Nauticus:MapIcon_OnEnter(this) end)
-		frame:SetScript("OnLeave", function() Nauticus:MapIcon_OnLeave(this) end)
+		frame:SetScript("OnEnter", function(self) Nauticus:MapIcon_OnEnter(self) end)
+		frame:SetScript("OnLeave", function(self) Nauticus:MapIcon_OnLeave(self) end)
 		frame:SetID(id)
 	end
 
