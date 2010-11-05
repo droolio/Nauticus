@@ -7,7 +7,7 @@ local WHITE   = "|cffffffff"
 local GREY    = "|cffbababa"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
-local DATA_VERSION = 5 -- route calibration versioning
+local DATA_VERSION = 6 -- route calibration versioning
 local CMD_VERSION = "VER"
 local CMD_KNOWN = "KWN3"
 
