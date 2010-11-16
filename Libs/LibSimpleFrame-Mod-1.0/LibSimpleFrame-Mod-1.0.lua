@@ -56,11 +56,15 @@ local function dragstop(this)
 	end
 end
 local function button_enter(this)
-	fade(this.core, this.core.db.fadeTime or 0.1, this.core:GetAlpha(), this.core.db.opacity)
+	if this:IsVisible() then
+		fade(this.core, this.core.db.fadeTime or 0.1, this.core:GetAlpha(), this.core.db.opacity)
+	end
 	call_handler(this, "OnEnter")
 end
 local function button_leave(this)
-	fade(this.core, this.core.db.fadeTime or 0.1, this.core:GetAlpha(), this.core.db.fade)
+	if this:IsVisible() then
+		fade(this.core, this.core.db.fadeTime or 0.1, this.core:GetAlpha(), this.core.db.fade)
+	end
 	call_handler(this, "OnLeave")
 end
 local function button_mouseup(this, button)
