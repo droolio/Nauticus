@@ -13,17 +13,17 @@ local ARTWORK_ZONING = ARTWORK_PATH.."MapIcon_Zoning"
 local ARTWORK_DEPARTING = ARTWORK_PATH.."Departing"
 local ARTWORK_IN_TRANSIT = ARTWORK_PATH.."Transit"
 local ARTWORK_DOCKED = ARTWORK_PATH.."Docked"
-local MAX_FORMATTED_TIME = 508 -- the longest route minus 60
+local MAX_FORMATTED_TIME = 541 -- the longest route minus 60
 local ICON_DEFAULT_SIZE = 18
 
 Nauticus = LibStub("AceAddon-3.0"):NewAddon("Nauticus", "AceEvent-3.0", "AceTimer-3.0")
 local Nauticus = Nauticus
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
-local Astrolabe = DongleStub("Astrolabe-0.4")
+local Astrolabe = DongleStub("Astrolabe-1.0")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionNum = 401 -- for comparison
+Nauticus.versionNum = 403 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
@@ -317,7 +317,7 @@ do
 end
 
 function Nauticus:OnInitialize()
-	self.db = LibStub("AceDB-3.0"):New("Nauticus3DB", defaults)
+	self.db = LibStub("AceDB-3.0"):New("Nauticus4DB", defaults)
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("Nauticus", options)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("NauticusSlashCommand", optionsSlash, { "nauticus", "naut" })
 	options.args.NauticusSlashCommand = optionsSlash
@@ -801,11 +801,20 @@ function Nauticus:ZONE_CHANGED_NEW_AREA(loopback)
 	if not loopback and self.currentZone == GetRealZoneText() then
 		zoneChanged = self:ScheduleTimer("ZONE_CHANGED_NEW_AREA", 1, true)
 		return
-		--self:DebugMessage("zoned: "..self.currentZone)
 	end
 
-	self.currentZone = GetRealZoneText()
-	self.currentZoneTransports = self.transitZones[self.currentZone]
+	--self:DebugMessage("zoned: "..GetRealZoneText())
+	self:SetZone(GetRealZoneText())
+end
+
+function Nauticus:SetZone(zone)
+	-- special case; don't acknowledge zone change when brushing certain zones, keeping map icons
+	if	(self.currentZone == L["Northern Barrens"] and (zone == L["Durotar"] or zone == L["Southern Barrens"])) or
+		(self.currentZone == L["Mulgore"] and zone == L["Southern Barrens"]) or
+		(self.currentZone == L["Stormwind City"] and (zone == L["Elwynn Forest"] or zone == L["The Great Sea"])) then return; end
+
+	self.currentZone = zone
+	self.currentZoneTransports = self.transitZones[zone]
 	if self.db.profile.zoneSpecific then self:RefreshMenu(); end
 end
 

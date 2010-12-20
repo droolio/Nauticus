@@ -88,6 +88,11 @@ L["Greeb Ramrocket"] = "格利伯·瑞姆洛基"
 L["Nargo Screwbore"] = "納爾高·螺孔"
 -- wg2wg:
 L["Harrowmeiser"] = "哈洛梅瑟"
+-- tb2org:
+L["Krendle Bigpockets"] = true -- to do
+L["Zelli Hotnozzle"] = true -- to do
+L["Sky-Captain \"Dusty\" Blastnut"] = true -- to do
+L["Watcher Tolwe"] = true -- to do
 
 -- ship names
 L["The Thundercaller"] = "喚雷者號"
@@ -106,43 +111,44 @@ L["Green Island"] = "綠島"
 L["The Kraken"] = "海怪號"
 L["Northspear"] = "北矛號"
 L["Captured Zeppelin"] = "被俘虜的飛艇"
+L["The Zephyr"] = true -- to do
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "奧格瑪"
 L["Undercity"] = "幽暗城"
 L["The Exodar"] = "艾克索達"
 L["Stormwind City"] = "暴風城"
+L["Thunder Bluff"] = true -- to do
 
 L["Durotar"] = "杜洛塔"
 L["Tirisfal Glades"] = "提里斯法林地"
-L["Stranglethorn Vale"] = "荊棘谷"
-L["The Barrens"] = "貧瘠之地"
+L["Northern Stranglethorn"] = true -- to do
+L["The Cape of Stranglethorn"] = true -- to do
+L["Northern Barrens"] = true -- to do
+L["Southern Barrens"] = true -- to do
 L["Wetlands"] = "濕地"
-L["Darkshore"] = "黑海岸"
 L["Dustwallow Marsh"] = "塵泥沼澤"
 L["Teldrassil"] = "泰達希爾"
 L["Azuremyst Isle"] = "藍謎島"
-L["Feralas"] = "菲拉斯"
+L["Elwynn Forest"] = true -- to do
 L["Westfall"] = "西部荒野"
 L["Borean Tundra"] = "北風凍原"
 L["Howling Fjord"] = "凜風峽灣"
 L["Dragonblight"] = "龍骨荒野"
+L["Mulgore"] = true -- to do
 
 L["The Veiled Sea"] = "迷霧之海"
 L["Twisting Nether"] = "扭曲虛空"
 L["The Frozen Sea"] = "冰凍之海"
+L["The Great Sea"] = true -- to do
 
 -- subzones
 L["Grom'gol"] = "格羅姆高營地"
 L["Booty Bay"] = "藏寶海灣"
 L["Ratchet"] = "棘齒城"
 L["Menethil Harbor"] = "米奈希爾港"
-L["Auberdine"] = "奧伯丁"
 L["Theramore"] = "塞拉摩島"
 L["Rut'Theran Village"] = "魯瑟蘭村"
-L["Sardor Isle"] = "薩爾多島"
-L["Feathermoon"] = "羽月要塞"
-L["Forgotten Coast"] = "被遺忘的海岸"
 L["Warsong Hold"] = "戰歌堡"
 L["Vengeance Landing"] = "復仇臺地"
 L["Valiance Keep"] = "驍勇要塞"
@@ -157,16 +163,14 @@ L["Org"] = "奧格"   -- Orgrimmar
 L["UC"]  = "幽暗"   -- Undercity
 L["Exo"] = "艾克"   -- The Exodar
 L["SC"]  = "暴風"   -- Stormwind City
+L["TB"]  = true     -- to do; Thunder Bluff
 
 L["GG"]  = "格羅姆高" -- Grom'gol
 L["BB"]  = "藏寶"   -- Booty Bay
 L["Rat"] = "棘齒"   -- Ratchet
 L["MH"]  = "米奈希爾" -- Menethil Harbor
-L["Aub"] = "奧伯丁"  -- Auberdine
 L["Th"]  = "塞拉摩"  -- Theramore
 L["RTV"] = "魯瑟蘭"  -- Rut'Theran Village
-L["FMS"] = "羽月"   -- Feathermoon
-L["Fer"] = "遺忘海岸" -- Feralas
 L["War"] = "戰歌"   -- Warsong Hold
 L["Ven"] = "復仇"   -- Vengeance Landing
 L["VK"]  = "驍勇"   -- Valiance Keep

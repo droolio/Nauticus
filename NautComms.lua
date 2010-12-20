@@ -7,9 +7,9 @@ local WHITE   = "|cffffffff"
 local GREY    = "|cffbababa"
 
 local DEFAULT_CHANNEL = "NauticSync" -- do not change!
-local DATA_VERSION = 6 -- route calibration versioning
+local DATA_VERSION = 1 -- route calibration versioning
 local CMD_VERSION = "VER"
-local CMD_KNOWN = "KWN3"
+local CMD_KNOWN = "KWN4"
 
 local Nauticus = Nauticus
 local L = LibStub("AceLocale-3.0"):GetLocale("Nauticus")
@@ -209,10 +209,7 @@ function Nauticus:CHAT_MSG_CHANNEL_NOTICE(eventName, noticeType, _, _, numAndNam
 
 		if newZone and self.transitZones[newZone] then
 			--self:DebugMessage("channel: "..newZone)
-			-- special case; don't acknowledge zone change when brushing Durotar zone on Booty Bay <-> Ratchet route
-			if self.currentZone == L["The Barrens"] and newZone == L["Durotar"] then return; end
-			self.currentZone = newZone
-			self.currentZoneTransports = self.transitZones[newZone]
+			self:SetZone(newZone)
 		end
 	end
 end

@@ -13,7 +13,7 @@
 ## eMail: droolio@gmail.com
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: Nauticus3DB
+## SavedVariables: Nauticus4DB
 ## X-Revision: @project-revision@
 ## X-Date: @project-date-iso@
 ## X-Embeds: Ace3, LibDBIcon-1.0

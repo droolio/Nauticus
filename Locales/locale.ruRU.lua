@@ -106,17 +106,21 @@ L["Green Island"] = "Зеленый остров"
 L["The Kraken"] = "Кракен"
 L["Northspear"] = "Северное копье"
 L["Captured Zeppelin"] = "Захваченный дирижабль"
+L["The Zephyr"] = true -- to do
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "Оргриммар"
 L["Undercity"] = "Подгород"
 L["The Exodar"] = "Экзодар"
 L["Stormwind City"] = "Штормград"
+L["Thunder Bluff"] = true -- to do
 
 L["Durotar"] = "Дуротар"
 L["Tirisfal Glades"] = "Тирисфальские леса"
-L["Stranglethorn Vale"] = "Тернистая долина"
-L["The Barrens"] = "Степи"
+L["Northern Stranglethorn"] = true -- to do
+L["The Cape of Stranglethorn"] = true -- to do
+L["Northern Barrens"] = true -- to do
+L["Southern Barrens"] = true -- to do
 L["Wetlands"] = "Болотина"
 L["Darkshore"] = "Темные берега"
 L["Dustwallow Marsh"] = "Пылевые топи"
@@ -127,22 +131,20 @@ L["Westfall"] = "Западный Край"
 L["Borean Tundra"] = "Борейская тундра"
 L["Howling Fjord"] = "Ревущий фьорд"
 L["Dragonblight"] = "Драконий Погост"
+L["Mulgore"] = true -- to do
 
 L["The Veiled Sea"] = "Сокрытое Море"
 L["Twisting Nether"] = "Круговерть Пустоты"
 L["The Frozen Sea"] = "Ледяное море"
+L["The Great Sea"] = true -- to do
 
 -- subzones
 L["Grom'gol"] = "Лагерь Гром'гол"
 L["Booty Bay"] = "Пиратская Бухта"
 L["Ratchet"] = "Кабестан"
 L["Menethil Harbor"] = "Гавань Менетил"
-L["Auberdine"] = "Аубердин"
 L["Theramore"] = "Остров Терамор"
 L["Rut'Theran Village"] = "Деревня Рут'теран"
-L["Sardor Isle"] = "Остров Сардор"
-L["Feathermoon"] = "Крепость Оперенной Луны"
-L["Forgotten Coast"] = "Забытый берег"
 L["Warsong Hold"] = "Крепость Песни Войны"
 L["Vengeance Landing"] = "Лагерь Возмездия"
 L["Valiance Keep"] = "Крепость Отваги"
@@ -157,16 +159,14 @@ L["Org"] = "Орг" -- Orgrimmar
 L["UC"]  = "ПГ"  -- Undercity
 L["Exo"] = "Экз" -- The Exodar
 L["SC"]  = "Шт"  -- Stormwind City
+L["TB"]  = true  -- to do; Thunder Bluff
 
 L["GG"]  = "ГГ"  -- Grom'gol
 L["BB"]  = "ББ"  -- Booty Bay
 L["Rat"] = "Каб" -- Ratchet
 L["MH"]  = "ГМ"  -- Menethil Harbor
-L["Aub"] = "Ауб" -- Auberdine
 L["Th"]  = "Тр"  -- Theramore
 L["RTV"] = "ДРТ" -- Rut'Theran Village
-L["FMS"] = "КОЛ" -- Feathermoon
-L["Fer"] = "Фер" -- Feralas
 L["War"] = "КПВ" -- Warsong Hold
 L["Ven"] = "ЛВ"  -- Vengeance Landing
 L["VK"]  = "КО"  -- Valiance Keep

@@ -88,6 +88,11 @@ L["Greeb Ramrocket"] = "Grieb Rammrakete"
 L["Nargo Screwbore"] = "Nargo Bohrschraub"
 -- wg2wg:
 L["Harrowmeiser"] = "Eggenmeiser"
+-- tb2org:
+L["Krendle Bigpockets"] = true -- to do
+L["Zelli Hotnozzle"] = true -- to do
+L["Sky-Captain \"Dusty\" Blastnut"] = true -- to do
+L["Watcher Tolwe"] = true -- to do
 
 -- ship names
 L["The Thundercaller"] = "Die Donnersturm"
@@ -106,43 +111,44 @@ L["Green Island"] = "Grüne Insel"
 L["The Kraken"] = "Die Kraken"
 L["Northspear"] = "Nordspeer"
 L["Captured Zeppelin"] = "Eroberter Zeppelin"
+L["The Zephyr"] = true -- to do
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "Orgrimmar"
 L["Undercity"] = "Unterstadt"
 L["The Exodar"] = "Die Exodar"
 L["Stormwind City"] = "Sturmwind"
+L["Thunder Bluff"] = true -- to do
 
 L["Durotar"] = "Durotar"
 L["Tirisfal Glades"] = "Tirisfal"
-L["Stranglethorn Vale"] = "Schlingendorntal"
-L["The Barrens"] = "Das Brachland"
+L["Northern Stranglethorn"] = true -- to do
+L["The Cape of Stranglethorn"] = true -- to do
+L["Northern Barrens"] = true -- to do
+L["Southern Barrens"] = true -- to do
 L["Wetlands"] = "Sumpfland"
-L["Darkshore"] = "Dunkelküste"
 L["Dustwallow Marsh"] = "Düstermarschen"
 L["Teldrassil"] = "Teldrassil"
 L["Azuremyst Isle"] = "Azurmythosinsel"
-L["Feralas"] = "Feralas"
+L["Elwynn Forest"] = true -- to do
 L["Westfall"] = "Westfall"
 L["Borean Tundra"] = "Boreanische Tundra"
 L["Howling Fjord"] = "Der heulende Fjord"
 L["Dragonblight"] = "Drachenöde"
+L["Mulgore"] = true -- to do
 
 L["The Veiled Sea"] = "Das verhüllte Meer"
 L["Twisting Nether"] = "Wirbelnder Nether"
 L["The Frozen Sea"] = "Die gefrorene See"
+L["The Great Sea"] = true -- to do
 
 -- subzones
 L["Grom'gol"] = "Grom'gol"
 L["Booty Bay"] = "Beutebucht"
 L["Ratchet"] = "Ratschet"
 L["Menethil Harbor"] = "Menethil"
-L["Auberdine"] = "Auberdine"
 L["Theramore"] = "Theramore"
 L["Rut'Theran Village"] = "Rut'Theran"
-L["Sardor Isle"] = "Insel Sardor"
-L["Feathermoon"] = "Mondfederfeste"
-L["Forgotten Coast"] = "Die vergessene Küste"
 L["Warsong Hold"] = "Kriegshymnenfeste"
 L["Vengeance Landing"] = "Hafen der Vergeltung"
 L["Valiance Keep"] = "Valianzfeste"
@@ -157,16 +163,14 @@ L["Org"] = "Org"  -- Orgrimmar
 L["UC"]  = "Us"   -- Undercity
 L["Exo"] = "Exo"  -- The Exodar
 L["SC"]  = "Stur" -- Stormwind City
+L["TB"]  = true   -- to do; Thunder Bluff
 
 L["GG"]  = "GG"   -- Grom'gol
 L["BB"]  = "BB"   -- Booty Bay
 L["Rat"] = "Rat"  -- Ratchet
 L["MH"]  = "Mene" -- Menethil Harbor
-L["Aub"] = "Aub"  -- Auberdine
 L["Th"]  = "Ther" -- Theramore
 L["RTV"] = "Rut"  -- Rut'Theran Village
-L["FMS"] = "Mond" -- Feathermoon
-L["Fer"] = "Fer"  -- Feralas
 L["War"] = "Khf"  -- Warsong Hold
 L["Ven"] = "HdV"  -- Vengeance Landing
 L["VK"]  = "Vf"   -- Valiance Keep

@@ -93,6 +93,11 @@ L["Greeb Ramrocket"] = true
 L["Nargo Screwbore"] = true
 -- wg2wg:
 L["Harrowmeiser"] = true
+-- tb2org:
+L["Krendle Bigpockets"] = true -- to do
+L["Zelli Hotnozzle"] = true -- to do
+L["Sky-Captain \"Dusty\" Blastnut"] = true -- to do
+L["Watcher Tolwe"] = true -- to do
 
 -- ship names
 L["The Thundercaller"] = true
@@ -111,43 +116,44 @@ L["Green Island"] = true
 L["The Kraken"] = true
 L["Northspear"] = true
 L["Captured Zeppelin"] = true
+L["The Zephyr"] = true
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "오그리마"
 L["Undercity"] = "언더시티"
 L["The Exodar"] = "엑소다르"
 L["Stormwind City"] = "스톰윈드"
+L["Thunder Bluff"] = true -- to do
 
 L["Durotar"] = "듀로타"
 L["Tirisfal Glades"] = "티리스팔 숲"
-L["Stranglethorn Vale"] = "가시덤불 골짜기"
-L["The Barrens"] = "불모의 땅"
+L["Northern Stranglethorn"] = true -- to do
+L["The Cape of Stranglethorn"] = true -- to do
+L["Northern Barrens"] = true -- to do
+L["Southern Barrens"] = true -- to do
 L["Wetlands"] = "저습지"
-L["Darkshore"] = "어둠의 해안"
 L["Dustwallow Marsh"] = "먼지진흙 습지대"
 L["Teldrassil"] = "텔드랏실"
 L["Azuremyst Isle"] = "하늘안개 섬"
-L["Feralas"] = "페랄라스"
+L["Elwynn Forest"] = true -- to do
 L["Westfall"] = "서부 몰락지대"
 L["Borean Tundra"] = "북풍의 땅"
 L["Howling Fjord"] = "울부짖는 협만"
 L["Dragonblight"] = "용의 안식처"
+L["Mulgore"] = true -- to do
 
 L["The Veiled Sea"] = "장막의 바다"
 L["Twisting Nether"] = "뒤틀린 황천"
 L["The Frozen Sea"] = true -- to do
+L["The Great Sea"] = true -- to do
 
 -- subzones
 L["Grom'gol"] = "그롬골 주둔지"
 L["Booty Bay"] = "무법항"
 L["Ratchet"] = "톱니항"
 L["Menethil Harbor"] = "메네실 항구"
-L["Auberdine"] = "아우버다인"
 L["Theramore"] = "테라모어 섬"
 L["Rut'Theran Village"] = "루테란 마을"
-L["Sardor Isle"] = true
-L["Feathermoon"] = true
-L["Forgotten Coast"] = true
 L["Warsong Hold"] = true
 L["Vengeance Landing"] = true
 L["Valiance Keep"] = true
@@ -162,16 +168,14 @@ L["Org"] = "오그"  -- Orgrimmar
 L["UC"]  = "언더"  -- Undercity
 L["Exo"] = "Exo" -- The Exodar
 L["SC"]  = "SC"  -- Stormwind City
+L["TB"]  = true  -- to do; Thunder Bluff
 
 L["GG"]  = "가덤"  -- Grom'gol
 L["BB"]  = "무법"  -- Booty Bay
 L["Rat"] = "톱니"  -- Ratchet
 L["MH"]  = "메네실" -- Menethil Harbor
-L["Aub"] = "아우버" -- Auberdine
 L["Th"]  = "테라"  -- Theramore
 L["RTV"] = "루테란" -- Rut'Theran Village
-L["FMS"] = true  -- Feathermoon
-L["Fer"] = true  -- Feralas
 L["War"] = true  -- Warsong Hold
 L["Ven"] = true  -- Vengeance Landing
 L["VK"]  = true  -- Valiance Keep
