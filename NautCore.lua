@@ -758,7 +758,7 @@ function Nauticus:InitialiseConfig()
 
 		frame = CreateFrame("Button", nil, worldMapOverlay)
 		data.worldmap_icon = frame
-		frame:SetHeight(worldIconSize, worldIconSize)
+		frame:SetSize(worldIconSize, worldIconSize)
 		texture = frame:CreateTexture(nil, "ARTWORK")
 		frame.texture = texture
 		texture:SetTexture(texture_name)
