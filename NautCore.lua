@@ -23,7 +23,7 @@ local Astrolabe = DongleStub("Astrolabe-1.0")
 local ldbicon = LibStub("LibDBIcon-1.0")
 
 -- object variables
-Nauticus.versionNum = 403 -- for comparison
+Nauticus.versionNum = 404 -- for comparison
 Nauticus.lowestNameTime = "--"
 Nauticus.tempText = ""
 Nauticus.tempTextCount = 0
@@ -115,9 +115,10 @@ local _options = {
 		end,
 		set = function(info, val)
 			Nauticus.db.profile.miniIconSize = val
+			val = val * ICON_DEFAULT_SIZE
 			for _, t in pairs(transports) do
-				t.minimap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
-				t.minimap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
+				t.minimap_icon:SetSize(val, val)
+				t.minimap_icon.texture:SetSize(val * math.sqrt(2), val * math.sqrt(2))
 			end
 		end,
 		isPercent = true,
@@ -133,9 +134,10 @@ local _options = {
 		end,
 		set = function(info, val)
 			Nauticus.db.profile.worldIconSize = val
+			val = val * ICON_DEFAULT_SIZE
 			for _, t in pairs(transports) do
-				t.worldmap_icon:SetHeight(val * ICON_DEFAULT_SIZE)
-				t.worldmap_icon:SetWidth(val * ICON_DEFAULT_SIZE)
+				t.worldmap_icon:SetSize(val, val)
+				t.worldmap_icon.texture:SetHeight(val * math.sqrt(2), val * math.sqrt(2))
 			end
 		end,
 		isPercent = true,
@@ -349,20 +351,6 @@ function Nauticus:OnEnable()
 	self:SetTransport()
 end
 
-local texCoordCache = { LLx = {}, LLy = {}, URx = {}, URy = {}, }
-local LLx, LLy, URx, URy
-local floor = math.floor
-local deg = math.deg
-
-local function RotateTexture(t, a)
-	a = floor(a+.5)
-	while   0 > a do a = a + 360; end
-	while 360 < a do a = a - 360; end
-	LLx, LLy = texCoordCache.LLx[a], texCoordCache.LLy[a]
-	URx, URy = texCoordCache.URx[a], texCoordCache.URy[a]
-	t:SetTexCoord(URy, LLx, LLx, LLy, URx, URy, LLy, URx)
-end
-
 local isDrawing
 
 function Nauticus:DrawMapIcons(worldOnly)
@@ -418,7 +406,7 @@ function Nauticus:DrawMapIcons(worldOnly)
 								transport.status = isZoning
 							end
 							Astrolabe:PlaceIconOnWorldMap(WorldMapButton, buttonWorld, 0, 0, x, y)
-							RotateTexture(buttonWorld.texture, angle)
+							buttonWorld.texture:SetRotation(angle)
 						elseif buttonWorld:IsVisible() then
 							buttonWorld:Hide()
 						end
@@ -426,7 +414,7 @@ function Nauticus:DrawMapIcons(worldOnly)
 						if isZoneInteresting and showMiniIcons and isFactionInteresting then
 							if not worldOnly then
 								Astrolabe:PlaceIconOnMinimap(buttonMini, 0, 0, x, y)
-								RotateTexture(buttonMini.texture, angle + (GetCVar("rotateMinimap") == "1" and deg(GetPlayerFacing()) or 0))
+								buttonMini.texture:SetRotation(angle - (GetCVar("rotateMinimap") == "1" and GetPlayerFacing() or 0))
 								buttonMini:SetAlpha(Astrolabe:IsIconOnEdge(buttonMini) and 0.6 or 0.9)
 							end
 						elseif buttonMini:IsVisible() then
@@ -696,7 +684,7 @@ function Nauticus:InitialiseConfig()
 	-- unpack transport data
 	local packedData = self.packedData
 	local args = {}
-	local j, oldX, oldY, oldOffset, oldDir, transit_data, texture_name, frame, texture
+	local j, oldX, oldY, oldOffset, oldDir, d_dir, transit_data, texture_name, frame, texture
 	local miniIconSize = self.db.profile.miniIconSize * ICON_DEFAULT_SIZE
 	local worldIconSize = self.db.profile.worldIconSize * ICON_DEFAULT_SIZE
 	local liveData = {}
@@ -725,8 +713,9 @@ function Nauticus:InitialiseConfig()
 			transit_data.dx[i] = tonumber(args[1])
 			transit_data.dy[i] = tonumber(args[2])
 			transit_data.dt[i] = tonumber(args[3])
-			transit_data.dir[i] = args[5]+oldDir
-			transit_data.d_dir[i] = tonumber(args[5])
+			d_dir = -rad(args[5])
+			transit_data.dir[i] = d_dir+oldDir
+			transit_data.d_dir[i] = d_dir
 
 			if args[6] then
 				local comment = strsub(args[6], 1, 4)
@@ -756,12 +745,12 @@ function Nauticus:InitialiseConfig()
 
 		frame = CreateFrame("Button", "NauticusMiniIcon"..id, Minimap)
 		data.minimap_icon = frame
-		frame:SetHeight(miniIconSize)
-		frame:SetWidth(miniIconSize)
+		frame:SetSize(miniIconSize, miniIconSize)
 		texture = frame:CreateTexture(nil, "ARTWORK")
 		frame.texture = texture
 		texture:SetTexture(texture_name)
-		texture:SetAllPoints(frame)
+		texture:SetPoint("CENTER")
+		texture:SetSize(miniIconSize * math.sqrt(2), miniIconSize * math.sqrt(2))
 		frame:SetScript("OnEnter", function(self) Nauticus:MapIcon_OnEnter(self) end)
 		frame:SetScript("OnLeave", function(self) Nauticus:MapIcon_OnLeave(self) end)
 		frame:SetID(id)
@@ -769,12 +758,12 @@ function Nauticus:InitialiseConfig()
 
 		frame = CreateFrame("Button", nil, worldMapOverlay)
 		data.worldmap_icon = frame
-		frame:SetHeight(worldIconSize)
-		frame:SetWidth(worldIconSize)
+		frame:SetHeight(worldIconSize, worldIconSize)
 		texture = frame:CreateTexture(nil, "ARTWORK")
 		frame.texture = texture
 		texture:SetTexture(texture_name)
-		texture:SetAllPoints(frame)
+		texture:SetPoint("CENTER")
+		texture:SetSize(worldIconSize * math.sqrt(2), worldIconSize * math.sqrt(2))
 		frame:SetScript("OnEnter", function(self) Nauticus:MapIcon_OnEnter(self) end)
 		frame:SetScript("OnLeave", function(self) Nauticus:MapIcon_OnLeave(self) end)
 		frame:SetID(id)
@@ -950,25 +939,5 @@ function Nauticus:DebugMessage(msg)
 		local now = GetTime()
 		ChatFrame4:AddMessage(format("[Naut] ["..YELLOW.."%0.3f|r]: %s", now-lastDebug, msg))
 		lastDebug = now
-	end
-end
-
--- build cache of all angles
-do
-	local cosa, sina, A, B, C, D, E, F, det, BFsubCE, AFaddCD
-	for i = 0, 360 do
-		cosa, sina = cos(i), sin(i)
-		-- translate texture to centre, rotate it, put it back
-		-- T(x1,y1).R(angle).T(-x1,-y1)
-		A, B, C, D, E, F =
-			cosa,	-sina,	0.5*(1-cosa)+0.5*sina,
-			sina,	cosa,	0.5*(1-cosa)-0.5*sina
-
-		det     =  A*E - B*D
-		BFsubCE =  B*F - C*E
-		AFaddCD = -A*F + C*D
-
-		texCoordCache.LLx[i], texCoordCache.LLy[i] = (-B + BFsubCE) / det, ( A + AFaddCD) / det
-		texCoordCache.URx[i], texCoordCache.URy[i] = ( E + BFsubCE) / det, (-D + AFaddCD) / det
 	end
 end

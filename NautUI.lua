@@ -276,7 +276,8 @@ function Nauticus:MapIcon_OnEnter(frame)
 	self:ShowTooltip(transit)
 
 	for id, data in pairs(transports) do
-		if transit ~= id and (MouseIsOver(data.worldmap_icon) or
+		if transit ~= id and
+			((data.worldmap_icon:IsVisible() and MouseIsOver(data.worldmap_icon)) or
 			(data.minimap_icon:IsVisible() and MouseIsOver(data.minimap_icon)))
 		then
 			tablet:AddLine("•") -- ascii 149
