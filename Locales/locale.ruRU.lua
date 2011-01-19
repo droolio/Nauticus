@@ -106,21 +106,21 @@ L["Green Island"] = "Зеленый остров"
 L["The Kraken"] = "Кракен"
 L["Northspear"] = "Северное копье"
 L["Captured Zeppelin"] = "Захваченный дирижабль"
-L["The Zephyr"] = true -- to do
+L["The Zephyr"] = "Зефир"
 
 -- zones (*must* strictly match the in-game name)
 L["Orgrimmar"] = "Оргриммар"
 L["Undercity"] = "Подгород"
 L["The Exodar"] = "Экзодар"
 L["Stormwind City"] = "Штормград"
-L["Thunder Bluff"] = true -- to do
+L["Thunder Bluff"] = "Громовой Утес"
 
 L["Durotar"] = "Дуротар"
 L["Tirisfal Glades"] = "Тирисфальские леса"
-L["Northern Stranglethorn"] = true -- to do
-L["The Cape of Stranglethorn"] = true -- to do
-L["Northern Barrens"] = true -- to do
-L["Southern Barrens"] = true -- to do
+L["Northern Stranglethorn"] = "Северная Тернистая долина"
+L["The Cape of Stranglethorn"] = "Мыс Тернистой долины"
+L["Northern Barrens"] = "Северные Степи"
+L["Southern Barrens"] = "Южные Степи"
 L["Wetlands"] = "Болотина"
 L["Darkshore"] = "Темные берега"
 L["Dustwallow Marsh"] = "Пылевые топи"
@@ -131,12 +131,12 @@ L["Westfall"] = "Западный Край"
 L["Borean Tundra"] = "Борейская тундра"
 L["Howling Fjord"] = "Ревущий фьорд"
 L["Dragonblight"] = "Драконий Погост"
-L["Mulgore"] = true -- to do
+L["Mulgore"] = "Мулгор"
 
 L["The Veiled Sea"] = "Сокрытое Море"
 L["Twisting Nether"] = "Круговерть Пустоты"
 L["The Frozen Sea"] = "Ледяное море"
-L["The Great Sea"] = true -- to do
+L["The Great Sea"] = "Великое море"
 
 -- subzones
 L["Grom'gol"] = "Лагерь Гром'гол"
@@ -159,7 +159,7 @@ L["Org"] = "Орг" -- Orgrimmar
 L["UC"]  = "ПГ"  -- Undercity
 L["Exo"] = "Экз" -- The Exodar
 L["SC"]  = "Шт"  -- Stormwind City
-L["TB"]  = true  -- to do; Thunder Bluff
+L["TB"]  = "ГУ"  -- Thunder Bluff
 
 L["GG"]  = "ГГ"  -- Grom'gol
 L["BB"]  = "ББ"  -- Booty Bay
